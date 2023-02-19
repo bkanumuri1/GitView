@@ -9,6 +9,8 @@ CORS(app)
 app.secret_key = secrets.token_hex(16)
 CLIENT_ID = "e7231ef0e449bce7d695"
 CLIENT_SECRET = "d8c966df9903e6e9fe3a3372708daea192bdd041"
+repositories=[]
+excelRepos=[]
 
 @app.route('/getAccessToken', methods=['GET'])
 def getAccessToken():
@@ -44,7 +46,7 @@ def getUserRepos():
     response = requests.get(url,headers=headers)
     repoData = {}
     for repository in response.json():
-        repoData[repository['id']] = repository['full_name']
+        repoData[repository['id']] = repository['full_name']   
     return jsonify(repoData)
 
 if __name__ == '__main__':
@@ -52,5 +54,3 @@ if __name__ == '__main__':
     # Engine, a webserver process such as Gunicorn will serve the app. You
     # can configure startup instructions by adding `entrypoint` to app.yaml.
     app.run(host='127.0.0.1', port=9000, debug=True)
-# [END gae_python3_app]
-# [END gae_python38_app]
