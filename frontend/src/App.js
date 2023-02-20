@@ -19,6 +19,7 @@ function App() {
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
   const [contributors, setContributors] = useState([]);
+  const [text, setText] = useState();
 
   //Forward the user to the guthub login screen (pass clientID)
   // user is now on the github side ang logs in
@@ -50,8 +51,13 @@ function App() {
             }
           });
       }
+      
       getAccessToken();
+      
     }
+    
+
+
   }, []); //[] is used to run once
 
   function loginWithGithub() {
@@ -59,6 +65,7 @@ function App() {
       "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
     );
   }
+
 
   async function getUserData() {
     await fetch("http://localhost:9000/getUserData", {
@@ -73,10 +80,10 @@ function App() {
       .then((data) => {
         console.log(data);
         setUserData(data);
+        setText(data)
         //getUserRepos();
       });
   }
-
   async function getUserRepos() {
     await fetch("http://localhost:9000/getUserRepos", {
       method: "GET",
@@ -130,16 +137,12 @@ function App() {
       <header className="App-header">
         {localStorage.getItem("access_token") ? (
           <>
-            <h1>we have the access token</h1>
-            <button
-              onClick={() => {
-                localStorage.removeItem("access_token");
-                setRerender(!rerender);
-              }}
-            >
-              Log Out
-            </button>
-            <h3>Get User Data from Github API</h3>
+           
+           
+
+            
+            
+            <h3>Get User Data from Github API </h3>
             <button onClick={getUserData}>Click to get Data</button>
             {Object.keys(userData).length !== 0 ? (
               <>
@@ -159,6 +162,17 @@ function App() {
             ) : (
               <></>
             )}
+            
+            <button
+              onClick={() => {
+                localStorage.removeItem("access_token");
+                setRerender(!rerender);
+              }}
+            >
+              Log Out
+            </button>
+
+            
           </>
         ) : (
           <>
