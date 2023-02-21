@@ -20,6 +20,7 @@ function App() {
   const [repositories, setRepositories] = useState([]);
   const [contributors, setContributors] = useState([]);
   const [text, setText] = useState();
+  const [data, setData] = useState([]);
 
   //Forward the user to the guthub login screen (pass clientID)
   // user is now on the github side ang logs in
@@ -59,6 +60,30 @@ function App() {
 
 
   }, []); //[] is used to run once
+
+
+
+  const getData = async () => {
+    const response = await fetch("http://localhost:9000/getUserData", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("access_token"),
+      },
+    });
+    const data = await response.json();
+    console.log("data",data);
+    return data;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await getData();
+      setData(result);
+    };
+    fetchData();
+  }, []);
+
+
 
   function loginWithGithub() {
     window.location.assign(
@@ -136,16 +161,15 @@ function App() {
       </Router>
       <header className="App-header">
         {localStorage.getItem("access_token") ? (
-          <>
-           
-           
-
-            
-            
+          <>  
+                    
+                    <h4> Hey there {data.login} !</h4>
             <h3>Get User Data from Github API </h3>
             <button onClick={getUserData}>Click to get Data</button>
             {Object.keys(userData).length !== 0 ? (
               <>
+
+                
                 <h4> Hey there {userData.login} !</h4>
                 <button onClick={getUserRepos}>Click to get Repos</button>
                 {Object.keys(repositories).length !== 0 ? (
