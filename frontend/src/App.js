@@ -1,8 +1,10 @@
 import "./App.css";
+import "./components/LoginButton.css";
 import Sidebar from "./components/Sidebar";
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AboutUs, OurAim, OurVision } from "./pages/AboutUs";
+
 // import {
 //   Services,
 //   ServicesOne,
@@ -21,6 +23,8 @@ function App() {
   const [contributors, setContributors] = useState([]);
   const [text, setText] = useState();
   const [data, setData] = useState([]);
+  const [repos, setRepos] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   //Forward the user to the guthub login screen (pass clientID)
   // user is now on the github side ang logs in
@@ -52,11 +56,11 @@ function App() {
             }
           });
       }
-      
+
       getAccessToken();
-      
+
     }
-    
+
 
 
   }, []); //[] is used to run once
@@ -70,8 +74,9 @@ function App() {
         Authorization: "Bearer " + localStorage.getItem("access_token"),
       },
     });
+
     const data = await response.json();
-    console.log("data",data);
+    console.log("data", data);
     return data;
   };
 
@@ -89,6 +94,7 @@ function App() {
     window.location.assign(
       "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
     );
+
   }
 
 
@@ -106,7 +112,7 @@ function App() {
         console.log(data);
         setUserData(data);
         setText(data)
-        //getUserRepos();
+        getUserRepos();
       });
   }
   async function getUserRepos() {
@@ -125,7 +131,7 @@ function App() {
   }
 
   async function getRepoContributors(repo) {
-    await fetch("http://localhost:9000/getRepoContributors/?repo="+repo, {
+    await fetch("http://localhost:9000/getRepoContributors/?repo=" + repo, {
       method: "GET",
       headers: {
         Authorization: "Bearer " + localStorage.getItem("access_token"),
@@ -139,13 +145,38 @@ function App() {
       });
   }
 
+  function handleSearch(event) {
+    setSearchTerm(event.target.value);
+  }
+
+  const filteredRepos = repos.filter((repo) =>
+    repo.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  useEffect(() => {
+    async function fetchRepos() {
+      await fetch("http://localhost:9000/getUserRepos", {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+
+      setRepos(data);
+    }
+    fetchRepos();
+  }, []);
+
   return (
 
     <div className="App">
       <Router>
-      <Sidebar />
+        <Sidebar />
         <Routes>
-          <Route path='/about-us' element={<AboutUs/>} />
+          <Route path='/about-us' element={<AboutUs />} />
           {/* <Route path='/about-us/aim' element={<OurAim/>} />
           <Route path='/about-us/vision' element={<OurVision/>} />
           <Route path='/services' element={<Services/>} />
@@ -161,52 +192,75 @@ function App() {
       </Router>
       <header className="App-header">
         {localStorage.getItem("access_token") ? (
-          <>  
-                    
-                    <h4> Hey there {data.login} !</h4>
-            <h3>Get User Data from Github API </h3>
-            <button onClick={getUserData}>Click to get Data</button>
+          <div className="card">
+
+
+            <h4 style={{ color: "black" }}> Hey there {data.login} !</h4>
+
+
+            <div>
+              <button onClick={getUserData} style={{
+                color: "white", backgroundColor: '#40005d',
+
+                padding: 10,
+
+              }}>Click to get UserRepos</button></div>
             {Object.keys(userData).length !== 0 ? (
               <>
 
-                
-                <h4> Hey there {userData.login} !</h4>
-                <button onClick={getUserRepos}>Click to get Repos</button>
                 {Object.keys(repositories).length !== 0 ? (
-                <> 
-                <select>
-                  {Object.entries(repositories).map(([key, value]) => (
-                    <option key={key} value={value}>{value}</option>
-                  ))}
-                </select>
-                </> ) : (
-                <> </>
-                 )}
+
+                  <>
+                    <select> {
+                      Object.entries(repositories).map(([key, value]) => (
+                        <option key={key}
+                          value={value}>
+                          {value}</option>
+                      ))
+                    } </select>
+
+                  </>) : (
+                  <> </>
+                )}
               </>
             ) : (
               <></>
             )}
-            
+
             <button
               onClick={() => {
                 localStorage.removeItem("access_token");
                 setRerender(!rerender);
               }}
+              style={{
+                color: "white", backgroundColor: '#40005d',
+
+                padding: 10,
+
+              }}
             >
               Log Out
             </button>
 
-            
-          </>
+
+          </div>
         ) : (
           <>
-            <h3> User not logged in</h3>
-            <button onClick={loginWithGithub}>Login With Github</button>
+            <div className="card">
+
+              <h3 style={{ color: "black" }}>Please Login </h3>
+
+              <button onClick={loginWithGithub} style={{
+                color: "white", backgroundColor: '#40005d',
+
+                padding: 20,
+
+              }}>Login With Github</button></div>
           </>
         )}
       </header>
     </div>
-      );
+  );
 }
-   
+
 export default App;
