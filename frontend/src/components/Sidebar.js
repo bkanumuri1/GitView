@@ -8,7 +8,7 @@ import SubMenu from "./SubMenu";
 import { IconContext } from "react-icons/lib";
  
 const Nav = styled.div`
-  background: #15171c;
+  background: #b6787a;
   height: 80px;
   display: flex;
   justify-content: flex-start;
@@ -25,7 +25,7 @@ const NavIcon = styled(Link)`
 `;
  
 const SidebarNav = styled.nav`
-  background: #15171c;
+  background: #fff;
   width: 250px;
   height: 100vh;
   display: flex;
@@ -48,17 +48,19 @@ const Sidebar = () => {
  
   return (
     <>
-      <IconContext.Provider value={{ color: "#fff" }}>
+      <IconContext.Provider value={{ color: "#e5eaf5" }}>
         <Nav>
           <NavIcon to="#">
             <FaIcons.FaBars onClick={showSidebar} />
           </NavIcon>
           <h1
-            style={{ textAlign: "center",
-                     marginLeft: "200px",
-                     color: "white" }}
+            style={{ 
+                    textAlign: "center",
+                     marginLeft: "620px",
+                    fontFamily: "sans-serif",
+                     color: "#fff" }}
           >
-            GITHUB GRADING TOOL
+            GitGrade
           </h1>
         </Nav>
         <SidebarNav sidebar={sidebar}>

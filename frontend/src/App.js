@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AboutUs, OurAim, OurVision } from "./pages/AboutUs";
+import { RiServerFill } from "react-icons/ri";
 
 // import {
 //   Services,
@@ -195,16 +196,15 @@ function App() {
           <div className="card">
 
 
-            <h4 style={{ color: "black" }}> Hey there {data.login} !</h4>
+            <h4 style={{ color: "black" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
 
 
             <div>
               <button onClick={getUserData} style={{
-                color: "white", backgroundColor: '#40005d',
+                color: "white", backgroundColor: '#7d3cff',
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16
 
-                padding: 10,
-
-              }}>Click to get UserRepos</button></div>
+              }}>Click to get your repositories</button></div>
             {Object.keys(userData).length !== 0 ? (
               <>
 
@@ -226,16 +226,15 @@ function App() {
             ) : (
               <></>
             )}
-
+            <br></br>
             <button
               onClick={() => {
                 localStorage.removeItem("access_token");
                 setRerender(!rerender);
               }}
               style={{
-                color: "white", backgroundColor: '#40005d',
-
-                padding: 10,
+                color: "white", backgroundColor: '#7d3cff',
+                padding: 10,borderRadius: 15, fontFamily: "sans-serif", fontSize: 16
 
               }}
             >
@@ -248,13 +247,11 @@ function App() {
           <>
             <div className="card">
 
-              <h3 style={{ color: "black" }}>Please Login </h3>
+              <h3 style={{ color: "black", fontFamily: "sans-serif" }}>Please Login </h3>
 
               <button onClick={loginWithGithub} style={{
-                color: "white", backgroundColor: '#40005d',
-
-                padding: 20,
-
+                color: "white", backgroundColor: '#7d3cff', 
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif"
               }}>Login With Github</button></div>
           </>
         )}

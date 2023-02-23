@@ -1,10 +1,10 @@
 .card {
 
     overflow: hidden;
-    background-color: aliceblue;
+    background-color: #f2d53c;
     border-radius: 20px;
-    height: 400px;
+    height: 450px;
     text-align: center;
     padding-top: 200px;
-    width: 400px;
+    width: 1450px;
   }
