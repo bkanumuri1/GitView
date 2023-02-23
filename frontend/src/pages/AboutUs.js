@@ -3,7 +3,7 @@ import React from "react";
 export const AboutUs = () => {
   return (
     <div className="home">
-      <h1>Git Repo</h1>
+      <h1></h1>
     </div>
   );
 };
