@@ -205,7 +205,7 @@ function App() {
           <div className="card">
 
 
-            <h4 style={{ color: "black" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
+            <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
 
 
             <div>
