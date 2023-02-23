@@ -5,7 +5,6 @@ function LoginButton(){
         <div>
         <button classname="Btn">Login With Github</button></div>
 
-
     </div>)
 }
 

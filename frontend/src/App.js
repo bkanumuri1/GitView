@@ -5,6 +5,15 @@ import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AboutUs, OurAim, OurVision } from "./pages/AboutUs";
 import { RiServerFill } from "react-icons/ri";
+import * as GoIcons from "react-icons/go";
+import * as GrIcons from "react-icons/gr";
+import { IconButton } from "rsuite";
+import { Admin, Menu, Reload, Resize, Search } from '@rsuite/icons';
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
+import Stack from '@mui/material/Stack';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 // import {
 //   Services,
@@ -175,7 +184,7 @@ function App() {
 
     <div className="App">
       <Router>
-        <Sidebar />
+        {/* <Sidebar /> */}
         <Routes>
           <Route path='/about-us' element={<AboutUs />} />
           {/* <Route path='/about-us/aim' element={<OurAim/>} />
@@ -196,7 +205,7 @@ function App() {
           <div className="card">
 
 
-            <h4 style={{ color: "black" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
+            <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
 
 
             <div>
@@ -240,21 +249,27 @@ function App() {
             >
               Log Out
             </button>
-
-
           </div>
         ) : (
           <>
             <div className="card">
-
-              <h3 style={{ color: "black", fontFamily: "sans-serif" }}>Please Login </h3>
-
-              <button onClick={loginWithGithub} style={{
+              <h3 style={{ color: "white", fontFamily: "sans-serif" }}>LOGIN TO BEGIN GRADING </h3>
+              {/* <button onClick={loginWithGithub} style={{
                 color: "white", backgroundColor: '#7d3cff', 
                 padding: 10, borderRadius: 15, fontFamily: "sans-serif"
-              }}>Login With Github</button></div>
+              }}> SIGN IN WITH GITHUB</button> */}
+               {/* <Stack direction="row" > */}
+                  <Button onClick={loginWithGithub} variant="outlined" startIcon={<GitHubIcon />} style={{
+                color: "white", 
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif"
+              }}>
+                  SIGN IN WITH GITHUB
+                          </Button>
+                     {/* </Stack> */}
+              </div>
           </>
         )}
+        
       </header>
     </div>
   );
