@@ -199,13 +199,14 @@ function App() {
             <h5> Accepted formats: .xlsx, .xls, .xlsm, .csv</h5>
             <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
 
+            <br></br>
             <div>
               <button onClick={getUserData} style={{
                 color: "white", backgroundColor: '#7d3cff',
-                padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16, margin : 10
 
               }}>Click to get your repositories</button></div>
-            {Object.keys(userData).length !== 0 ? (
+              {Object.keys(userData).length !== 0 ? (
               <>
 
                 {Object.keys(repositories).length !== 0 ? (
@@ -218,8 +219,6 @@ function App() {
                           {value}</option>
                       ))
                     } </select>
-
-
                   </>) : (
                   <> </>
                 )}
@@ -245,7 +244,7 @@ function App() {
         ) : (
           <>
             <div className="card">
-              <h3 style={{ color: "white", fontFamily: "sans-serif" }}>LOGIN TO BEGIN GRADING </h3>
+              <h3 style={{ color: "white", fontFamily: "sans-serif" }}>Login to begin grading</h3>
               {/* <button onClick={loginWithGithub} style={{
                 color: "white", backgroundColor: '#7d3cff', 
                 padding: 10, borderRadius: 15, fontFamily: "sans-serif"
