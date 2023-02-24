@@ -1,9 +1,9 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import Sidebar from "./components/Sidebar";
-import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AboutUs, OurAim, OurVision } from "./pages/AboutUs";
+import {useEffect, useState} from "react";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import {AboutUs, OurAim, OurVision} from "./pages/AboutUs";
 import { RiServerFill } from "react-icons/ri";
 import * as GoIcons from "react-icons/go";
 import * as GrIcons from "react-icons/gr";
@@ -14,12 +14,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import GitHubIcon from '@mui/icons-material/GitHub';
-
+import * as XLSX from 'xlsx';
 // import {
-//   Services,
-//   ServicesOne,
-//   ServicesTwo,
-//   ServicesThree,
+// Services,
+// ServicesOne,
+// ServicesTwo,
+// ServicesThree,
 // } from "./pages/Services";
 // import { Events, EventsOne, EventsTwo } from "./pages/Events";
 // import Contact from "./pages/ContactUs";
@@ -27,85 +27,46 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
-  const [rerender, setRerender] = useState(false);
-  const [userData, setUserData] = useState({});
-  const [repositories, setRepositories] = useState([]);
-  const [contributors, setContributors] = useState([]);
-  const [text, setText] = useState();
-  const [data, setData] = useState([]);
-  const [repos, setRepos] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+    const [rerender, setRerender] = useState(false);
+    const [userData, setUserData] = useState({});
+    const [repositories, setRepositories] = useState([]);
+    const [contributors, setContributors] = useState([]);
+    const [text, setText] = useState();
+    const [data, setData] = useState([]);
+    const [repos, setRepos] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [excelData, setExcelData] = useState([]);
 
-  //Forward the user to the guthub login screen (pass clientID)
-  // user is now on the github side ang logs in
-  // when user decides to login .. they get forwaded back to localhost
-  // get code
-  //use code to get access token ( code can be only used once)
-  useEffect(() => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const codeParam = urlParams.get("code");
-    console.log(codeParam);
-    //using local storage to store access_token, help persists through login in with Github
-
-    if (codeParam && localStorage.getItem("access_token") === null) {
-      console.log("Inside if block");
-      async function getAccessToken() {
-        await fetch("http://localhost:9000/getAccessToken?code=" + codeParam, {
-          method: "GET",
-        })
-          .then((response) => {
-            console.log(response);
-            return response.json();
-          })
-          .then((data) => {
-            console.log(data);
-            if (data.access_token) {
-              localStorage.setItem("access_token", data.access_token);
-              setRerender(!rerender); // to force rerender on success
+    // Forward the user to the guthub login screen (pass clientID)
+    // user is now on the github side ang logs in
+    // when user decides to login .. they get forwaded back to localhost
+    // get code
+    // use code to get access token ( code can be only used once)
+    useEffect(() => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const codeParam = urlParams.get("code");
+        // using local storage to store access_token, help persists through login in with Github
+        if (codeParam && localStorage.getItem("access_token") === null) {
+            console.log("Inside if block");
+            async function getAccessToken() {
+                await fetch("http://localhost:9000/getAccessToken?code=" + codeParam, {method: "GET"}).then((response) => {
+                    console.log(response);
+                    return response.json();
+                }).then((data) => {
+                    console.log(data);
+                    if (data.access_token) {
+                        localStorage.setItem("access_token", data.access_token);
+                        setRerender(!rerender); // to force rerender on success
+                    }
+                });
             }
-          });
-      }
+            getAccessToken();
+        }
+    }, []); // [] is used to run once
 
-      getAccessToken();
-
-    }
-
-
-
-  }, []); //[] is used to run once
-
-
-
-  const getData = async () => {
-    const response = await fetch("http://localhost:9000/getUserData", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("access_token"),
-      },
-    });
-
-    const data = await response.json();
-    console.log("data", data);
-    return data;
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await getData();
-      setData(result);
-    };
-    fetchData();
-  }, []);
-
-
-
-  function loginWithGithub() {
-    window.location.assign(
-      "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
-    );
-
-  }
+    function loginWithGithub() {
+        window.location.assign("https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID);}
 
 
   async function getUserData() {
@@ -119,12 +80,11 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         setUserData(data);
-        setText(data)
         getUserRepos();
       });
   }
+
   async function getUserRepos() {
     await fetch("http://localhost:9000/getUserRepos", {
       method: "GET",
@@ -136,7 +96,14 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        setRepositories(data);
+        console.log(data);
+        let commonElements = new Map();
+        Object.keys(data).forEach(key => {
+            if (excelData.includes(data[key])) {
+                commonElements[key] = data[key];
+            }
+        });
+        setRepositories(commonElements);
       });
   }
 
@@ -157,6 +124,26 @@ function App() {
 
   function handleSearch(event) {
     setSearchTerm(event.target.value);
+  }
+
+  function handleFileUpload(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const list = [];
+        for (let z in worksheet) {
+            if (z.toString()[0] === 'A') {
+                list.push(worksheet[z].v);
+            }
+        }
+        console.log(JSON.stringify({list}));
+        setExcelData(list);
+    };
+    reader.readAsArrayBuffer(file);
   }
 
   const filteredRepos = repos.filter((repo) =>
@@ -208,13 +195,18 @@ function App() {
             <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
 
 
+            <h3>Please upload an excel file with repositories.</h3>
+            <h5> Accepted formats: .xlsx, .xls, .xlsm, .csv</h5>
+            <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
+
+            <br></br>
             <div>
               <button onClick={getUserData} style={{
                 color: "white", backgroundColor: '#7d3cff',
-                padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16, margin : 10
 
               }}>Click to get your repositories</button></div>
-            {Object.keys(userData).length !== 0 ? (
+              {Object.keys(userData).length !== 0 ? (
               <>
 
                 {Object.keys(repositories).length !== 0 ? (
@@ -227,7 +219,6 @@ function App() {
                           {value}</option>
                       ))
                     } </select>
-
                   </>) : (
                   <> </>
                 )}
@@ -253,7 +244,7 @@ function App() {
         ) : (
           <>
             <div className="card">
-              <h3 style={{ color: "white", fontFamily: "sans-serif" }}>LOGIN TO BEGIN GRADING </h3>
+              <h3 style={{ color: "white", fontFamily: "sans-serif" }}>Login to begin grading</h3>
               {/* <button onClick={loginWithGithub} style={{
                 color: "white", backgroundColor: '#7d3cff', 
                 padding: 10, borderRadius: 15, fontFamily: "sans-serif"
@@ -274,5 +265,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
