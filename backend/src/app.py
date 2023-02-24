@@ -1,3 +1,4 @@
+import json
 import secrets
 from flask import Flask,request,jsonify, session
 import requests
@@ -48,6 +49,21 @@ def getUserRepos():
     for repository in response.json():
         repoData[repository['id']] = repository['full_name']   
     return jsonify(repoData)
+
+@app.route('/getRepoContributors', methods=['GET'])
+def getRepoContributors():
+    token = request.headers.get('Authorization')
+    repo_name = request.args.get("repo")
+    url = "https://api.github.com/repos/"+repo_name+"/collaborators"
+    print(url)
+    headers = {'Authorization' : token}
+    response = requests.get(url,headers=headers)
+    data=response.json()
+    logins = [d['login'] for d in data]
+    print(logins)
+    return jsonify(logins)
+
+
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

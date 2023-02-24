@@ -32,7 +32,7 @@ function App() {
     const [repositories, setRepositories] = useState([]);
     const [contributors, setContributors] = useState([]);
     const [text, setText] = useState();
-    const [data, setData] = useState([]);
+    // const [data, setData] = useState([]);
     const [repos, setRepos] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [excelData, setExcelData] = useState([]);
@@ -48,15 +48,13 @@ function App() {
         const codeParam = urlParams.get("code");
         // using local storage to store access_token, help persists through login in with Github
         if (codeParam && localStorage.getItem("access_token") === null) {
-            console.log("Inside if block");
             async function getAccessToken() {
                 await fetch("http://localhost:9000/getAccessToken?code=" + codeParam, {method: "GET"}).then((response) => {
-                    console.log(response);
                     return response.json();
                 }).then((data) => {
-                    console.log(data);
                     if (data.access_token) {
                         localStorage.setItem("access_token", data.access_token);
+                        getUserData();
                         setRerender(!rerender); // to force rerender on success
                     }
                 });
@@ -66,7 +64,8 @@ function App() {
     }, []); // [] is used to run once
 
     function loginWithGithub() {
-        window.location.assign("https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID);}
+        window.location.assign("https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID);
+    }
 
 
   async function getUserData() {
@@ -81,7 +80,7 @@ function App() {
       })
       .then((data) => {
         setUserData(data);
-        getUserRepos();
+        // getUserRepos();
       });
   }
 
@@ -118,7 +117,7 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        setRepositories(data);
+        setContributors(contributors);
       });
   }
 
@@ -162,7 +161,7 @@ function App() {
           return response.json();
         })
 
-      setRepos(data);
+      setRepos(repos);
     }
     fetchRepos();
   }, []);
@@ -191,41 +190,37 @@ function App() {
         {localStorage.getItem("access_token") ? (
           <div className="card">
 
-
-            <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
-
+            {Object.keys(userData).length !== 0 ? (
+              <>
+            <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {userData.login} !</h4>
+            </>) : (
+                <>
+                {/* when userData is null */}
+                </>
+            )
+            }
 
             <h3>Please upload an excel file with repositories.</h3>
             <h5> Accepted formats: .xlsx, .xls, .xlsm, .csv</h5>
             <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
 
             <br></br>
-            <div>
-              <button onClick={getUserData} style={{
+              <button onClick={getUserRepos} style={{
                 color: "white", backgroundColor: '#7d3cff',
                 padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16, margin : 10
 
-              }}>Click to get your repositories</button></div>
-              {Object.keys(userData).length !== 0 ? (
-              <>
-
-                {Object.keys(repositories).length !== 0 ? (
-
-                  <>
-                    <select> {
-                      Object.entries(repositories).map(([key, value]) => (
-                        <option key={key}
-                          value={value}>
-                          {value}</option>
-                      ))
-                    } </select>
-                  </>) : (
-                  <> </>
-                )}
-              </>
-            ) : (
-              <></>
-            )}
+              }}>Click to get your repositories</button>
+                {
+                    Object.keys(repositories).length !== 0 ? (
+                    <>
+                        <select> {
+                            Object.entries(repositories).map(([key, value]) => (
+                                <option key={key} value={value}> {value} </option>))
+                        } 
+                        </select>
+                    </>
+                    ) : (<> </>)
+                }
             <br></br>
             <button
               onClick={() => {
