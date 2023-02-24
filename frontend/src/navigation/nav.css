@@ -1,0 +1,12 @@
+.nav {
+    overflow: hidden;
+    background-color: #0d0d0d;
+    height: 50px;
+    padding-top: 0%;
+    width: 100%;
+    color: white;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+}

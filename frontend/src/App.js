@@ -14,6 +14,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import LandingUI from "./components/LandingUI";
+import Navbar from "./navigation/NavBar";
+import AccountCircle from '@mui/icons-material/AccountCircle';
 
 // import {
 //   Services,
@@ -183,32 +186,38 @@ function App() {
   return (
 
     <div className="App">
-      <Router>
-        {/* <Sidebar /> */}
-        <Routes>
-          <Route path='/about-us' element={<AboutUs />} />
-          {/* <Route path='/about-us/aim' element={<OurAim/>} />
-          <Route path='/about-us/vision' element={<OurVision/>} />
-          <Route path='/services' element={<Services/>} />
-          <Route path='/services/services1' element={<ServicesOne/>} />
-          <Route path='/services/services2' element={<ServicesTwo/>} />
-          <Route path='/services/services3' element={<ServicesThree/>} />
-          <Route path='/contact' element={<Contact/>} />
-          <Route path='/events' element={<Events/>} />
-          <Route path='/events/events1' element={<EventsOne/>} />
-          <Route path='/events/events2' element={<EventsTwo/>} />
-          <Route path='/support' element={<Support/>} /> */}
-        </Routes>
-      </Router>
-      <header className="App-header">
+      
+      {/* <header className="App-header"> */}
+      
         {localStorage.getItem("access_token") ? (
-          <div className="card">
-
-
+        <div>
+          <div className="nav">
+          <button
+                    onClick={() => {
+                      localStorage.removeItem("access_token");
+                      setRerender(!rerender);
+                    }}
+                    style={{
+                      color: "white", backgroundColor: 'black',
+                       fontFamily: "sans-serif", fontSize: 16
+      
+                    }}
+                  >
+                    Log Out
+                  </button>
+          <Button startIcon={<AccountCircle />} style={{
+                      color: "white", 
+                      padding: 10, borderRadius: 15, fontFamily: "sans-serif",
+                      justifyContent:"flex-end"
+                    }}>
+                       WELCOME {data.login}
+                                </Button>
+             </div>
+          <header className="App-header">
+            <div className="card">
             <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
-
-
             <div>
+              
               <button onClick={getUserData} style={{
                 color: "white", backgroundColor: '#7d3cff',
                 padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16
@@ -250,8 +259,13 @@ function App() {
               Log Out
             </button>
           </div>
+          </header>
+        </div>
+        /* </div> */
+    
         ) : (
           <>
+          <div className="newCard">
             <div className="card">
               <h3 style={{ color: "white", fontFamily: "sans-serif" }}>LOGIN TO BEGIN GRADING </h3>
               {/* <button onClick={loginWithGithub} style={{
@@ -261,16 +275,17 @@ function App() {
                {/* <Stack direction="row" > */}
                   <Button onClick={loginWithGithub} variant="outlined" startIcon={<GitHubIcon />} style={{
                 color: "white", 
-                padding: 10, borderRadius: 15, fontFamily: "sans-serif"
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif", 
               }}>
                   SIGN IN WITH GITHUB
                           </Button>
-                     {/* </Stack> */}
+        
+              </div>
               </div>
           </>
         )}
         
-      </header>
+      {/* </header> */}
     </div>
   );
 }

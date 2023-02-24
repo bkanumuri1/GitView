@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@rsuite/icons": "^1.0.2",
+    "rsuite": "^5.27.0"
+  }
+}
