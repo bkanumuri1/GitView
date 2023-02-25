@@ -1,6 +1,5 @@
 import "./App.css";
 import "./components/LoginButton.css";
-import Sidebar from "./components/Sidebar";
 import {useEffect, useState} from "react";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {AboutUs, OurAim, OurVision} from "./pages/AboutUs";
@@ -15,15 +14,6 @@ import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import * as XLSX from 'xlsx';
-// import {
-// Services,
-// ServicesOne,
-// ServicesTwo,
-// ServicesThree,
-// } from "./pages/Services";
-// import { Events, EventsOne, EventsTwo } from "./pages/Events";
-// import Contact from "./pages/ContactUs";
-// import Support from "./pages/Support";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -32,7 +22,6 @@ function App() {
     const [repositories, setRepositories] = useState([]);
     const [contributors, setContributors] = useState([]);
     const [text, setText] = useState();
-    const [data, setData] = useState([]);
     const [repos, setRepos] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [excelData, setExcelData] = useState([]);
@@ -48,15 +37,13 @@ function App() {
         const codeParam = urlParams.get("code");
         // using local storage to store access_token, help persists through login in with Github
         if (codeParam && localStorage.getItem("access_token") === null) {
-            console.log("Inside if block");
             async function getAccessToken() {
                 await fetch("http://localhost:9000/getAccessToken?code=" + codeParam, {method: "GET"}).then((response) => {
-                    console.log(response);
                     return response.json();
                 }).then((data) => {
-                    console.log(data);
                     if (data.access_token) {
                         localStorage.setItem("access_token", data.access_token);
+                        getUserData();
                         setRerender(!rerender); // to force rerender on success
                     }
                 });
@@ -66,7 +53,8 @@ function App() {
     }, []); // [] is used to run once
 
     function loginWithGithub() {
-        window.location.assign("https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID);}
+        window.location.assign("https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID);
+    }
 
 
   async function getUserData() {
@@ -81,7 +69,7 @@ function App() {
       })
       .then((data) => {
         setUserData(data);
-        getUserRepos();
+        // getUserRepos();
       });
   }
 
@@ -118,7 +106,7 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        setRepositories(data);
+        setContributors(contributors);
       });
   }
 
@@ -162,7 +150,7 @@ function App() {
           return response.json();
         })
 
-      setRepos(data);
+      setRepos(repos);
     }
     fetchRepos();
   }, []);
@@ -174,58 +162,42 @@ function App() {
         {/* <Sidebar /> */}
         <Routes>
           <Route path='/about-us' element={<AboutUs />} />
-          {/* <Route path='/about-us/aim' element={<OurAim/>} />
-          <Route path='/about-us/vision' element={<OurVision/>} />
-          <Route path='/services' element={<Services/>} />
-          <Route path='/services/services1' element={<ServicesOne/>} />
-          <Route path='/services/services2' element={<ServicesTwo/>} />
-          <Route path='/services/services3' element={<ServicesThree/>} />
-          <Route path='/contact' element={<Contact/>} />
-          <Route path='/events' element={<Events/>} />
-          <Route path='/events/events1' element={<EventsOne/>} />
-          <Route path='/events/events2' element={<EventsTwo/>} />
-          <Route path='/support' element={<Support/>} /> */}
         </Routes>
       </Router>
       <header className="App-header">
         {localStorage.getItem("access_token") ? (
           <div className="card">
 
-
-            <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
-
+            {Object.keys(userData).length !== 0 ? (
+              <>
+            <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {userData.login} !</h4>
+            </>) : (
+                <>
+                </>
+            )
+            }
 
             <h3>Please upload an excel file with repositories.</h3>
             <h5> Accepted formats: .xlsx, .xls, .xlsm, .csv</h5>
             <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
 
             <br></br>
-            <div>
-              <button onClick={getUserData} style={{
+              <button onClick={getUserRepos} style={{
                 color: "white", backgroundColor: '#7d3cff',
                 padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16, margin : 10
 
-              }}>Click to get your repositories</button></div>
-              {Object.keys(userData).length !== 0 ? (
-              <>
-
-                {Object.keys(repositories).length !== 0 ? (
-
-                  <>
-                    <select> {
-                      Object.entries(repositories).map(([key, value]) => (
-                        <option key={key}
-                          value={value}>
-                          {value}</option>
-                      ))
-                    } </select>
-                  </>) : (
-                  <> </>
-                )}
-              </>
-            ) : (
-              <></>
-            )}
+              }}>Click to get your repositories</button>
+                {
+                    Object.keys(repositories).length !== 0 ? (
+                    <>
+                        <select> {
+                            Object.entries(repositories).map(([key, value]) => (
+                                <option key={key} value={value}> {value} </option>))
+                        } 
+                        </select>
+                    </>
+                    ) : (<> </>)
+                }
             <br></br>
             <button
               onClick={() => {
@@ -245,18 +217,12 @@ function App() {
           <>
             <div className="card">
               <h3 style={{ color: "white", fontFamily: "sans-serif" }}>Login to begin grading</h3>
-              {/* <button onClick={loginWithGithub} style={{
-                color: "white", backgroundColor: '#7d3cff', 
-                padding: 10, borderRadius: 15, fontFamily: "sans-serif"
-              }}> SIGN IN WITH GITHUB</button> */}
-               {/* <Stack direction="row" > */}
                   <Button onClick={loginWithGithub} variant="outlined" startIcon={<GitHubIcon />} style={{
                 color: "white", 
                 padding: 10, borderRadius: 15, fontFamily: "sans-serif"
               }}>
                   SIGN IN WITH GITHUB
                           </Button>
-                     {/* </Stack> */}
               </div>
           </>
         )}
