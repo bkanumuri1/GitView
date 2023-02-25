@@ -1,6 +1,5 @@
 import "./App.css";
 import "./components/LoginButton.css";
-import Sidebar from "./components/Sidebar";
 import {useEffect, useState} from "react";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {AboutUs, OurAim, OurVision} from "./pages/AboutUs";
@@ -15,15 +14,6 @@ import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import * as XLSX from 'xlsx';
-// import {
-// Services,
-// ServicesOne,
-// ServicesTwo,
-// ServicesThree,
-// } from "./pages/Services";
-// import { Events, EventsOne, EventsTwo } from "./pages/Events";
-// import Contact from "./pages/ContactUs";
-// import Support from "./pages/Support";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -32,7 +22,6 @@ function App() {
     const [repositories, setRepositories] = useState([]);
     const [contributors, setContributors] = useState([]);
     const [text, setText] = useState();
-    // const [data, setData] = useState([]);
     const [repos, setRepos] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [excelData, setExcelData] = useState([]);
@@ -173,17 +162,6 @@ function App() {
         {/* <Sidebar /> */}
         <Routes>
           <Route path='/about-us' element={<AboutUs />} />
-          {/* <Route path='/about-us/aim' element={<OurAim/>} />
-          <Route path='/about-us/vision' element={<OurVision/>} />
-          <Route path='/services' element={<Services/>} />
-          <Route path='/services/services1' element={<ServicesOne/>} />
-          <Route path='/services/services2' element={<ServicesTwo/>} />
-          <Route path='/services/services3' element={<ServicesThree/>} />
-          <Route path='/contact' element={<Contact/>} />
-          <Route path='/events' element={<Events/>} />
-          <Route path='/events/events1' element={<EventsOne/>} />
-          <Route path='/events/events2' element={<EventsTwo/>} />
-          <Route path='/support' element={<Support/>} /> */}
         </Routes>
       </Router>
       <header className="App-header">
@@ -195,7 +173,6 @@ function App() {
             <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {userData.login} !</h4>
             </>) : (
                 <>
-                {/* when userData is null */}
                 </>
             )
             }
@@ -240,18 +217,12 @@ function App() {
           <>
             <div className="card">
               <h3 style={{ color: "white", fontFamily: "sans-serif" }}>Login to begin grading</h3>
-              {/* <button onClick={loginWithGithub} style={{
-                color: "white", backgroundColor: '#7d3cff', 
-                padding: 10, borderRadius: 15, fontFamily: "sans-serif"
-              }}> SIGN IN WITH GITHUB</button> */}
-               {/* <Stack direction="row" > */}
                   <Button onClick={loginWithGithub} variant="outlined" startIcon={<GitHubIcon />} style={{
                 color: "white", 
                 padding: 10, borderRadius: 15, fontFamily: "sans-serif"
               }}>
                   SIGN IN WITH GITHUB
                           </Button>
-                     {/* </Stack> */}
               </div>
           </>
         )}
