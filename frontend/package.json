@@ -28,7 +28,10 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "eject": "react-scripts eject",
+    "start": "react-scripts start",
+    "build": "react-scripts build"
   },
   "eslintConfig": {
     "extends": [

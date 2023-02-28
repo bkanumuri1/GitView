@@ -23,6 +23,8 @@ function App() {
     const [contributors, setContributors] = useState([]);
     const [text, setText] = useState();
     const [repos, setRepos] = useState([]);
+    const [selectedValue, setSelectedValue] = useState("");
+    const [selectedContributor, setSelectedContributor] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [excelData, setExcelData] = useState([]);
 
@@ -95,23 +97,27 @@ function App() {
       });
   }
 
-  async function getRepoContributors(repo) {
-    await fetch("http://localhost:9000/getRepoContributors/?repo=" + repo, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("access_token"),
-      },
-    })
-      .then((response) => {
+  async function getRepoContributors(selectedValue) {
+    console.log("Repo: " + selectedValue);
+    await fetch("http://localhost:9000/getRepoContributors?repo=" + selectedValue, {
+        method: "GET",
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("access_token")
+        }
+    }).then((response) => {
         return response.json();
-      })
-      .then((data) => {
-        setContributors(contributors);
-      });
-  }
+    }).then((data) => {
+        setContributors(data);
+    });
+}
 
   function handleSearch(event) {
     setSearchTerm(event.target.value);
+  }
+
+  function handleDropdownChange(event) {
+    setSelectedValue(event.target.value);
+    getRepoContributors(event.target.value);
   }
 
   function handleFileUpload(event) {
@@ -190,10 +196,19 @@ function App() {
                 {
                     Object.keys(repositories).length !== 0 ? (
                     <>
-                        <select> {
+                        <select id="repoDropdown" onChange={handleDropdownChange}> {
                             Object.entries(repositories).map(([key, value]) => (
                                 <option key={key} value={value}> {value} </option>))
                         } 
+                        </select>
+                        <select id="dropdown" value={selectedContributor}>
+                          <option value="">--Please choose a Contributor--</option>
+                          <option value="all">All contributors</option>
+                            {
+                              contributors.map((option, index) => (
+                                  <option key={index} value={option}> {option} </option>
+                              ))
+                            } 
                         </select>
                     </>
                     ) : (<> </>)
