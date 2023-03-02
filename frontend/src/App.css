@@ -1,5 +1,13 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .App {
+  background-color:  #4a90d5;
   text-align: center;
+  height: 100%;
+  min-height: 100vh;
 }
 
 .App-logo {
@@ -13,10 +21,14 @@
   }
 }
 
+.Nav {
+  padding-top: 0%;
+}
+
 .App-header {
   /* background-color: #282c34;
    */
-  background-color:  #4a90d5;; 
+  background-color:  #4a90d5;
   /* background-color:#fceed1; */
   min-height: 100vh;
   display: flex;
@@ -38,4 +50,56 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+
+.card {
+
+  overflow: hidden;
+  background-color: #0d0d0d;
+  border-radius: 20px;
+  height: 100%;
+  text-align: center;
+  padding-top: 100px;
+  width: 900px;
+  color:white;
+}
+
+.newCard {
+
+  display: flex;
+  justify-content: center;
+}
+
+.nav {
+  background-color: #0d0d0d;
+  height: 50px;
+  padding-top: 0%;
+  width: 100%;
+  color: white;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.tableFilter {
+  margin-top: 30px;
+  margin-left: 30px;
+  display: flex;
+  justify-content: flex-start;
+  height: 100px;
+}
+
+.title {
+  margin-right: 400px;
+}
+
+.mainPage {
+  height: 100%;
+}
+
+.date {
+
+  width: 260;
+  display: 'block';
 }

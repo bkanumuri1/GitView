@@ -1,4 +1,5 @@
 import "./App.css";
+import * as React from 'react';
 import "./components/LoginButton.css";
 import {useEffect, useState} from "react";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
@@ -14,6 +15,20 @@ import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import * as XLSX from 'xlsx';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+// import { Dayjs } from 'dayjs';
+// import Typography from '@mui/material/Typography';
+// import TextField from '@mui/material/TextField';
+// import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+// import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
+// import { DateRangePicker} from '@mui/x-date-pickers-pro/DateRangePicker';
+// import { DateRangePickerDay } from "@mui/x-date-pickers-pro";
+import Box from '@mui/material/Box';
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -22,11 +37,14 @@ function App() {
     const [repositories, setRepositories] = useState([]);
     const [contributors, setContributors] = useState([]);
     const [text, setText] = useState();
+    const [data, setData] = useState([]);
     const [repos, setRepos] = useState([]);
     const [selectedValue, setSelectedValue] = useState("");
     const [selectedContributor, setSelectedContributor] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [excelData, setExcelData] = useState([]);
+    // const [value, setValue] = useState(["2000/02/03", null]);
+    // const [value, setValue] = React.useState<DateRangePickerDay>([null, null]);
 
     // Forward the user to the guthub login screen (pass clientID)
     // user is now on the github side ang logs in
@@ -59,6 +77,27 @@ function App() {
     }
 
 
+    // const getData = async () => {
+    //   const response = await fetch("http://localhost:9000/getUserData", {
+    //     method: "GET",
+    //     headers: {
+    //       Authorization: "Bearer " + localStorage.getItem("access_token"),
+    //     },
+    //   });
+  
+    //   const data = await response.json();
+    //   console.log("data", data);
+    //   return data;
+    // };
+  
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     const result = await getData();
+    //     setData(result);
+    //   };
+    //   fetchData();
+    // }, []);
+
   async function getUserData() {
     await fetch("http://localhost:9000/getUserData", {
       method: "GET",
@@ -86,7 +125,7 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
+        console.log("Repo"+JSON.stringify(data));
         let commonElements = new Map();
         Object.keys(data).forEach(key => {
             if (excelData.includes(data[key])) {
@@ -118,6 +157,7 @@ function App() {
   function handleDropdownChange(event) {
     setSelectedValue(event.target.value);
     getRepoContributors(event.target.value);
+    // getUserRepos(event.target.value);
   }
 
   function handleFileUpload(event) {
@@ -170,25 +210,38 @@ function App() {
           <Route path='/about-us' element={<AboutUs />} />
         </Routes>
       </Router>
-      <header className="App-header">
+      {/* <header className="App-header"> */}
         {localStorage.getItem("access_token") ? (
-          <div className="card">
+        <div className="mainPage">
+        
+          <div className="nav">
+          <div color="white" className="title"> GIT VIEW </div>
+          <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
+          <button
+              onClick={() => {
+                localStorage.removeItem("access_token");
+                setRerender(!rerender);
+              }}
+              style={{
+                color: "white", backgroundColor: 'black',
+                 fontFamily: "sans-serif", fontSize: 16
 
-            {Object.keys(userData).length !== 0 ? (
-              <>
-            <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {userData.login} !</h4>
-            </>) : (
-                <>
-                </>
-            )
-            }
-
-            <h3>Please upload an excel file with repositories.</h3>
-            <h5> Accepted formats: .xlsx, .xls, .xlsm, .csv</h5>
-            <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
-
-            <br></br>
-              <button onClick={getUserRepos} style={{
+              }}
+            >
+              Log Out
+            </button>
+              <Button startIcon={<AccountCircle />} style={{
+                color: "white", 
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif",
+                justifyContent:"flex-end"
+              }}>
+                 WELCOME {userData.login}
+                          </Button>
+          
+          </div>
+      
+       <div className="tableFilter"> 
+       <button onClick={getUserRepos} style={{
                 color: "white", backgroundColor: '#7d3cff',
                 padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16, margin : 10
 
@@ -213,21 +266,93 @@ function App() {
                     </>
                     ) : (<> </>)
                 }
-            <br></br>
-            <button
-              onClick={() => {
-                localStorage.removeItem("access_token");
-                setRerender(!rerender);
-              }}
-              style={{
-                color: "white", backgroundColor: '#7d3cff',
-                padding: 10,borderRadius: 15, fontFamily: "sans-serif", fontSize: 16
+        
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="demo-simple-select-helper-label">Choose Contributor</InputLabel>
+        <Select
+          labelId="demo-simple-select-helper-label"
+          id="demo-simple-select-helper"
+          // value={age}
+          label="Repository List"
+          onChange={handleDropdownChange}
+        >
+         {/* { Object.entries(contributors).map(([key, value]) => (
+                                <MenuItem key ={key} value={value}>
+                                <em>{value}</em>
+                              </MenuItem>))} */}
+                              {
+                              contributors.map((option, index) => (
+                                  <option key={index} value={option}> {option} </option>
+                              ))
+                            } 
+          {/* <MenuItem value={value}>
+            <em>{value}</em>
+          </MenuItem> */}
+          {/* <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem> */}
+        </Select>
+        <FormHelperText>Please select a Contributor</FormHelperText>
+          </FormControl>
 
-              }}
-            >
-              Log Out
-            </button>
-          </div>
+       </div>
+       </div>
+          // <div className="card">
+
+          //   {Object.keys(userData).length !== 0 ? (
+          //     <>
+          //   <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {userData.login} !</h4>
+          //   </>) : (
+          //       <>
+          //       </>
+          //   )
+          //   }
+
+          //   <h3>Please upload an excel file with repositories.</h3>
+          //   <h5> Accepted formats: .xlsx, .xls, .xlsm, .csv</h5>
+          //   <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
+
+          //   <br></br>
+          //     <button onClick={getUserRepos} style={{
+          //       color: "white", backgroundColor: '#7d3cff',
+          //       padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16, margin : 10
+
+          //     }}>Click to get your repositories</button>
+          //       {
+          //           Object.keys(repositories).length !== 0 ? (
+          //           <>
+          //               <select id="repoDropdown" onChange={handleDropdownChange}> {
+          //                   Object.entries(repositories).map(([key, value]) => (
+          //                       <option key={key} value={value}> {value} </option>))
+          //               } 
+          //               </select>
+          //               <select id="dropdown" value={selectedContributor}>
+          //                 <option value="">--Please choose a Contributor--</option>
+          //                 <option value="all">All contributors</option>
+          //                   {
+          //                     contributors.map((option, index) => (
+          //                         <option key={index} value={option}> {option} </option>
+          //                     ))
+          //                   } 
+          //               </select>
+          //           </>
+          //           ) : (<> </>)
+          //       }
+          //   <br></br>
+          //   <button
+          //     onClick={() => {
+          //       localStorage.removeItem("access_token");
+          //       setRerender(!rerender);
+          //     }}
+          //     style={{
+          //       color: "white", backgroundColor: '#7d3cff',
+          //       padding: 10,borderRadius: 15, fontFamily: "sans-serif", fontSize: 16
+
+          //     }}
+          //   >
+          //     Log Out
+          //   </button>
+          // </div>
         ) : (
           <>
             <div className="card">
@@ -242,7 +367,7 @@ function App() {
           </>
         )}
         
-      </header>
+      {/* </header> */}
     </div>
   );
 }
