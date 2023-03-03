@@ -2,7 +2,7 @@ import "./App.css";
 import "./components/LoginButton.css";
 import Sidebar from "./components/Sidebar";
 import {useEffect, useState} from "react";
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route,Switch} from "react-router-dom";
 import {AboutUs, OurAim, OurVision} from "./pages/AboutUs";
 import { RiServerFill } from "react-icons/ri";
 import * as GoIcons from "react-icons/go";
@@ -15,6 +15,11 @@ import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import * as XLSX from 'xlsx';
+import About from "./components/About"
+import Home from "./components/Chart"
+import { useNavigate } from "react-router-dom";
+
+
 // import {
 // Services,
 // ServicesOne,
@@ -126,6 +131,8 @@ function App() {
     setSearchTerm(event.target.value);
   }
 
+
+  
   function handleFileUpload(event) {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -166,14 +173,28 @@ function App() {
     }
     fetchRepos();
   }, []);
-
+ 
   return (
-
+    <>
+    
+    
     <div className="App">
       <Router>
         {/* <Sidebar /> */}
         <Routes>
+
+        
+        <Route  path="/Charts" element={<Home />} />
+        
+      
+    
+
+
           <Route path='/about-us' element={<AboutUs />} />
+          <Route path='/about' element={<About />} />
+          
+          
+       
           {/* <Route path='/about-us/aim' element={<OurAim/>} />
           <Route path='/about-us/vision' element={<OurVision/>} />
           <Route path='/services' element={<Services/>} />
@@ -240,6 +261,9 @@ function App() {
             >
               Log Out
             </button>
+            
+            
+
           </div>
         ) : (
           <>
@@ -262,7 +286,7 @@ function App() {
         )}
         
       </header>
-    </div>
+    </div></>
   );
 }
 
