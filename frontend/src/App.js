@@ -2,7 +2,7 @@ import "./App.css";
 import "./components/LoginButton.css";
 import Sidebar from "./components/Sidebar";
 import {useEffect, useState} from "react";
-import {BrowserRouter as Router, Routes, Route,Switch} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route,Switch,Navigate} from "react-router-dom";
 import {AboutUs, OurAim, OurVision} from "./pages/AboutUs";
 import { RiServerFill } from "react-icons/ri";
 import * as GoIcons from "react-icons/go";
@@ -18,6 +18,7 @@ import * as XLSX from 'xlsx';
 import About from "./components/About"
 import Home from "./components/Chart"
 import { useNavigate } from "react-router-dom";
+import Existing from "./components/Existing"
 
 
 // import {
@@ -182,8 +183,9 @@ function App() {
       <Router>
         {/* <Sidebar /> */}
         <Routes>
+        <Route path="/" element={<Navigate to="/Home" replace={true} />}></Route>
 
-        
+        <Route  exact path="/Home" element={<Existing data={data} loginWithGithub={loginWithGithub} handleFileUpload={handleFileUpload} getUserData={getUserData} userData={userData} repositories={repositories}/>} />
         <Route  path="/Charts" element={<Home />} />
         
       
@@ -208,84 +210,7 @@ function App() {
           <Route path='/support' element={<Support/>} /> */}
         </Routes>
       </Router>
-      <header className="App-header">
-        {localStorage.getItem("access_token") ? (
-          <div className="card">
-
-
-            <h4 style={{ color: "white" , fontFamily: "sans-serif" }}> Hey there {data.login} !</h4>
-
-
-            <h3>Please upload an excel file with repositories.</h3>
-            <h5> Accepted formats: .xlsx, .xls, .xlsm, .csv</h5>
-            <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
-
-            <br></br>
-            <div>
-              <button onClick={getUserData} style={{
-                color: "white", backgroundColor: '#7d3cff',
-                padding: 10, borderRadius: 15, fontFamily: "sans-serif", fontSize: 16, margin : 10
-
-              }}>Click to get your repositories</button></div>
-              {Object.keys(userData).length !== 0 ? (
-              <>
-
-                {Object.keys(repositories).length !== 0 ? (
-
-                  <>
-                    <select> {
-                      Object.entries(repositories).map(([key, value]) => (
-                        <option key={key}
-                          value={value}>
-                          {value}</option>
-                      ))
-                    } </select>
-                  </>) : (
-                  <> </>
-                )}
-              </>
-            ) : (
-              <></>
-            )}
-            <br></br>
-            <button
-              onClick={() => {
-                localStorage.removeItem("access_token");
-                setRerender(!rerender);
-              }}
-              style={{
-                color: "white", backgroundColor: '#7d3cff',
-                padding: 10,borderRadius: 15, fontFamily: "sans-serif", fontSize: 16
-
-              }}
-            >
-              Log Out
-            </button>
-            
-            
-
-          </div>
-        ) : (
-          <>
-            <div className="card">
-              <h3 style={{ color: "white", fontFamily: "sans-serif" }}>Login to begin grading</h3>
-              {/* <button onClick={loginWithGithub} style={{
-                color: "white", backgroundColor: '#7d3cff', 
-                padding: 10, borderRadius: 15, fontFamily: "sans-serif"
-              }}> SIGN IN WITH GITHUB</button> */}
-               {/* <Stack direction="row" > */}
-                  <Button onClick={loginWithGithub} variant="outlined" startIcon={<GitHubIcon />} style={{
-                color: "white", 
-                padding: 10, borderRadius: 15, fontFamily: "sans-serif"
-              }}>
-                  SIGN IN WITH GITHUB
-                          </Button>
-                     {/* </Stack> */}
-              </div>
-          </>
-        )}
-        
-      </header>
+      
     </div></>
   );
 }

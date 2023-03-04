@@ -11,6 +11,7 @@ import {
 import { Bar } from 'react-chartjs-2';
 import { Line } from 'react-chartjs-2';
 import faker from 'faker';
+import Line1 from './Line'
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -57,9 +58,8 @@ ChartJS.register(
  
  
 function Home() {
-    return  <><Bar width={100}
-    height={50} options={options} data={data} />
-        
+    return  <><Line1 />
+       
     </>;
   }
 

@@ -25,6 +25,7 @@
     "react-router-dom": "^6.8.2",
     "react-scripts": "^5.0.1",
     "react-select": "^5.7.0",
+    "recharts": "^2.4.3",
     "rsuite": "^5.27.0",
     "styled-components": "^5.3.6",
     "user-agents": "^1.0.1307",
