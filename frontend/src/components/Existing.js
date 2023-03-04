@@ -2,9 +2,12 @@ import React from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import Button from '@mui/material/Button';
 import {useEffect, useState} from "react";
+import Chartsss from './Chart'
+import {BrowserRouter as Router, Routes, Route,Switch,useNavigate} from "react-router-dom";
 
 const Existing =(props)=>{
     const [rerender, setRerender] = useState(false);
+    const navigate =useNavigate();
     return(
         <>
 
@@ -47,6 +50,17 @@ const Existing =(props)=>{
         ) : (
           <></>
         )}
+        <br></br>
+
+        <button 
+        style={{
+            color: "white", backgroundColor: '#7d3cff',
+            padding: 10,borderRadius: 15, fontFamily: "sans-serif", fontSize: 16
+
+          }}onClick={
+                ()=>navigate('charts')
+
+        }>charts</button>
         <br></br>
         <button
           onClick={() => {

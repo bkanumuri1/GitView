@@ -186,7 +186,7 @@ function App() {
         <Route path="/" element={<Navigate to="/Home" replace={true} />}></Route>
 
         <Route  exact path="/Home" element={<Existing data={data} loginWithGithub={loginWithGithub} handleFileUpload={handleFileUpload} getUserData={getUserData} userData={userData} repositories={repositories}/>} />
-        <Route  path="/Charts" element={<Home />} />
+        <Route  path="/Home/Charts" element={<Home />} />
         
       
     
