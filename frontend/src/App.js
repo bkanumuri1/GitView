@@ -45,6 +45,7 @@ function App() {
                 }).then((data) => {
                     if (data.access_token) {
                         localStorage.setItem("access_token", data.access_token);
+                        console.log("Access" + localStorage.access_token);
                         getUserData();
                         setRerender(!rerender); // to force rerender on success
                     }
@@ -196,7 +197,9 @@ function App() {
                 {
                     Object.keys(repositories).length !== 0 ? (
                     <>
-                        <select id="repoDropdown" onChange={handleDropdownChange}> {
+                        <select id="repoDropdown" onChange={handleDropdownChange}> 
+                        <option value="">--Please choose a Contributor--</option>
+                        {
                             Object.entries(repositories).map(([key, value]) => (
                                 <option key={key} value={value}> {value} </option>))
                         } 
