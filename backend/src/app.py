@@ -47,7 +47,7 @@ def getUserRepos():
     response = requests.get(url,headers=headers)
     repoData = {}
     for repository in response.json():
-        repoData[repository['id']] = repository['full_name']   
+        repoData[str(repository.get('id'))] = repository.get('full_name')   
     return jsonify(repoData)
 
 @app.route('/getRepoContributors', methods=['GET'])
