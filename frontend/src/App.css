@@ -63,6 +63,10 @@ html, body {
   padding-top: 100px;
   width: 900px;
   color:white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .newCard {
@@ -87,7 +91,6 @@ html, body {
   margin-left: 30px;
   display: flex;
   justify-content: flex-start;
-  height: 100px;
 }
 
 .title {
@@ -102,4 +105,28 @@ html, body {
 
   width: 260;
   display: 'block';
+}
+
+input.inputBox {
+  font-size: 22px;
+  padding: 5px 8px 4px 8px;
+  border-radius: 3px;
+  border: 1px solid #666;
+  width: max-content;
+  align-items: center;
+}
+
+.calendarWrap {
+  display: inline-block;
+  position: relative;
+  margin-left: 30px;
+  
+}
+
+.calendarElement {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-40%);
+  top: 40px;
+  border: 1px solid #ccc;
 }
