@@ -13,6 +13,8 @@ function App() {
     const [userData, setUserData] = useState({});
     const [repositories, setRepositories] = useState([]);
     const [contributors, setContributors] = useState([]);
+    const [commits, setCommits] = useState([]);
+    const [PRs, setPRs] = useState([]);
     const [text, setText] = useState();
     const [repos, setRepos] = useState([]);
     const [selectedRepo, setSelectedRepo] = useState("");
@@ -93,7 +95,23 @@ function App() {
         }).then((response) => {
             return response.json();
         }).then((data) => {
+            console.log(data)
             setContributors(data);
+        });
+    }
+
+    async function getCommits(){
+        console.log("getting commits for this repo => " + selectedRepo);
+        await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
+            method: "GET",
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("access_token")
+            }
+        }).then((response) => {
+            return response.json();
+        }).then((data) => {
+            console.log(data)
+            setCommits(data);
         });
     }
 
@@ -221,6 +239,7 @@ function App() {
                                             {option} </option>
                                     ))
                                 } </select>
+                                <button onClick={getCommits}>Get Commits</button>
                             </>
                         ) : (
                             <></>
