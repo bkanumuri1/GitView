@@ -70,6 +70,16 @@ def getCommits():
     data=response.json()
     return jsonify(data)
 
+@app.route('/getPRs', methods=['GET'])
+def getPRs():
+    token = request.headers.get('Authorization')
+    repo_name = request.args.get("repo")
+    url = "https://api.github.com/repos/" + repo_name + "/pulls"
+    headers = {'Authorization' : token}
+    response = requests.get(url,headers=headers)
+    data=response.json()
+    return jsonify(data)
+
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. You

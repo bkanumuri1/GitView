@@ -115,6 +115,21 @@ function App() {
         });
     }
 
+    async function getPRs(){
+        console.log("getting PRs for this repo => " + selectedRepo);
+        await fetch("http://localhost:9000/getPRs?repo=" + selectedRepo, {
+            method: "GET",
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("access_token")
+            }
+        }).then((response) => {
+            return response.json();
+        }).then((data) => {
+            console.log(data)
+            setPRs(data);
+        });
+    }
+
     function handleSearch(event) {
         setSearchTerm(event.target.value);
     }
@@ -240,6 +255,7 @@ function App() {
                                     ))
                                 } </select>
                                 <button onClick={getCommits}>Get Commits</button>
+                                <button onClick={getPRs}> Get PRs</button>
                             </>
                         ) : (
                             <></>
