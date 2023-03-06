@@ -44,7 +44,6 @@ def getUserRepos():
     url = "https://api.github.com/user/repos"
     headers = {'Authorization' : token}
     response = requests.get(url, headers=headers)
-    
     repoData = {}
     for repository in response.json():
         repoData[str(repository.get('id'))] = repository.get('full_name')   
@@ -60,6 +59,16 @@ def getRepoContributors():
     data=response.json()
     logins = [d['login'] for d in data]
     return jsonify(logins)
+
+@app.route('/getCommits', methods=['GET'])
+def getCommits():
+    token = request.headers.get('Authorization')
+    repo_name = request.args.get("repo")
+    url = "https://api.github.com/repos/" + repo_name + "/commits"
+    headers = {'Authorization' : token}
+    response = requests.get(url,headers=headers)
+    data=response.json()
+    return jsonify(data)
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
