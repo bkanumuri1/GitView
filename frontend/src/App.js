@@ -47,7 +47,8 @@ function App() {
     }, []); // [] is used to run once
 
     function loginWithGithub() {
-        window.location.assign("https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID);
+      const scope = "repo,user";
+      window.location.assign(`https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=${scope}`);
     }
 
     async function getUserData() {
@@ -72,7 +73,6 @@ function App() {
         }).then((response) => {
             return response.json();
         }).then((data) => {
-            console.log(data);
             let commonElements = new Map();
             Object.keys(data).forEach(key => {
                 if (excelData.includes(data[key])) {
@@ -108,7 +108,6 @@ function App() {
 
     function handleContributorDropdownChange(event) {
         setSelectedContributor(event.target.value);
-        console.log("You selected: ", event.target.value);
     }
 
     function handleFileUpload(event) {
@@ -125,7 +124,6 @@ function App() {
                     list.push(worksheet[z].v);
                 }
             }
-            console.log(JSON.stringify({list}));
             setExcelData(list);
         };
         reader.readAsArrayBuffer(file);
@@ -133,24 +131,22 @@ function App() {
 
     const filteredRepos = repos.filter((repo) => repo.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    useEffect(() => {
-        async function fetchRepos() {
-            await fetch("http://localhost:9000/getUserRepos", {
-                method: "GET",
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token")
-                }
-            }).then((response) => {
-                return response.json();
-            })
-
-            setRepos(repos);
-        }
-        fetchRepos();
-    }, []);
+    // useEffect(() => {
+    //     async function fetchRepos() {
+    //         await fetch("http://localhost:9000/getUserRepos", {
+    //             method: "GET",
+    //             headers: {
+    //                 Authorization: "Bearer " + localStorage.getItem("access_token")
+    //             }
+    //         }).then((response) => {
+    //             return response.json();
+    //         })
+    //         setRepos(repos);
+    //     }
+    //     fetchRepos();
+    // }, []);
 
     return (
-
         <div className="App">
             <Router>
                 <Routes>
