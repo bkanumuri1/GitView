@@ -11,7 +11,7 @@ import {
 import { Bar } from 'react-chartjs-2';
 import { Line } from 'react-chartjs-2';
 
-
+import Line1 from './Line'
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -58,7 +58,7 @@ ChartJS.register(
  
  
 function Home() {
-    return  <>hello
+    return  <><Line1 />
        
     </>;
   }
