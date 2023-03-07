@@ -151,6 +151,8 @@ input.inputBox {
   border: 1px solid #666;
   width: max-content;
   align-items: center;
+  background-color: rgb(199, 199, 203);
+  
 }
 
 .calendarWrap {
@@ -166,4 +168,8 @@ input.inputBox {
   transform: translateX(-40%);
   top: 40px;
   border: 1px solid #ccc;
-}
+  /* z-index: 1;
+  width: 230px; 
+  max-height: 300px; 
+  overflow-y: auto; */
+} 
