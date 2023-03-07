@@ -5,7 +5,9 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {AboutUs} from "./pages/AboutUs";
 import Button from '@mui/material/Button';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import * as XLSX from 'xlsx';
+import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -147,133 +149,125 @@ function App() {
     // }, []);
 
     return (
-        <div className="App">
-            <Router>
-                <Routes>
-                    <Route path='/about-us'
-                        element={<AboutUs/>}/>
-                </Routes>
-            </Router>
-            <header className="App-header">
+
+      <div className="App">
+        <Router>
+          <Routes>
+            <Route path='/about-us' element={<AboutUs />} />
+          </Routes>
+        </Router>
+        {/* <header className="App-header"> */}
+        {localStorage.getItem("access_token") ? (
+          <div className="mainPage">
+  
+            <div className="nav">
+            <Button startIcon={<AccountTreeOutlinedIcon />} style={{
+                color: "white",
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif",
+                marginRight: "400px", fontSize:16, fontWeight: 600 }}>
+                GIT VIEW
+              </Button>
+              <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload} />
+              <button
+                onClick={() => {
+                  localStorage.removeItem("access_token");
+                  setRerender(!rerender);
+                }}
+                style={{
+                  color: "white", backgroundColor: 'black',
+                  fontFamily: "sans-serif", fontSize: 16
+  
+                }}
+              >
+                Log Out
+              </button>
+              <Button startIcon={<AccountCircle />} style={{
+                color: "white",
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif",
+                justifyContent: "flex-end"
+              }}>
+                WELCOME {userData.login}
+              </Button>
+  
+            </div>
+  
+            <div className="tableFilter">
+              {/* <FormControl sx={{ m: 1, minWidth: 120 }}>
+                <InputLabel id="demo-simple-select-helper-label">Choose Repo</InputLabel>
                 {
-                localStorage.getItem("access_token") ? (
-                    <div className="card">
-                        {
-                        Object.keys(userData).length !== 0 ? (
-                            <>
-                                <h4 style={
-                                    {
-                                        color: "white",
-                                        fontFamily: "sans-serif"
-                                    }
-                                }>
-                                    Hey there {
-                                    userData.login
-                                }
-                                    !</h4>
-                            </>
-                        ) : (
-                            <></>
-                        )
-                    }
-
-                        <h3>Please upload an excel file with repositories.</h3>
-                        <h5>
-                            Accepted formats: .xlsx, .xls, .xlsm, .csv</h5>
-                        <input type="file" accept=".xlsx, .xls, .xlsm, .csv"
-                            onChange={handleFileUpload}/>
-
-                        <br></br>
-                        <button onClick={getUserRepos}
-                            style={
-                                {
-                                    color: "white",
-                                    backgroundColor: '#7d3cff',
-                                    padding: 10,
-                                    borderRadius: 15,
-                                    fontFamily: "sans-serif",
-                                    fontSize: 16,
-                                    margin: 10
-
-                                }
-                        }>Get repositories</button>
-                        {
-                        Object.keys(repositories).length !== 0 ? (
-                            <>
-                                <select id="repoDropdown"
-                                    onChange={handleRepoDropdownChange}>
-                                    <option value="">--Please choose a Contributor--</option>
-                                    {
-                                    Object.entries(repositories).map(([key, value]) => (
-                                        <option key={key}
-                                            value={value}>
-                                            {value} </option>
-                                    ))
-                                } </select>
-                                <select id="dropdown"
-                                    onChange={handleContributorDropdownChange}>
-                                    <option value="">--Please choose a Contributor--</option>
-                                    <option value="all">All contributors</option>
-                                    {
-                                    contributors.map((option, index) => (
-                                        <option key={index}
-                                            value={option}>
-                                            {option} </option>
-                                    ))
-                                } </select>
-                            </>
-                        ) : (
-                            <></>
-                        )
-                    }
-                        <br></br>
-                        <button onClick={
-                                () => {
-                                    localStorage.removeItem("access_token");
-                                    setRerender(!rerender);
-                                }
-                            }
-                            style={
-                                {
-                                    color: "white",
-                                    backgroundColor: '#7d3cff',
-                                    padding: 10,
-                                    borderRadius: 15,
-                                    fontFamily: "sans-serif",
-                                    fontSize: 16
-
-                                }
-                        }>
-                            Log Out
-                        </button>
-                    </div>
-                ) : (
+                  Object.keys(repositories).length !== 0 ? (
                     <>
-                        <div className="card">
-                            <h3 style={
-                                {
-                                    color: "white",
-                                    fontFamily: "sans-serif"
-                                }
-                            }>Login to begin grading</h3>
-                            <Button onClick={loginWithGithub}
-                                variant="outlined"
-                                startIcon={<GitHubIcon/>}
-                                style={
-                                    {
-                                        color: "white",
-                                        padding: 10,
-                                        borderRadius: 15,
-                                        fontFamily: "sans-serif"
-                                    }
-                            }>
-                                SIGN IN WITH GITHUB
-                            </Button>
-                        </div>
+                      <Select
+                        labelId="demo-simple-select-helper-label"
+                        id="demo-simple-select-helper"
+                        // value={age}
+                        label="Repository List"
+                        onChange={handleDropdownChange}
+                      >
+                        {
+                          Object.entries(repositories).map(([key, value]) => (
+                            <option key={key} value={value}> {value} </option>))
+                        }
+                      </Select>
+  
+  
                     </>
-                )
-            } </header>
-        </div>
+                  ) : (<> </>)
+                }
+                <MenuItem value={"all"}>
+              <em>{"all"}</em>
+                </MenuItem> 
+                 <MenuItem value={10}>Ten</MenuItem>
+                <MenuItem value={20}>Twenty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem>
+  
+                <FormHelperText>Please select a Contributor</FormHelperText>
+              </FormControl> */}
+              <button  id="repoButton" onClick={getUserRepos} style={{
+                
+  
+              }}>GET REPOSITORIES</button>
+              {
+                Object.keys(repositories).length !== 0 ? (
+                  <>
+                    <select id="repoDropdown" onChange={handleRepoDropdownChange}> {
+                      Object.entries(repositories).map(([key, value]) => (
+                        <option key={key} value={value}> {value} </option>))
+                    }
+                    </select>
+                    <select style={{ marginLeft: 10 }} id="contributorDropdown" value={selectedContributor} onChange={handleContributorDropdownChange}>
+                      <option value="">--Please choose a Contributor--</option>
+                      <option value="all">All contributors</option>
+                      {
+                        contributors.map((option, index) => (
+                          <option key={index} value={option}> {option} </option>
+                        ))
+                      }
+                    </select>
+  
+  
+                  </>
+                ) : (<> </>)
+              }
+            </div>
+  
+          </div> // main page end
+        ) : (
+          <>
+            <div className="card">
+              <h1 style={{ color: "white", fontFamily: "sans-serif" }}>LOGIN TO BEGIN GRADING</h1>
+              <Button onClick={loginWithGithub} variant="outlined" startIcon={<GitHubIcon />} style={{
+                color: "white",
+                padding: 10, borderRadius: 15, fontFamily: "sans-serif"
+              }}>
+                SIGN IN WITH GITHUB
+              </Button>
+            </div>
+          </>
+        )}
+  
+        {/* </header> */}
+      </div>
     );
 }
 
