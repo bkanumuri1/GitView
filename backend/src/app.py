@@ -75,8 +75,6 @@ def getCommits():
     elif(contributor != "all"):
         url = "https://api.github.com/repos/" + repo_name + "/commits?author=" + contributor
         print("when contributor is selected, url is " +url)
-        
-
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
     data=response.json()

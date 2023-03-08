@@ -193,6 +193,7 @@ function App() {
                 setCommits(data);
             });
         }
+
     }
 
     function handleSearch(event) {
