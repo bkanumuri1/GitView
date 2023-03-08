@@ -70,11 +70,19 @@ def getCommits():
     data=response.json()
     return jsonify(data)
 
+# /repos/:owner/:repo/pulls?state=all&creator=:username
+
 @app.route('/getPRs', methods=['GET'])
 def getPRs():
     token = request.headers.get('Authorization')
     repo_name = request.args.get("repo")
-    url = "https://api.github.com/repos/" + repo_name + "/pulls"
+    contributor = request.args.get("creator")
+    if (contributor == "all"):
+        url = "https://api.github.com/repos/" + repo_name + "/pulls"
+    elif (contributor == None):
+        url = "https://api.github.com/repos/" + repo_name + "/pulls"
+    elif(contributor != "all"):
+        url = "https://api.github.com/repos/" + repo_name +"/pulls?state=all&creator=" + contributor 
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
     data=response.json()
