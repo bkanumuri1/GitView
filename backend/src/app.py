@@ -26,8 +26,6 @@ def getAccessToken():
     }
     response = requests.post(url,headers=headers,data=data)
     # TODO:  validate response and send appropriate results
-    session['access_token']=response.json()['access_token']
-    print(session['access_token'])
     return response.json()
 
 @app.route('/getUserData', methods=['GET'])
@@ -42,12 +40,13 @@ def getUserData():
 @app.route('/getUserRepos', methods=['GET'])
 def getUserRepos():
     token = request.headers.get('Authorization')
+    print(token)
     url = "https://api.github.com/user/repos"
     headers = {'Authorization' : token}
-    response = requests.get(url,headers=headers)
+    response = requests.get(url, headers=headers)
     repoData = {}
     for repository in response.json():
-        repoData[repository['id']] = repository['full_name']   
+        repoData[str(repository.get('id'))] = repository.get('full_name')   
     return jsonify(repoData)
 
 @app.route('/getRepoContributors', methods=['GET'])
@@ -61,7 +60,43 @@ def getRepoContributors():
     logins = [d['login'] for d in data]
     return jsonify(logins)
 
+@app.route('/getCommits', methods=['GET'])
+def getCommits():
+    token = request.headers.get('Authorization')
+    repo_name = request.args.get("repo")
+    contributor = request.args.get("author")
+    # print("is the contributor being passed??? " + contributor)
+    if (contributor == "all"):
+        url = "https://api.github.com/repos/" + repo_name + "/commits"
+        print("when contributor isn't selected, url is : " + url)
+    elif (contributor == None):
+        url = "https://api.github.com/repos/" + repo_name + "/commits"
+        print("inside else loop url : " + url)
+    elif(contributor != "all"):
+        url = "https://api.github.com/repos/" + repo_name + "/commits?author=" + contributor
+        print("when contributor is selected, url is " +url)
+    headers = {'Authorization' : token}
+    response = requests.get(url,headers=headers)
+    data=response.json()
+    return jsonify(data)
 
+# /repos/:owner/:repo/pulls?state=all&creator=:username
+
+@app.route('/getPRs', methods=['GET'])
+def getPRs():
+    token = request.headers.get('Authorization')
+    repo_name = request.args.get("repo")
+    contributor = request.args.get("creator")
+    if (contributor == "all"):
+        url = "https://api.github.com/repos/" + repo_name + "/pulls"
+    elif (contributor == None):
+        url = "https://api.github.com/repos/" + repo_name + "/pulls"
+    elif(contributor != "all"):
+        url = "https://api.github.com/repos/" + repo_name +"/pulls?state=all&creator=" + contributor 
+    headers = {'Authorization' : token}
+    response = requests.get(url,headers=headers)
+    data=response.json()
+    return jsonify(data)
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
