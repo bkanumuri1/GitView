@@ -1,7 +1,7 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import { useEffect, useState,  useRef} from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route ,Navigate} from "react-router-dom";
 import { AboutUs } from "./pages/AboutUs";
 import Button from '@mui/material/Button';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -202,146 +202,16 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-        <Route  path="/Charts" element={<Home />} />
-        <Route  path="/Home" element={<Existing loginWithGithub={loginWithGithub} data={userData} handleFileUpload={handleFileUpload} userData={userData} getUserRepos={getUserRepos} repositories={repositories} handleRepoDropdownChange={handleRepoDropdownChange} selectedContributor={selectedContributor} handleContributorDropdownChange={handleContributorDropdownChange} contributors={contributors}/>}/>
-
+        <Route  path="/home/Charts" element={<Home />} />
+        <Route  path="/Home" element={
+        <Existing loginWithGithub={loginWithGithub} data={userData} handleFileUpload={handleFileUpload} userData={userData} getUserRepos={getUserRepos} repositories={repositories} handleRepoDropdownChange={handleRepoDropdownChange} selectedContributor={selectedContributor} handleContributorDropdownChange={handleContributorDropdownChange} contributors={contributors}/>}/>
+        <Route path="/" element={<Navigate to="/Home" replace={true} />}></Route>
           <Route path='/about-us' element={<AboutUs />} />
         </Routes>
       </Router>
+      {/*
       {/* <header className="App-header"> */}
-      {localStorage.getItem("access_token") ? (
-        <div className="mainPage">
-
-          <div className="nav">
-            <Button startIcon={<AccountTreeOutlinedIcon />} style={{
-              color: "white",
-              padding: 10, borderRadius: 15, fontFamily: "sans-serif",
-              marginRight: "400px", fontSize: 16, fontWeight: 600
-            }}>
-              GIT VIEW
-            </Button>
-            <input type="file" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload} />
-            <button
-              onClick={() => {
-                localStorage.removeItem("access_token");
-                setRerender(!rerender);
-              }}
-              style={{
-                color: "white", backgroundColor: 'black',
-                fontFamily: "sans-serif", fontSize: 16
-
-              }}
-            >
-              Log Out
-            </button>
-            <Button startIcon={<AccountCircle />} style={{
-              color: "white",
-              padding: 10, borderRadius: 15, fontFamily: "sans-serif",
-              justifyContent: "flex-end"
-            }}>
-              WELCOME {userData.login}
-            </Button>
-
-          </div>
-
-          <div className="tableFilter">
-            {/* <FormControl sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-helper-label">Choose Repo</InputLabel>
-                {
-                  Object.keys(repositories).length !== 0 ? (
-                    <>
-                      <Select
-                        labelId="demo-simple-select-helper-label"
-                        id="demo-simple-select-helper"
-                        // value={age}
-                        label="Repository List"
-                        onChange={handleDropdownChange}
-                      >
-                        {
-                          Object.entries(repositories).map(([key, value]) => (
-                            <option key={key} value={value}> {value} </option>))
-                        }
-                      </Select>
-  
-  
-                    </>
-                  ) : (<> </>)
-                }
-                <MenuItem value={"all"}>
-              <em>{"all"}</em>
-                </MenuItem> 
-                 <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-  
-                <FormHelperText>Please select a Contributor</FormHelperText>
-              </FormControl> */}
-            <button id="repoButton" onClick={getUserRepos} style={{
-
-
-            }}>GET REPOSITORIES</button>
-            {
-              Object.keys(repositories).length !== 0 ? (
-                <>
-                  <select id="repoDropdown" onChange={handleRepoDropdownChange}> {
-                    Object.entries(repositories).map(([key, value]) => (
-                      <option key={key} value={value}> {value} </option>))
-                  }
-                  </select>
-                  <select style={{ marginLeft: 10 }} id="contributorDropdown" value={selectedContributor} onChange={handleContributorDropdownChange}>
-                    <option value="">--Please choose a Contributor--</option>
-                    <option value="all">All contributors</option>
-                    {
-                      contributors.map((option, index) => (
-                        <option key={index} value={option}> {option} </option>
-                      ))
-                    }
-                  </select>
-
-                  <div className="calendarWrap">
-
-                    <input
-                      value={`${format(range[0].startDate, "MM/dd/yy")} to ${format(range[0].endDate, "MM/dd/yy")}`}
-                      readOnly
-                      className="inputBox"
-                      onClick={() => setOpen(open => !open)}
-                    />
-
-                    <div ref={refOne}>
-                      {open &&
-                        <DateRange
-                          onChange={item => setRange([item.selection])}
-                          editableDateInputs={true}
-                          moveRangeOnFirstSelection={false}
-                          ranges={range}
-                          months={1}
-                          direction="horizontal"
-                          className="calendarElement"
-                        />
-                      }
-                    </div>
-
-                  </div>
-
-                </>
-              ) : (<> </>)
-            }
-          </div>
-
-        </div> // main page end
-      ) : (
-        <>
-          <div className="card">
-            <h1 style={{ color: "white", fontFamily: "sans-serif" }}>LOGIN TO BEGIN GRADING</h1>
-            <Button onClick={loginWithGithub} variant="outlined" startIcon={<GitHubIcon />} style={{
-              color: "white",
-              padding: 10, borderRadius: 15, fontFamily: "sans-serif"
-            }}>
-              SIGN IN WITH GITHUB
-            </Button>
-          </div>
-        </>
-      )}
+      
 
       {/* </header> */}
     </div>

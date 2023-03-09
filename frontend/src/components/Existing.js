@@ -27,7 +27,7 @@ const Existing =(props)=>{
 
 <>
 {localStorage.getItem("access_token") ? (
-        <div className="mainPage">
+        <><div className="mainPage">
 
           <div className="nav">
             <Button startIcon={<AccountTreeOutlinedIcon />} style={{
@@ -139,13 +139,20 @@ const Existing =(props)=>{
                     </div>
 
                   </div>
+                  
+                 
+          
 
                 </>
               ) : (<> </>)
-            }
+            }<button id="repoButton" onClick={()=>navigate('charts')}>charts</button>
+          
           </div>
-
-        </div> // main page end
+          
+          
+          
+        </div> </>// main page end 
+        
       ) : (
         <>
           <div className="card">
@@ -159,7 +166,7 @@ const Existing =(props)=>{
           </div>
         </>
       )}</>
-
+        
         </>
     )
 }
