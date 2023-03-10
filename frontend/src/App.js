@@ -130,9 +130,37 @@ function App() {
     async function getCommits(){
         console.log("The selected repo is => " + selectedRepo);
         console.log("The selected user is => " + selectedContributor);
+        var startDate = range[0].startDate.toISOString();
+        var endDate = range[0].endDate.toISOString();
+        // if (selectedContributor == "all") {
+        //     await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
+        //         method: "GET",
+        //         headers: {
+        //             Authorization: "Bearer " + localStorage.getItem("access_token")
+        //         }
+        //     }).then((response) => {
+        //         return response.json();
+        //     }).then((data) => {
+        //         console.log(data)
+        //         setCommits(data);
+        //     });
+        // }
 
-        if (selectedContributor == "all") {
-            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
+        // else if (selectedContributor == null ) {
+        //     await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
+        //         method: "GET",
+        //         headers: {
+        //             Authorization: "Bearer " + localStorage.getItem("access_token")
+        //         }
+        //     }).then((response) => {
+        //         return response.json();
+        //     }).then((data) => {
+        //         console.log(data)
+        //         setCommits(data);
+        //     });
+        // }
+        // else if (selectedContributor != "all"){
+            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo + "&author=" + selectedContributor + "&since=" + startDate + "&until=" + endDate, {
                 method: "GET",
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("access_token")
@@ -140,38 +168,11 @@ function App() {
             }).then((response) => {
                 return response.json();
             }).then((data) => {
-                console.log(data)
-                setCommits(data);
-            });
-        }
-
-        else if (selectedContributor == null ) {
-            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
-                method: "GET",
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token")
-                }
-            }).then((response) => {
-                return response.json();
-            }).then((data) => {
-                console.log(data)
-                setCommits(data);
-            });
-        }
-        else if (selectedContributor != "all"){
-            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo + "&author=" + selectedContributor, {
-                method: "GET",
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("access_token")
-                }
-            }).then((response) => {
-                return response.json();
-            }).then((data) => {
-                console.log("after fetch is made, selected contributor and selected repo is:" + selectedContributor + selectedRepo);
+                // console.log("after fetch is made, selected contributor and selected repo is:" + selectedContributor + selectedRepo);
                 console.log(data);
                 setCommits(data);
             });
-        }
+        // }
        
     }
 
@@ -338,41 +339,7 @@ function App() {
           </div>
 
           <div className="tableFilter">
-            {/* <FormControl sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-helper-label">Choose Repo</InputLabel>
-                {
-                  Object.keys(repositories).length !== 0 ? (
-                    <>
-                      <Select
-                        labelId="demo-simple-select-helper-label"
-                        id="demo-simple-select-helper"
-                        // value={age}
-                        label="Repository List"
-                        onChange={handleDropdownChange}
-                      >
-                        {
-                          Object.entries(repositories).map(([key, value]) => (
-                            <option key={key} value={value}> {value} </option>))
-                        }
-                      </Select>
-  
-  
-                    </>
-                  ) : (<> </>)
-                }
-                <MenuItem value={"all"}>
-              <em>{"all"}</em>
-                </MenuItem> 
-                 <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-  
-                <FormHelperText>Please select a Contributor</FormHelperText>
-              </FormControl> */}
-            <button id="repoButton" onClick={getUserRepos} style={{
-
-
-            }}>GET REPOSITORIES</button>
+            <button id="repoButton" onClick={getUserRepos} style={{}}>GET REPOSITORIES</button>
             {
               Object.keys(repositories).length !== 0 ? (
                 <>
@@ -396,7 +363,7 @@ function App() {
                   <div className="calendarWrap">
 
                     <input
-                      value={`${format(range[0].startDate, "MM/dd/yy")} to ${format(range[0].endDate, "MM/dd/yy")}`}
+                      value={`${format(range[0].startDate, "MM/dd/yyyy")} to ${format(range[0].endDate, "MM/dd/yyyy")}`}
                       readOnly
                       className="inputBox"
                       onClick={() => setOpen(open => !open)}

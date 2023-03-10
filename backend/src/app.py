@@ -78,6 +78,7 @@ def getCommits():
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
     data=response.json()
+    print(data)
     return jsonify(data)
 
 # /repos/:owner/:repo/pulls?state=all&creator=:username
