@@ -129,33 +129,99 @@ function App() {
   }
 
     async function getCommits(){
-        console.log("getting commits for this repo => " + selectedRepo);
-        await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
-            method: "GET",
-            headers: {
-                Authorization: "Bearer " + localStorage.getItem("access_token")
-            }
-        }).then((response) => {
-            return response.json();
-        }).then((data) => {
-            console.log(data)
-            setCommits(data);
-        });
+        console.log("The selected repo is => " + selectedRepo);
+        console.log("The selected user is => " + selectedContributor);
+
+        if (selectedContributor == "all") {
+            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log(data)
+                setCommits(data);
+            });
+        }
+
+        else if (selectedContributor == null ) {
+            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log(data)
+                setCommits(data);
+            });
+        }
+        else if (selectedContributor != "all"){
+            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo + "&author=" + selectedContributor, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log("after fetch is made, selected contributor and selected repo is:" + selectedContributor + selectedRepo);
+                console.log(data);
+                setCommits(data);
+            });
+        }
+       
     }
 
     async function getPRs(){
         console.log("getting PRs for this repo => " + selectedRepo);
-        await fetch("http://localhost:9000/getPRs?repo=" + selectedRepo, {
-            method: "GET",
-            headers: {
-                Authorization: "Bearer " + localStorage.getItem("access_token")
-            }
-        }).then((response) => {
-            return response.json();
-        }).then((data) => {
-            console.log(data)
-            setPRs(data);
-        });
+        console.log(selectedContributor)
+
+        if (selectedContributor == "all") {
+            await fetch("http://localhost:9000/getPRs?repo=" + selectedRepo, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log(data)
+                setCommits(data);
+            });
+        }
+
+        else if (selectedContributor == null ) {
+            await fetch("http://localhost:9000/getPRs?repo=" + selectedRepo, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log(data)
+                setCommits(data);
+            });
+        }
+        else if (selectedContributor != "all"){
+            await fetch("http://localhost:9000/getPRs?repo=" + selectedRepo + "&creator=" + selectedContributor, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log("after fetch is made, selected contributor and selected repo is:" + selectedContributor + selectedRepo);
+                console.log(data);
+                setCommits(data);
+            });
+        }
+
     }
 
   function handleSearch(event) {
