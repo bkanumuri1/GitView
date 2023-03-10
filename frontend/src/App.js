@@ -3,18 +3,12 @@ import "./components/LoginButton.css";
 import { useEffect, useState,  useRef} from "react";
 import { BrowserRouter as Router, Routes, Route ,Navigate} from "react-router-dom";
 import { AboutUs } from "./pages/AboutUs";
-import Button from '@mui/material/Button';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import * as XLSX from 'xlsx';
-import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
-import { DateRange } from 'react-date-range';
 import { addDays, subDays } from 'date-fns';
-import format from 'date-fns/format'
 import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css'
-import Home from "./components/Chart"
-import Existing from "./components/Existing"
+import 'react-date-range/dist/theme/default.css';
+import Home from "./components/Chart";
+import MainUI from "./components/MainUI.js";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -204,7 +198,12 @@ function App() {
         <Routes>
         <Route  path="/home/Charts" element={<Home />} />
         <Route  path="/Home" element={
-        <Existing loginWithGithub={loginWithGithub} data={userData} handleFileUpload={handleFileUpload} userData={userData} getUserRepos={getUserRepos} repositories={repositories} handleRepoDropdownChange={handleRepoDropdownChange} selectedContributor={selectedContributor} handleContributorDropdownChange={handleContributorDropdownChange} contributors={contributors}/>}/>
+        <MainUI loginWithGithub={loginWithGithub}
+         data={userData} handleFileUpload={handleFileUpload} userData={userData} 
+         getUserRepos={getUserRepos} repositories={repositories} 
+         handleRepoDropdownChange={handleRepoDropdownChange} 
+         selectedContributor={selectedContributor} 
+         handleContributorDropdownChange={handleContributorDropdownChange} contributors={contributors}/>}/>
         <Route path="/" element={<Navigate to="/Home" replace={true} />}></Route>
           <Route path='/about-us' element={<AboutUs />} />
         </Routes>

@@ -10,7 +10,7 @@ import format from 'date-fns/format'
 import { addDays, subDays } from 'date-fns';
 import { DateRange } from 'react-date-range';
 
-const Existing =(props)=>{
+const MainUI =(props)=>{
     const [rerender, setRerender] = useState(false);
     const [range, setRange] = useState([
         {
@@ -145,7 +145,7 @@ const Existing =(props)=>{
 
                 </>
               ) : (<> </>)
-            }<button id="repoButton" onClick={()=>navigate('charts')}>charts</button>
+            }<button id="chartButton" onClick={()=>navigate('charts')}>Charts</button>
           
           </div>
           
@@ -171,4 +171,4 @@ const Existing =(props)=>{
     )
 }
 
-export default Existing;
+export default MainUI;
