@@ -26,8 +26,6 @@ def getAccessToken():
     }
     response = requests.post(url,headers=headers,data=data)
     # TODO:  validate response and send appropriate results
-    session['access_token']=response.json()['access_token']
-    print(session['access_token'])
     return response.json()
 
 @app.route('/getUserData', methods=['GET'])
@@ -42,12 +40,14 @@ def getUserData():
 @app.route('/getUserRepos', methods=['GET'])
 def getUserRepos():
     token = request.headers.get('Authorization')
+    print(token)
     url = "https://api.github.com/user/repos"
     headers = {'Authorization' : token}
-    response = requests.get(url,headers=headers)
+    response = requests.get(url, headers=headers)
+    
     repoData = {}
     for repository in response.json():
-        repoData[repository['id']] = repository['full_name']   
+        repoData[str(repository.get('id'))] = repository.get('full_name')   
     return jsonify(repoData)
 
 @app.route('/getRepoContributors', methods=['GET'])
@@ -55,15 +55,11 @@ def getRepoContributors():
     token = request.headers.get('Authorization')
     repo_name = request.args.get("repo")
     url = "https://api.github.com/repos/"+repo_name+"/collaborators"
-    print(url)
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
     data=response.json()
     logins = [d['login'] for d in data]
-    print(logins)
     return jsonify(logins)
-
-
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
