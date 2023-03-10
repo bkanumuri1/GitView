@@ -20,6 +20,8 @@ function App() {
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
   const [contributors, setContributors] = useState([]);
+    const [commits, setCommits] = useState([]);
+    const [PRs, setPRs] = useState([]);
   const [text, setText] = useState();
   const [repos, setRepos] = useState([]);
   const [selectedRepo, setSelectedRepo] = useState("");
@@ -121,9 +123,106 @@ function App() {
     }).then((response) => {
       return response.json();
     }).then((data) => {
+            console.log(data)
       setContributors(data);
     });
   }
+
+    async function getCommits(){
+        console.log("The selected repo is => " + selectedRepo);
+        console.log("The selected user is => " + selectedContributor);
+
+        if (selectedContributor == "all") {
+            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log(data)
+                setCommits(data);
+            });
+        }
+
+        else if (selectedContributor == null ) {
+            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log(data)
+                setCommits(data);
+            });
+        }
+        else if (selectedContributor != "all"){
+            await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo + "&author=" + selectedContributor, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log("after fetch is made, selected contributor and selected repo is:" + selectedContributor + selectedRepo);
+                console.log(data);
+                setCommits(data);
+            });
+        }
+       
+    }
+
+    async function getPRs(){
+        console.log("getting PRs for this repo => " + selectedRepo);
+        console.log(selectedContributor)
+
+        if (selectedContributor == "all") {
+            await fetch("http://localhost:9000/getPRs?repo=" + selectedRepo, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log(data)
+                setCommits(data);
+            });
+        }
+
+        else if (selectedContributor == null ) {
+            await fetch("http://localhost:9000/getPRs?repo=" + selectedRepo, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log(data)
+                setCommits(data);
+            });
+        }
+        else if (selectedContributor != "all"){
+            await fetch("http://localhost:9000/getPRs?repo=" + selectedRepo + "&creator=" + selectedContributor, {
+                method: "GET",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("access_token")
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log("after fetch is made, selected contributor and selected repo is:" + selectedContributor + selectedRepo);
+                console.log(data);
+                setCommits(data);
+            });
+        }
+
+    }
 
   function handleSearch(event) {
     setSearchTerm(event.target.value);
@@ -292,6 +391,8 @@ function App() {
                       ))
                     }
                   </select>
+                  <button onClick={getCommits}>Get Commits</button>
+                  <button onClick={getPRs}> Get PRs</button>
 
                   <div className="calendarWrap">
 
