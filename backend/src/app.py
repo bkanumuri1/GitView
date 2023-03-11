@@ -3,6 +3,7 @@ import secrets
 from flask import Flask,request,jsonify, session
 import requests
 from flask_cors import CORS
+from datetime import datetime
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = Flask(__name__)
@@ -65,22 +66,45 @@ def getCommits():
     token = request.headers.get('Authorization')
     repo_name = request.args.get("repo")
     contributor = request.args.get("author")
-    # print("is the contributor being passed??? " + contributor)
-    if (contributor == "all"):
+    if (contributor == "all" or contributor == None):
         url = "https://api.github.com/repos/" + repo_name + "/commits"
-        print("when contributor isn't selected, url is : " + url)
-    elif (contributor == None):
-        url = "https://api.github.com/repos/" + repo_name + "/commits"
-        print("inside else loop url : " + url)
     elif(contributor != "all"):
         url = "https://api.github.com/repos/" + repo_name + "/commits?author=" + contributor
-        print("when contributor is selected, url is " +url)
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
-    data=response.json()
-    print(data)
-    return jsonify(data)
+    return parseCommitData(response.json())
+    
+def parseCommitData(data):
+    parsedCommitData = []
+    parsedCommitCount = {}
+    parsedCommitList={}
+    for commit in data:
+        date = datetime.strptime(commit['commit']['author']['date'], '%Y-%m-%dT%H:%M:%SZ')
+        formatted_date = date.strftime('%Y-%m-%d')      
+        parsedCommitCount[formatted_date] =parsedCommitCount.get(formatted_date,0)+1
+        if formatted_date in parsedCommitList:
+            parsedCommitList[formatted_date].append(constructEachCommitEntry(commit))
+        else:
+            parsedCommitList[formatted_date] = [constructEachCommitEntry(commit)]
 
+    for key in parsedCommitCount.keys():
+        d = {}
+        d['date'] = key
+        d['commit_count'] = parsedCommitCount.get(key)
+        d['commit_details']=parsedCommitList.get(key)
+        parsedCommitData.append(d)
+    
+    return jsonify(parsedCommitData)
+
+def constructEachCommitEntry(commit):
+        commmit_entry = {}
+        commmit_entry['sha'] = commit['sha']
+        commmit_entry['date'] = commit['commit']['author']['date']
+        commmit_entry['author'] = {'name':commit['commit']['author']['name'],'login':commit['author']['login']}
+        commmit_entry['html_url'] = commit['html_url']
+        commmit_entry['message'] = commit['commit']['message']
+        commmit_entry['comment'] = {'comment_count':commit['commit']['comment_count'],'comments_url':commit['comments_url']}
+        return commmit_entry
 # /repos/:owner/:repo/pulls?state=all&creator=:username
 
 @app.route('/getPRs', methods=['GET'])
@@ -94,10 +118,48 @@ def getPRs():
         url = "https://api.github.com/repos/" + repo_name + "/pulls"
     elif(contributor != "all"):
         url = "https://api.github.com/repos/" + repo_name +"/pulls?state=all&creator=" + contributor 
+    print(url)
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
-    data=response.json()
-    return jsonify(data)
+    data=parsePullRequestData(response.json())
+    # print(data)
+    return data
+
+def constructEachPullRequestEntry(pullrequest):
+        pr_entry = {}
+        pr_entry['number'] = pullrequest['number']
+        pr_entry['date'] = pullrequest['created_at']
+        pr_entry['author'] = pullrequest['user']['login']
+        pr_entry['html_url'] = pullrequest['html_url']
+        pr_entry['title'] = pullrequest['title']
+        pr_entry['head_branch'] = pullrequest['head']['ref']
+        pr_entry['base_branch'] = pullrequest['base']['ref']
+        print(pr_entry)
+        return pr_entry
+    
+def parsePullRequestData(data):
+    parsedPRData = []
+    parsedPRCount = {}
+    parsedPRList={}
+    for pullrequest in data:
+        date = datetime.strptime(pullrequest['created_at'], '%Y-%m-%dT%H:%M:%SZ')
+        print("dsfasdf")
+        formatted_date = date.strftime('%Y-%m-%d')
+        parsedPRCount[formatted_date] =parsedPRCount.get(formatted_date,0)+1
+        if formatted_date in parsedPRList:
+            parsedPRList[formatted_date].append(constructEachPullRequestEntry(pullrequest))
+        else:
+            parsedPRList[formatted_date] = [constructEachPullRequestEntry(pullrequest)]
+
+    for key in parsedPRCount.keys():
+        d = {}
+        d['date'] = key
+        d['pr_count'] = parsedPRCount.get(key)
+        d['pr_details']=parsedPRList.get(key)
+        parsedPRData.append(d)
+    
+    return jsonify(parsedPRData)
+
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
