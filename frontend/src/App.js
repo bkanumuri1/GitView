@@ -1,7 +1,7 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route,useNavigate } from "react-router-dom";
 import { AboutUs } from "./pages/AboutUs";
 import Button from '@mui/material/Button';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -14,7 +14,8 @@ import format from 'date-fns/format'
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css'
 import Home from "./components/Chart"
-import ExampleChart from './components/Line'
+import ExampleChart from "./components/Line"
+
 
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
@@ -46,9 +47,10 @@ function App() {
     }
   ]);
   const [open, setOpen] = useState(false);
+
   // const [value, setValue] = useState(["2000/02/03", null]);
   // const [value, setValue] = React.useState<DateRangePickerDay>([null, null]);
-
+  
 
   const refOne = useRef(null);
 
@@ -59,6 +61,7 @@ function App() {
   // get code
   // use code to get access token ( code can be only used once)
   useEffect(() => {
+    
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const codeParam = urlParams.get("code");
@@ -303,7 +306,7 @@ function App() {
       <Router>
         <Routes>
           <Route path='/about-us' element={<AboutUs />} />
-          <Route  path="/home/Charts" element={<Home />} />
+          <Route  path="/ch" element={<ExampleChart />} />
         </Routes>
       </Router>
       {/* <header className="App-header"> */}
@@ -426,8 +429,9 @@ function App() {
                 </>
               ) : (<> </>)
             }
+            
           </div>
-          <button onClick={<ExampleChart/>}> Charts </button>
+          <button >charts</button>
         </div> // main page end
         
       ) : (
