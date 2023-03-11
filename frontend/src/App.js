@@ -13,6 +13,9 @@ import { addDays, subDays } from 'date-fns';
 import format from 'date-fns/format'
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css'
+import Home from "./components/Chart"
+import ExampleChart from './components/Line'
+
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -300,6 +303,7 @@ function App() {
       <Router>
         <Routes>
           <Route path='/about-us' element={<AboutUs />} />
+          <Route  path="/home/Charts" element={<Home />} />
         </Routes>
       </Router>
       {/* <header className="App-header"> */}
@@ -423,8 +427,9 @@ function App() {
               ) : (<> </>)
             }
           </div>
-
+          <button onClick={<ExampleChart/>}> Charts </button>
         </div> // main page end
+        
       ) : (
         <>
           <div className="card">
