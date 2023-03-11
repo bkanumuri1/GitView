@@ -1,7 +1,7 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route,useNavigate } from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route,Switch,useNavigate} from "react-router-dom";
 import { AboutUs } from "./pages/AboutUs";
 import Button from '@mui/material/Button';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -15,11 +15,14 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css'
 import Home from "./components/Chart"
 import ExampleChart from "./components/Line"
+import { Link } from 'react-router-dom';
+import Ex from "./components/Navigate"
 
 
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
+  
   const [rerender, setRerender] = useState(false);
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
@@ -309,9 +312,12 @@ function App() {
           <Route  path="/ch" element={<ExampleChart />} />
         </Routes>
       </Router>
+      
+
       {/* <header className="App-header"> */}
       {localStorage.getItem("access_token") ? (
         <div className="mainPage">
+            
 
           <div className="nav">
             <Button startIcon={<AccountTreeOutlinedIcon />} style={{
@@ -432,6 +438,7 @@ function App() {
             
           </div>
           <button >charts</button>
+          
         </div> // main page end
         
       ) : (
