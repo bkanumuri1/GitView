@@ -1,4 +1,5 @@
 import "./App.css";
+import "./table.css";
 import "./components/LoginButton.css";
 import { useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -12,7 +13,8 @@ import { DateRange } from 'react-date-range';
 import { addDays, subDays } from 'date-fns';
 import format from 'date-fns/format'
 import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css'
+import 'react-date-range/dist/theme/default.css';
+import MyTable from "./table";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -322,7 +324,7 @@ function App() {
               ) : (<> </>)
             }
           </div>
-
+            <MyTable/>
         </div> // main page end
       ) : (
         <>
