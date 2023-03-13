@@ -137,7 +137,8 @@ function App() {
 
   async function getRepoContributors(selectedValue) {
     console.log("Repo: " + selectedValue);
-    await fetch("http://localhost:9000/getRepoContributors?repo=" + selectedValue,
+    await fetch(
+      "http://localhost:9000/getRepoContributors?repo=" + selectedValue,
       {
         method: "GET",
         headers: {
@@ -153,13 +154,17 @@ function App() {
       });
   }
 
-  async function getCommits(contributor) {
+  async function getTableInfo(contributor) {
     console.log("The selected repo is => " + selectedRepo);
     console.log("The selected user is => " + contributor);
     console.log("Access_token => " + localStorage.getItem("access_token"));
     var startDate = range[0].startDate.toISOString();
     var endDate = range[0].endDate.toISOString();
-    await fetch("http://localhost:9000/getCommits?repo=" + selectedRepo + "&author=" + contributor,
+    await fetch(
+      "http://localhost:9000/getTableInfo?repo=" +
+        selectedRepo +
+        "&author=" +
+        contributor,
       //  +
       // "&since=" +
       // startDate +
@@ -170,7 +175,8 @@ function App() {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("access_token"),
         },
-      })
+      }
+    )
       .then((response) => {
         return response.json();
       })
@@ -190,22 +196,22 @@ function App() {
     return formattedDate;
   }
 
-  async function getPRs(contributor) {
-      await fetch("http://localhost:9000/getPRs?repo=" +selectedRepo + "&creator=" + contributor,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("access_token"),
-          },
-        })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          setPRs(data);
-          console.log(data);
-        });
-  }
+  // async function getPRs(contributor) {
+  //     await fetch("http://localhost:9000/getPRs?repo=" +selectedRepo + "&creator=" + contributor,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: "Bearer " + localStorage.getItem("access_token"),
+  //         },
+  //       })
+  //       .then((response) => {
+  //         return response.json();
+  //       })
+  //       .then((data) => {
+  //         setPRs(data);
+  //         console.log(data);
+  //       });
+  // }
 
   function handleSearch(event) {
     setSearchTerm(event.target.value);
@@ -218,8 +224,7 @@ function App() {
 
   function handleContributorDropdownChange(event) {
     setSelectedContributor(event.target.value);
-    getCommits(event.target.value);
-    getPRs(event.target.value);
+    getTableInfo(event.target.value);
     // console.log(commits);
   }
 
@@ -290,16 +295,50 @@ function App() {
                   <TableHead>
                     <TableRow>
                       <TableCell>Commit Links</TableCell>
+                      <TableCell>PR Links</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.commit_details.map((detailsRow, index) => (
+                    <TableRow>
+                      <TableCell>
+                        {row.commit_details.map((detailsRow, index) => (
+                          <div>
+                            {" "}
+                            <a
+                              key={index}
+                              href={detailsRow.html_url}
+                              target="_blank"
+                            >
+                              {detailsRow.author.login}: {detailsRow.message}
+                            </a>
+                          </div>
+                        ))}
+                      </TableCell>
+
+                      <TableCell>
+                        {row.pr_details.map((prRow, index) => (
+                          <div>
+                            <a
+                              key={index}
+                              href={prRow.html_url}
+                              target="_blank"
+                            >
+                              {prRow.author}: {prRow.title}
+                            </a>
+                          </div>
+                        ))}
+                      </TableCell>
+                    </TableRow>
+
+                    {/* {row.pr_details.map((prRow, index) => (
                       <TableRow key={index}>
                         <TableCell>
-                          <a href={detailsRow.html_url} target="_blank">{detailsRow.author.login}: {detailsRow.message}</a>
+                          <a href={prRow.html_url} target="_blank">
+                            {prRow.author.login}: {prRow.title}
+                          </a>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ))} */}
                   </TableBody>
                 </Table>
               </Box>
@@ -385,7 +424,9 @@ function App() {
               {Object.keys(repositories).length !== 0 ? (
                 <>
                   <select id="repoDropdown" onChange={handleRepoDropdownChange}>
-                    <option key="" value="">--Please select a Repository--</option>
+                    <option key="" value="">
+                      --Please select a Repository--
+                    </option>
                     {Object.entries(repositories).map(([key, value]) => (
                       <option key={key} value={value}>
                         {" "}
