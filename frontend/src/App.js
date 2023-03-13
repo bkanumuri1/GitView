@@ -58,7 +58,6 @@ function App() {
   const [open, setOpen] = useState(false);
 
   const refOne = useRef(null);
-
   // Forward the user to the github login screen (pass clientID)
   // user is now on the github side ang logs in
   // when user decides to login .. they get forwaded back to localhost
@@ -87,6 +86,7 @@ function App() {
       }
       getAccessToken();
     }
+  }, []); // [] is used to run once
 
     document.addEventListener("keydown", hideOnEscape, true);
     document.addEventListener("click", hideOnClickOutside, true);
