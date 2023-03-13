@@ -86,8 +86,6 @@ function App() {
       }
       getAccessToken();
     }
-  }, []); // [] is used to run once
-
     document.addEventListener("keydown", hideOnEscape, true);
     document.addEventListener("click", hideOnClickOutside, true);
   }, []); // [] is used to run once
