@@ -14,19 +14,8 @@ import format from "date-fns/format";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import * as React from "react";
-import PropTypes from "prop-types";
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+
+import FullWidthTabs from "./FullWidthTabs";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -152,14 +141,14 @@ function App() {
       });
   }
 
-  async function getTableInfo(contributor) {
+  async function getCommits(contributor) {
     console.log("The selected repo is => " + selectedRepo);
     console.log("The selected user is => " + contributor);
     console.log("Access_token => " + localStorage.getItem("access_token"));
     var startDate = range[0].startDate.toISOString();
     var endDate = range[0].endDate.toISOString();
     await fetch(
-      "http://localhost:9000/getTableInfo?repo=" +
+      "http://localhost:9000/getCommits?repo=" +
         selectedRepo +
         "&author=" +
         contributor,
@@ -180,7 +169,7 @@ function App() {
       })
       .then((data) => {
         setCommits(data);
-        //console.log(commits);
+        console.log(data);
       });
   }
 
@@ -194,22 +183,27 @@ function App() {
     return formattedDate;
   }
 
-  // async function getPRs(contributor) {
-  //     await fetch("http://localhost:9000/getPRs?repo=" +selectedRepo + "&creator=" + contributor,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: "Bearer " + localStorage.getItem("access_token"),
-  //         },
-  //       })
-  //       .then((response) => {
-  //         return response.json();
-  //       })
-  //       .then((data) => {
-  //         setPRs(data);
-  //         console.log(data);
-  //       });
-  // }
+  async function getPRs(contributor) {
+    await fetch(
+      "http://localhost:9000/getPRs?repo=" +
+        selectedRepo +
+        "&author=" +
+        contributor,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+      }
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setPRs(data);
+        console.log(data);
+      });
+  }
 
   function handleSearch(event) {
     setSearchTerm(event.target.value);
@@ -222,7 +216,8 @@ function App() {
 
   function handleContributorDropdownChange(event) {
     setSelectedContributor(event.target.value);
-    getTableInfo(event.target.value);
+    getCommits(event.target.value);
+    getPRs(event.target.value);
     // console.log(commits);
   }
 
@@ -262,105 +257,6 @@ function App() {
   const filteredRepos = repos.filter((repo) =>
     repo.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  function Row(props) {
-    const { row } = props;
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <React.Fragment>
-        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-          <TableCell>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
-          <TableCell scope="row" align="center">
-            {row.date}
-          </TableCell>
-          <TableCell align="center">{row.commit_count}</TableCell>
-          <TableCell align="center">{row.pr_count}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Commit Links</TableCell>
-                      <TableCell>PR Links</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        {row.commit_details.map((detailsRow, index) => (
-                          <div>
-                            {" "}
-                            <a
-                              key={index}
-                              href={detailsRow.html_url}
-                              target="_blank"
-                            >
-                              {detailsRow.author.login}: {detailsRow.message}
-                            </a>
-                          </div>
-                        ))}
-                      </TableCell>
-
-                      <TableCell>
-                        {row.pr_details.map((prRow, index) => (
-                          <div>
-                            <a
-                              key={index}
-                              href={prRow.html_url}
-                              target="_blank"
-                            >
-                              {prRow.author}: {prRow.title}
-                            </a>
-                          </div>
-                        ))}
-                      </TableCell>
-                    </TableRow>
-
-                    {/* {row.pr_details.map((prRow, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <a href={prRow.html_url} target="_blank">
-                            {prRow.author.login}: {prRow.title}
-                          </a>
-                        </TableCell>
-                      </TableRow>
-                    ))} */}
-                  </TableBody>
-                </Table>
-              </Box>
-            </Collapse>
-          </TableCell>
-        </TableRow>
-      </React.Fragment>
-    );
-  }
-
-  Row.propTypes = {
-    row: PropTypes.shape({
-      date: PropTypes.string.isRequired,
-      commit_count: PropTypes.number.isRequired,
-      pr_count: PropTypes.number.isRequired,
-      commit_details: PropTypes.arrayOf(
-        PropTypes.shape({
-          author: PropTypes.object.isRequired,
-          html_url: PropTypes.string.isRequired,
-          message: PropTypes.string.isRequired,
-        })
-      ).isRequired,
-    }).isRequired,
-  };
 
   return (
     <div className="App">
@@ -478,30 +374,8 @@ function App() {
                 <> </>
               )}
             </div>
-            <div>
-              {/* here you check if the state is loading otherwise if you wioll not call that you will get a blank page because the data is an empty array at the moment of mounting */}
-              {commits.length == 0 ? (
-                <></>
-              ) : (
-                <TableContainer component={Paper}>
-                  <Table aria-label="collapsible table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Details</TableCell>
-                        <TableCell align="center">Date</TableCell>
-                        <TableCell align="center">Commits</TableCell>
-                        <TableCell align="center">Pull Requests</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {commits.map((row, index) => (
-                        <Row key={index} row={row} />
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
-            </div>
+
+            <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
           </div>
         </div> // main page end
       ) : (

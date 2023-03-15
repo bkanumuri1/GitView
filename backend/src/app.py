@@ -61,8 +61,8 @@ def getRepoContributors():
     logins = [d['login'] for d in data]
     return jsonify(logins)
 
-@app.route('/getTableInfo', methods = ['GET'])
-def getTableInfo():
+# @app.route('/getTableInfo', methods = ['GET'])
+# def getTableInfo():
     token = request.headers.get('Authorization')
     repo_name = request.args.get("repo")
     contributor = request.args.get("author")
@@ -106,19 +106,21 @@ def getTableInfo():
     return jsonify(data)
 
 
-# @app.route('/getCommits', methods=['GET'])
-def getCommits(token,repo_name,contributor):
+@app.route('/getCommits', methods=['GET'])
+def getCommits():
+    token = request.headers.get('Authorization')
+    repo_name = request.args.get("repo")
+    contributor = request.args.get("author")
     if (contributor == "all" or contributor == None):
         url = "https://api.github.com/repos/" + repo_name + "/commits"
     elif(contributor != "all"):
         url = "https://api.github.com/repos/" + repo_name + "/commits?author=" + contributor
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
-    return response.json()
-    # return parseCommitData(response.json())
+    return jsonify(parseCommitData(response.json()))
     
 def parseCommitData(data):
-    # parsedCommitCount = {}
+    dataToSend = []
     parsedCommitList={}
     for commit in data:
         date = datetime.strptime(commit['commit']['author']['date'], '%Y-%m-%dT%H:%M:%SZ')
@@ -128,7 +130,14 @@ def parseCommitData(data):
             parsedCommitList[formatted_date].append(constructEachCommitEntry(commit))
         else:
             parsedCommitList[formatted_date] = [constructEachCommitEntry(commit)]
-    return parsedCommitList
+
+    for cdate in parsedCommitList.keys():
+        entry = {}
+        entry['date'] = cdate
+        entry['commit_count'] = len(parsedCommitList.get(cdate))
+        entry['commit_details'] = parsedCommitList.get(cdate)
+        dataToSend.append(entry)
+    return dataToSend
 
 def constructEachCommitEntry(commit):
         commmit_entry = {}
@@ -141,14 +150,15 @@ def constructEachCommitEntry(commit):
         return commmit_entry
 # /repos/:owner/:repo/pulls?state=all&creator=:username
 
-# @app.route('/getPRs', methods=['GET'])
-def getPRs(token,repo_name):
+@app.route('/getPRs', methods=['GET'])
+def getPRs():
     token = request.headers.get('Authorization')
     repo_name = request.args.get("repo")
+    contributor = request.args.get("author")
     url = "https://api.github.com/repos/" + repo_name +"/pulls?state=all"
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
-    return response.json()
+    return jsonify(parsePullRequestData(response.json(),contributor))
 
 def constructEachPullRequestEntry(pullrequest):
         pr_entry = {}
@@ -163,7 +173,7 @@ def constructEachPullRequestEntry(pullrequest):
         return pr_entry
     
 def parsePullRequestData(data,contributor):
-    # parsedPRCount = {}
+    dataToSend = []
     parsedPRList={}
     for pullrequest in data:
         user = pullrequest['user']['login']
@@ -175,7 +185,14 @@ def parsePullRequestData(data,contributor):
                 parsedPRList[formatted_date].append(constructEachPullRequestEntry(pullrequest))
             else:
                 parsedPRList[formatted_date] = [constructEachPullRequestEntry(pullrequest)]
-    return parsedPRList
+
+    for pDate in parsedPRList.keys():
+        entry = {}
+        entry['date'] = pDate
+        entry['pr_count'] = len(parsedPRList.get(pDate))
+        entry['pr_details'] = parsedPRList.get(pDate)
+        dataToSend.append(entry)
+    return dataToSend
 
 
 if __name__ == '__main__':
