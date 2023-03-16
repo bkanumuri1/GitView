@@ -1,7 +1,7 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route,useNavigate } from "react-router-dom";
 import { AboutUs } from "./pages/AboutUs";
 import Button from "@mui/material/Button";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -14,11 +14,13 @@ import format from "date-fns/format";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import * as React from "react";
-
+import { BrowserRouter } from 'react-router-dom'
+import About from "./components/Existing";
 import FullWidthTabs from "./FullWidthTabs";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
+  
   const [rerender, setRerender] = useState(false);
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
@@ -259,7 +261,18 @@ function App() {
   );
 
   return (
+    
+    
     <div className="App">
+      {console.log("userdata:", userData)}
+     <Router>
+        <Routes>
+          <Route path="/cha" element={<About login={userData}/>}></Route>
+        </Routes>
+      </Router> 
+
+
+      
       {localStorage.getItem("access_token") ? (
         <div className="mainPage">
           <div className="nav">
@@ -376,7 +389,9 @@ function App() {
             </div>
 
             <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
+            {console.log("commits",commits)}
           </div>
+          
         </div> // main page end
       ) : (
         <>
@@ -403,6 +418,7 @@ function App() {
 
       {/* </header> */}
     </div>
+    
   );
 }
 
@@ -410,6 +426,7 @@ function AppRouter() {
   return (
     <Router>
       <Routes>
+      <Route path="/charts" element={<About />} />
         <Route path="/" element={<App />} />
         <Route path="/about-us" element={<AboutUs />} />
       </Routes>
