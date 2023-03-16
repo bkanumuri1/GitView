@@ -12,11 +12,13 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
+import Chart from "./components/Charts";
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
 
   return (
+    <>
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
@@ -66,7 +68,11 @@ function Row(props) {
           </Collapse>
         </TableCell>
       </TableRow>
+      
     </React.Fragment>
+    
+    
+    </>
   );
 }
 
@@ -104,8 +110,11 @@ export default function Commits({ commits }) {
               {commits.map((row, index) => (
                 <Row key={index} row={row} />
               ))}
+             
             </TableBody>
+            
           </Table>
+          <Chart/>
         </TableContainer>
       )}
     </div>

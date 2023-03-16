@@ -70,7 +70,7 @@ export default function FullWidthTabs({ commitData, prData }) {
           <Tab label="Pull Requests" {...a11yProps(1)} />
           <Tab label="Addtions" {...a11yProps(2)} />
           <Tab label="Deletions" {...a11yProps(3)} />
-          <Tab label="Charts" {...a11yProps(4)} />
+          
         </Tabs>
       </AppBar>
 

@@ -15,12 +15,35 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import * as React from "react";
 import { BrowserRouter } from 'react-router-dom'
-import About from "./components/Existing";
+import Chart from "./components/Existing";
 import FullWidthTabs from "./FullWidthTabs";
+import Chartsss from "./components/Charts";
+import { Line } from "react-chartjs-2";
+import BarChart from "./components/BarChart";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
   
+  const lineChartData = {
+    labels: ["October", "November", "December"],
+    datasets: [
+      {
+        data: [8137119, 9431691, 10266674],
+        label: "Infected",
+        borderColor: "#3333ff",
+        fill: true,
+        lineTension: 0.5
+      },
+      {
+        data: [1216410, 1371390, 1477380],
+        label: "Deaths",
+        borderColor: "#ff3333",
+        backgroundColor: "rgba(255, 0, 0, 0.5)",
+        fill: true,
+        lineTension: 0.5
+      }
+    ]
+  };
   const [rerender, setRerender] = useState(false);
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
@@ -267,11 +290,11 @@ function App() {
       {console.log("userdata:", userData)}
      <Router>
         <Routes>
-          <Route path="/cha" element={<About login={userData}/>}></Route>
+          <Route path="/cha" element={<Chartsss />}></Route>
         </Routes>
       </Router> 
 
-
+      
       
       {localStorage.getItem("access_token") ? (
         <div className="mainPage">
@@ -389,6 +412,7 @@ function App() {
             </div>
 
             <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
+            <Chartsss/>
             {console.log("commits",commits)}
           </div>
           
@@ -413,10 +437,12 @@ function App() {
               SIGN IN WITH GITHUB
             </Button>
           </div>
+          
         </>
       )}
 
       {/* </header> */}
+      
     </div>
     
   );
@@ -426,7 +452,7 @@ function AppRouter() {
   return (
     <Router>
       <Routes>
-      <Route path="/charts" element={<About />} />
+       
         <Route path="/" element={<App />} />
         <Route path="/about-us" element={<AboutUs />} />
       </Routes>
