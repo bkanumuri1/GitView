@@ -3,7 +3,8 @@ import { useState } from "react";
 import BarChart from "./BarChart";
 import { Line } from "react-chartjs-2";
 
-const Chart = () => {
+const Chart = (props) => {
+    const {commitData}=props;
 
      const UserData = [
         {
@@ -38,17 +39,14 @@ const Chart = () => {
         },
       ];
       const [userData, setUserData] = useState({
-        labels: UserData.map((data) => data.year),
+        labels: commitData.map((data) => data.date),
         datasets: [
           {
-            label: "Users Gained",
-            data: UserData.map((data) => data.userGain),
+            label: "Commits",
+            data: commitData.map((data) => data.commit_count),
             backgroundColor: [
               "rgba(75,192,192,1)",
-              "#ecf0f1",
-              "#50AF95",
-              "#f3ba2f",
-              "#2a71d0",
+              
             ],
             borderColor: "black",
             borderWidth: 2,
@@ -57,8 +55,8 @@ const Chart = () => {
       });
 
   return (
-    <>vkjbvkj
-    <BarChart chartData={userData}/>
+    <>{console.log("ccccccc",commitData)}
+    <BarChart chartData={userData} commitsData={commitData}/>
     </>
   );
 };

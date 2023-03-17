@@ -16,9 +16,11 @@ import Chart from "./components/Charts";
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
+  
 
   return (
     <>
+    
     <React.Fragment>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
@@ -91,6 +93,7 @@ Row.propTypes = {
 };
 
 export default function Commits({ commits }) {
+  
   return (
     <div>
       {/* here you check if the state is loading otherwise if you wioll not call that you will get a blank page because the data is an empty array at the moment of mounting */}
@@ -107,14 +110,18 @@ export default function Commits({ commits }) {
               </TableRow>
             </TableHead>
             <TableBody>
+              
               {commits.map((row, index) => (
                 <Row key={index} row={row} />
+                
               ))}
+              
+              
              
             </TableBody>
             
           </Table>
-          <Chart/>
+          <Chart commitData={commits}/>
         </TableContainer>
       )}
     </div>

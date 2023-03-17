@@ -412,7 +412,7 @@ function App() {
             </div>
 
             <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
-            <Chartsss/>
+            
             {console.log("commits",commits)}
           </div>
           
