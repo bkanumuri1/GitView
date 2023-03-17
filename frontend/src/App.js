@@ -8,7 +8,7 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import * as XLSX from "xlsx";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
-import { DateRange } from "react-date-range";
+import { DateRangePicker } from "react-date-range";
 import { addDays, subDays } from "date-fns";
 import format from "date-fns/format";
 import "react-date-range/dist/styles.css";
@@ -37,13 +37,22 @@ function App() {
       key: "selection",
     },
   ]);
-  const [range, setRange] = useState([
+  const [selectedDates, setDateRange] = useState([
     {
       startDate: new Date(),
       endDate: subDays(new Date(), 15),
-      key: "selection",
+      key: 'selection',
     },
   ]);
+
+  const handleDateChange = (selectedDates) => {
+    setDateRange([selectedDates.selection]);
+    var start = selectedDates.selection.startDate.toISOString().slice(0, -5) + 'Z';;
+    var end = selectedDates.selection.endDate.toISOString().slice(0, -5) + 'Z';;
+    console.log("start: "+start)
+    console.log("end: "+end)
+    // console.log(selectedDates);
+  };
   const [open, setOpen] = useState(false);
 
   const refOne = useRef(null);
@@ -145,18 +154,13 @@ function App() {
     console.log("The selected repo is => " + selectedRepo);
     console.log("The selected user is => " + contributor);
     console.log("Access_token => " + localStorage.getItem("access_token"));
-    var startDate = range[0].startDate.toISOString();
-    var endDate = range[0].endDate.toISOString();
+    var start = selectedDates[0].startDate.toISOString().slice(0, -5) + 'Z';;
+    var end = selectedDates[0].endDate.toISOString().slice(0, -5) + 'Z';;
+    console.log("start: "+start)
+    console.log("end: "+end)
+
     await fetch(
-      "http://localhost:9000/getCommits?repo=" +
-        selectedRepo +
-        "&author=" +
-        contributor,
-      //  +
-      // "&since=" +
-      // startDate +
-      // "&until=" +
-      // endDate,
+      "http://localhost:9000/getCommits?repo="+selectedRepo+"&author="+contributor+"&since="+start+"&until="+end,
       {
         method: "GET",
         headers: {
@@ -169,7 +173,6 @@ function App() {
       })
       .then((data) => {
         setCommits(data);
-        console.log(data);
       });
   }
 
@@ -201,7 +204,6 @@ function App() {
       })
       .then((data) => {
         setPRs(data);
-        console.log(data);
       });
   }
 
@@ -346,10 +348,10 @@ function App() {
 
                   <div className="calendarWrap">
                     <input
-                      value={`${format(
-                        range[0].startDate,
-                        "MM/dd/yyyy"
-                      )} to ${format(range[0].endDate, "MM/dd/yyyy")}`}
+                      value={`${format(selectedDates[0].startDate, 'MM/dd/yyyy')} to ${format(
+                        selectedDates[0].endDate,
+                        'MM/dd/yyyy'
+                      )}`}
                       readOnly
                       className="inputBox"
                       onClick={() => setOpen((open) => !open)}
@@ -357,11 +359,11 @@ function App() {
 
                     <div ref={refOne}>
                       {open && (
-                        <DateRange
-                          onChange={(item) => setRange([item.selection])}
+                        <DateRangePicker
+                          onChange={handleDateChange}
                           editableDateInputs={true}
                           moveRangeOnFirstSelection={false}
-                          ranges={range}
+                          ranges={selectedDates}
                           months={1}
                           direction="horizontal"
                           className="calendarElement"

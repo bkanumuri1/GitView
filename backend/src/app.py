@@ -169,7 +169,6 @@ def constructEachPullRequestEntry(pullrequest):
         pr_entry['title'] = pullrequest['title']
         pr_entry['head_branch'] = pullrequest['head']['ref']
         pr_entry['base_branch'] = pullrequest['base']['ref']
-        print(pr_entry)
         return pr_entry
     
 def parsePullRequestData(data,contributor):
