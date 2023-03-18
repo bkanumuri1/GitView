@@ -56,7 +56,7 @@ const Chart = (props) => {
 
   return (
     <>{console.log("ccccccc",commitData)}
-    <BarChart chartData={userData} commitsData={commitData}/>
+    <BarChart chartData={userData} />
     </>
   );
 };

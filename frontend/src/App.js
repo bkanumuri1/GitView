@@ -15,9 +15,9 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import * as React from "react";
 import { BrowserRouter } from 'react-router-dom'
-import Chart from "./components/Existing";
+
 import FullWidthTabs from "./FullWidthTabs";
-import Chartsss from "./components/Charts";
+import Chart from "./components/Charts";
 import { Line } from "react-chartjs-2";
 import BarChart from "./components/BarChart";
 
@@ -243,7 +243,7 @@ function App() {
     setSelectedContributor(event.target.value);
     getCommits(event.target.value);
     getPRs(event.target.value);
-    // console.log(commits);
+     console.log("qwerty",commits);
   }
 
   function handleFileUpload(event) {
@@ -290,7 +290,7 @@ function App() {
       {console.log("userdata:", userData)}
      <Router>
         <Routes>
-          <Route path="/cha" element={<Chartsss />}></Route>
+          <Route path="/cha" element={<Chart />}></Route>
         </Routes>
       </Router> 
 
@@ -412,6 +412,7 @@ function App() {
             </div>
 
             <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
+            
             
             {console.log("commits",commits)}
           </div>

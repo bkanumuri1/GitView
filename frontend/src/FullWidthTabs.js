@@ -47,6 +47,7 @@ function a11yProps(index) {
 export default function FullWidthTabs({ commitData, prData }) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  console.log("asdfd",value)
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -89,6 +90,7 @@ export default function FullWidthTabs({ commitData, prData }) {
       <TabPanel value={value} index={4} dir={theme.direction}>
         Item four
       </TabPanel>
+      
     </Box>
   );
 }
