@@ -74,14 +74,20 @@ def getCommits():
         url = "https://api.github.com/repos/" + repo_name + "/commits?author=" + contributor+"&since="+startDate+"&until="+endDate
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
-    return jsonify(parseCommitData(response.json()))
+    return jsonify(parseCommitData(response.json(), contributor, startDate, endDate))
     
-def parseCommitData(data):
+def parseCommitData(data, contributor, startDate, endDate):
     dataToSend = []
     parsedCommitList={}
+    sdate = datetime.strptime(startDate, '%Y-%m-%dT%H:%M:%SZ')
+    sdate = sdate.strftime('%Y-%m-%d')
+    edate = datetime.strptime(endDate, '%Y-%m-%dT%H:%M:%SZ')
+    edate = edate.strftime('%Y-%m-%d')
     for commit in data:
         date = datetime.strptime(commit['commit']['author']['date'], '%Y-%m-%dT%H:%M:%SZ')
-        formatted_date = date.strftime('%Y-%m-%d')      
+        formatted_date = date.strftime('%Y-%m-%d') 
+        if not (formatted_date >= sdate and formatted_date <= edate):
+                continue     
         # parsedCommitCount[formatted_date] =parsedCommitCount.get(formatted_date,0)+1
         if formatted_date in parsedCommitList:
             parsedCommitList[formatted_date].append(constructEachCommitEntry(commit))
