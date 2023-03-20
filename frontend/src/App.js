@@ -1,35 +1,49 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route,useNavigate } from "react-router-dom";
 import { AboutUs } from "./pages/AboutUs";
 import Button from "@mui/material/Button";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import * as XLSX from "xlsx";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
-import { DateRange } from "react-date-range";
+import { DateRangePicker } from "react-date-range";
 import { addDays, subDays } from "date-fns";
 import format from "date-fns/format";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import * as React from "react";
-import PropTypes from "prop-types";
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { BrowserRouter } from 'react-router-dom'
+
+import FullWidthTabs from "./FullWidthTabs";
+import Chart from "./components/Charts";
+import { Line } from "react-chartjs-2";
+import BarChart from "./components/BarChart";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
+  
+  const lineChartData = {
+    labels: ["October", "November", "December"],
+    datasets: [
+      {
+        data: [8137119, 9431691, 10266674],
+        label: "Infected",
+        borderColor: "#3333ff",
+        fill: true,
+        lineTension: 0.5
+      },
+      {
+        data: [1216410, 1371390, 1477380],
+        label: "Deaths",
+        borderColor: "#ff3333",
+        backgroundColor: "rgba(255, 0, 0, 0.5)",
+        fill: true,
+        lineTension: 0.5
+      }
+    ]
+  };
   const [rerender, setRerender] = useState(false);
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
@@ -48,13 +62,23 @@ function App() {
       key: "selection",
     },
   ]);
-  const [range, setRange] = useState([
+  const [selectedDates, setDateRange] = useState([
     {
-      startDate: new Date(),
-      endDate: subDays(new Date(), 15),
+      startDate: subDays(new Date(), 30),
+      endDate: new Date(),
       key: "selection",
     },
   ]);
+
+  const handleDateChange = (selectedDates) => {
+    setDateRange([selectedDates.selection]);
+    var start =
+      selectedDates.selection.startDate.toISOString().slice(0, -5) + "Z";
+    var end = selectedDates.selection.endDate.toISOString().slice(0, -5) + "Z";
+    getCommits(selectedContributor, start, end);
+    getPRs(selectedContributor, start, end);
+    // console.log(selectedDates);
+  };
   const [open, setOpen] = useState(false);
 
   const refOne = useRef(null);
@@ -152,22 +176,23 @@ function App() {
       });
   }
 
-  async function getTableInfo(contributor) {
+  async function getCommits(contributor, start, end) {
     console.log("The selected repo is => " + selectedRepo);
     console.log("The selected user is => " + contributor);
     console.log("Access_token => " + localStorage.getItem("access_token"));
-    var startDate = range[0].startDate.toISOString();
-    var endDate = range[0].endDate.toISOString();
+
+    console.log("start: " + start);
+    console.log("end: " + end);
+
     await fetch(
-      "http://localhost:9000/getTableInfo?repo=" +
+      "http://localhost:9000/getCommits?repo=" +
         selectedRepo +
         "&author=" +
-        contributor,
-      //  +
-      // "&since=" +
-      // startDate +
-      // "&until=" +
-      // endDate,
+        contributor +
+        "&since=" +
+        start +
+        "&until=" +
+        end,
       {
         method: "GET",
         headers: {
@@ -180,7 +205,6 @@ function App() {
       })
       .then((data) => {
         setCommits(data);
-        //console.log(commits);
       });
   }
 
@@ -194,22 +218,35 @@ function App() {
     return formattedDate;
   }
 
-  // async function getPRs(contributor) {
-  //     await fetch("http://localhost:9000/getPRs?repo=" +selectedRepo + "&creator=" + contributor,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: "Bearer " + localStorage.getItem("access_token"),
-  //         },
-  //       })
-  //       .then((response) => {
-  //         return response.json();
-  //       })
-  //       .then((data) => {
-  //         setPRs(data);
-  //         console.log(data);
-  //       });
-  // }
+  async function getPRs(contributor, start, end) {
+    // var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
+    // var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
+    // console.log("start: " + start);
+    // console.log("end: " + end);
+
+    await fetch(
+      "http://localhost:9000/getPRs?repo=" +
+        selectedRepo +
+        "&author=" +
+        contributor +
+        "&since=" +
+        start +
+        "&until=" +
+        end,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+      }
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setPRs(data);
+      });
+  }
 
   function handleSearch(event) {
     setSearchTerm(event.target.value);
@@ -222,8 +259,13 @@ function App() {
 
   function handleContributorDropdownChange(event) {
     setSelectedContributor(event.target.value);
-    getTableInfo(event.target.value);
+
+    var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
+    var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
+    getCommits(event.target.value, start, end);
+    getPRs(event.target.value, start, end);
     // console.log(commits);
+
   }
 
   function handleFileUpload(event) {
@@ -263,107 +305,19 @@ function App() {
     repo.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  function Row(props) {
-    const { row } = props;
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <React.Fragment>
-        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-          <TableCell>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
-          <TableCell scope="row" align="center">
-            {row.date}
-          </TableCell>
-          <TableCell align="center">{row.commit_count}</TableCell>
-          <TableCell align="center">{row.pr_count}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Commit Links</TableCell>
-                      <TableCell>PR Links</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        {row.commit_details.map((detailsRow, index) => (
-                          <div>
-                            {" "}
-                            <a
-                              key={index}
-                              href={detailsRow.html_url}
-                              target="_blank"
-                            >
-                              {detailsRow.author.login}: {detailsRow.message}
-                            </a>
-                          </div>
-                        ))}
-                      </TableCell>
-
-                      <TableCell>
-                        {row.pr_details.map((prRow, index) => (
-                          <div>
-                            <a
-                              key={index}
-                              href={prRow.html_url}
-                              target="_blank"
-                            >
-                              {prRow.author}: {prRow.title}
-                            </a>
-                          </div>
-                        ))}
-                      </TableCell>
-                    </TableRow>
-
-                    {/* {row.pr_details.map((prRow, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <a href={prRow.html_url} target="_blank">
-                            {prRow.author.login}: {prRow.title}
-                          </a>
-                        </TableCell>
-                      </TableRow>
-                    ))} */}
-                  </TableBody>
-                </Table>
-              </Box>
-            </Collapse>
-          </TableCell>
-        </TableRow>
-      </React.Fragment>
-    );
-  }
-
-  Row.propTypes = {
-    row: PropTypes.shape({
-      date: PropTypes.string.isRequired,
-      commit_count: PropTypes.number.isRequired,
-      pr_count: PropTypes.number.isRequired,
-      commit_details: PropTypes.arrayOf(
-        PropTypes.shape({
-          author: PropTypes.object.isRequired,
-          html_url: PropTypes.string.isRequired,
-          message: PropTypes.string.isRequired,
-        })
-      ).isRequired,
-    }).isRequired,
-  };
-
   return (
+    
+    
     <div className="App">
+      {console.log("userdata:", userData)}
+     <Router>
+        <Routes>
+          <Route path="/cha" element={<Chart />}></Route>
+        </Routes>
+      </Router> 
+
+      
+      
       {localStorage.getItem("access_token") ? (
         <div className="mainPage">
           <div className="nav">
@@ -451,9 +405,9 @@ function App() {
                   <div className="calendarWrap">
                     <input
                       value={`${format(
-                        range[0].startDate,
+                        selectedDates[0].startDate,
                         "MM/dd/yyyy"
-                      )} to ${format(range[0].endDate, "MM/dd/yyyy")}`}
+                      )} to ${format(selectedDates[0].endDate, "MM/dd/yyyy")}`}
                       readOnly
                       className="inputBox"
                       onClick={() => setOpen((open) => !open)}
@@ -461,11 +415,11 @@ function App() {
 
                     <div ref={refOne}>
                       {open && (
-                        <DateRange
-                          onChange={(item) => setRange([item.selection])}
+                        <DateRangePicker
+                          onChange={handleDateChange}
                           editableDateInputs={true}
                           moveRangeOnFirstSelection={false}
-                          ranges={range}
+                          ranges={selectedDates}
                           months={1}
                           direction="horizontal"
                           className="calendarElement"
@@ -478,31 +432,13 @@ function App() {
                 <> </>
               )}
             </div>
-            <div>
-              {/* here you check if the state is loading otherwise if you wioll not call that you will get a blank page because the data is an empty array at the moment of mounting */}
-              {commits.length == 0 ? (
-                <></>
-              ) : (
-                <TableContainer component={Paper}>
-                  <Table aria-label="collapsible table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Details</TableCell>
-                        <TableCell align="center">Date</TableCell>
-                        <TableCell align="center">Commits</TableCell>
-                        <TableCell align="center">Pull Requests</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {commits.map((row, index) => (
-                        <Row key={index} row={row} />
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
-            </div>
+
+            <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
+            
+            
+            {console.log("commits",commits)}
           </div>
+          
         </div> // main page end
       ) : (
         <>
@@ -524,11 +460,14 @@ function App() {
               SIGN IN WITH GITHUB
             </Button>
           </div>
+          
         </>
       )}
 
       {/* </header> */}
+      
     </div>
+    
   );
 }
 
@@ -536,6 +475,7 @@ function AppRouter() {
   return (
     <Router>
       <Routes>
+       
         <Route path="/" element={<App />} />
         <Route path="/about-us" element={<AboutUs />} />
       </Routes>
