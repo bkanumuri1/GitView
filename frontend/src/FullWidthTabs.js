@@ -51,6 +51,7 @@ export default function FullWidthTabs({ commitData, prData }) {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    Chart(commitData);
   };
 
   const handleChangeIndex = (index) => {

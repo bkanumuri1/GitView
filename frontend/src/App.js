@@ -243,6 +243,7 @@ function App() {
     setSelectedContributor(event.target.value);
     getCommits(event.target.value);
     getPRs(event.target.value);
+    Chart(commits);
      console.log("qwerty",commits);
   }
 
