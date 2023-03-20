@@ -1,7 +1,7 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route,useNavigate } from "react-router-dom";
 import { AboutUs } from "./pages/AboutUs";
 import Button from "@mui/material/Button";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -14,11 +14,36 @@ import format from "date-fns/format";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import * as React from "react";
+import { BrowserRouter } from 'react-router-dom'
 
 import FullWidthTabs from "./FullWidthTabs";
+import Chart from "./components/Charts";
+import { Line } from "react-chartjs-2";
+import BarChart from "./components/BarChart";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
+  
+  const lineChartData = {
+    labels: ["October", "November", "December"],
+    datasets: [
+      {
+        data: [8137119, 9431691, 10266674],
+        label: "Infected",
+        borderColor: "#3333ff",
+        fill: true,
+        lineTension: 0.5
+      },
+      {
+        data: [1216410, 1371390, 1477380],
+        label: "Deaths",
+        borderColor: "#ff3333",
+        backgroundColor: "rgba(255, 0, 0, 0.5)",
+        fill: true,
+        lineTension: 0.5
+      }
+    ]
+  };
   const [rerender, setRerender] = useState(false);
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
@@ -234,11 +259,13 @@ function App() {
 
   function handleContributorDropdownChange(event) {
     setSelectedContributor(event.target.value);
+
     var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
     var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
     getCommits(event.target.value, start, end);
     getPRs(event.target.value, start, end);
     // console.log(commits);
+
   }
 
   function handleFileUpload(event) {
@@ -279,7 +306,18 @@ function App() {
   );
 
   return (
+    
+    
     <div className="App">
+      {console.log("userdata:", userData)}
+     <Router>
+        <Routes>
+          <Route path="/cha" element={<Chart />}></Route>
+        </Routes>
+      </Router> 
+
+      
+      
       {localStorage.getItem("access_token") ? (
         <div className="mainPage">
           <div className="nav">
@@ -396,7 +434,11 @@ function App() {
             </div>
 
             <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
+            
+            
+            {console.log("commits",commits)}
           </div>
+          
         </div> // main page end
       ) : (
         <>
@@ -418,11 +460,14 @@ function App() {
               SIGN IN WITH GITHUB
             </Button>
           </div>
+          
         </>
       )}
 
       {/* </header> */}
+      
     </div>
+    
   );
 }
 
@@ -430,6 +475,7 @@ function AppRouter() {
   return (
     <Router>
       <Routes>
+       
         <Route path="/" element={<App />} />
         <Route path="/about-us" element={<AboutUs />} />
       </Routes>
