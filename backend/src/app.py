@@ -69,7 +69,7 @@ def getCommits():
     startDate = request.args.get("since")
     endDate = request.args.get("until")
     if (contributor == "all" or contributor == None):
-        url = "https://api.github.com/repos/" + repo_name + "/commits"
+        url = "https://api.github.com/repos/" + repo_name + "/commits?since="+startDate+"&until="+endDate
     elif(contributor != "all"):
         url = "https://api.github.com/repos/" + repo_name + "/commits?author=" + contributor+"&since="+startDate+"&until="+endDate
     headers = {'Authorization' : token}
