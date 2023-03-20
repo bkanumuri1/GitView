@@ -64,7 +64,7 @@ function App() {
   ]);
   const [selectedDates, setDateRange] = useState([
     {
-      startDate: subDays(new Date(), 15),
+      startDate: subDays(new Date(), 30),
       endDate: new Date(),
       key: "selection",
     },
