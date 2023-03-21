@@ -41,6 +41,8 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell>Commit Links</TableCell>
+                    <TableCell>Additions</TableCell>
+                    <TableCell>Deletions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -56,6 +58,22 @@ function Row(props) {
                           >
                             {detailsRow.author.login}: {detailsRow.message}
                           </a>
+                        </div>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                    {row.commit_details.map((detailsRow, index) => (
+                        <div>
+                          {" "}
+                          <p>{detailsRow.stats.additions}</p>                         
+                        </div>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                    {row.commit_details.map((detailsRow, index) => (
+                        <div>
+                          {" "}
+                          <p>{detailsRow.stats.deletions}</p>                         
                         </div>
                       ))}
                     </TableCell>
