@@ -122,12 +122,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  {
-    id: 'details',
-    numeric: false,
-    disablePadding: true,
-    label: 'Details',
-  },
+  // {
+  //   id: 'details',
+  //   numeric: false,
+  //   disablePadding: true,
+  //   label: 'Details',
+  // },
   {
     id: 'date',
     numeric: false,
@@ -158,6 +158,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
+      <TableCell>Details</TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -199,9 +200,6 @@ export default function Commits({ commits }) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('Commits');
   const [selected, setSelected] = React.useState([]);
-  // const [page, setPage] = React.useState(0);
-  // const [dense, setDense] = React.useState(false);
-  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -218,8 +216,6 @@ export default function Commits({ commits }) {
       ) : (
         <TableContainer component={Paper}>
           <Table aria-label="collapsible table">
-            {/* <TableHead> */}
-            {/* <TableRow> */}
             <EnhancedTableHead
               numSelected={selected.length}
               order={order}
@@ -227,24 +223,13 @@ export default function Commits({ commits }) {
               onRequestSort={handleRequestSort}
               rowCount={commits.length}
             />
-            {/* <TableCell>Details</TableCell> */}
-            {/* <TableCell align="center">Date</TableCell>
-                <TableCell align="center">Commits</TableCell> */}
-            {/* </TableRow> */}
-            {/* </TableHead> */}
             <TableBody >
               {stableSort(commits, getComparator(order, orderBy))
                 .map((row, index) => {
-                  // const isItemSelected = isSelected(row.name);
-                  // const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <Row key={index} row={row} />
                   );
                 })}
-              {/* {commits.map((row, index) => (
-                <Row key={index} row={row} />
-                
-              ))} */}
             </TableBody>
           </Table>
           <Chart commitData={commits} />
