@@ -50,7 +50,7 @@ def getRepoContributors():
     if response.status_code == 200:
         logins = [d['login'] for d in data]
         return jsonify(logins)
-    elif response.status_code == 404:
+    else:
         print(data)
         abort(404)
         
