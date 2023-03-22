@@ -306,18 +306,7 @@ function App() {
   );
 
   return (
-
-
     <div className="App">
-      {console.log("userdata:", userData)}
-      <Router>
-        <Routes>
-          <Route path="/cha" element={<Chart />}></Route>
-        </Routes>
-      </Router>
-
-
-
       {localStorage.getItem("access_token") ? (
         <div className="mainPage">
           <div className="nav">
