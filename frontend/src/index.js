@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import AppRouter from './App';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     //removed strict mode only for development, need a way later
-    <App />
+    <AppRouter />
 );
 
 // If you want to start measuring performance in your app, pass a function

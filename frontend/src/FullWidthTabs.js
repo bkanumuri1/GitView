@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Commits from "./Commits";
 import PRS from "./PullRequests";
+import Chart from "./components/Charts";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -49,6 +50,7 @@ export default function FullWidthTabs({ commitData, prData }) {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    Chart(commitData);
   };
 
   const handleChangeIndex = (index) => {
@@ -70,12 +72,14 @@ export default function FullWidthTabs({ commitData, prData }) {
           <Tab label="Pull Requests" {...a11yProps(1)} />
           <Tab label="Addtions" {...a11yProps(2)} />
           <Tab label="Deletions" {...a11yProps(3)} />
+          
         </Tabs>
       </AppBar>
 
       <TabPanel value={value} index={0} dir={theme.direction}>
         <Commits commits={commitData}></Commits>
         {/* {JSON.stringify(commitData)} */}
+        
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
         <PRS prData={prData}></PRS>
@@ -83,6 +87,10 @@ export default function FullWidthTabs({ commitData, prData }) {
       <TabPanel value={value} index={2} dir={theme.direction}>
         Item Three
       </TabPanel>
+      <TabPanel value={value} index={4} dir={theme.direction}>
+        Item four
+      </TabPanel>
+      
     </Box>
   );
 }

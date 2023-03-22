@@ -1,7 +1,7 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route,useNavigate } from "react-router-dom";
 import { AboutUs } from "./pages/AboutUs";
 import Button from "@mui/material/Button";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -14,11 +14,36 @@ import format from "date-fns/format";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import * as React from "react";
+import { BrowserRouter } from 'react-router-dom'
 
 import FullWidthTabs from "./FullWidthTabs";
+import Chart from "./components/Charts";
+import { Line } from "react-chartjs-2";
+import BarChart from "./components/BarChart";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
+  
+  const lineChartData = {
+    labels: ["October", "November", "December"],
+    datasets: [
+      {
+        data: [8137119, 9431691, 10266674],
+        label: "Infected",
+        borderColor: "#3333ff",
+        fill: true,
+        lineTension: 0.5
+      },
+      {
+        data: [1216410, 1371390, 1477380],
+        label: "Deaths",
+        borderColor: "#ff3333",
+        backgroundColor: "rgba(255, 0, 0, 0.5)",
+        fill: true,
+        lineTension: 0.5
+      }
+    ]
+  };
   const [rerender, setRerender] = useState(false);
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
@@ -39,7 +64,7 @@ function App() {
   ]);
   const [selectedDates, setDateRange] = useState([
     {
-      startDate: subDays(new Date(), 15),
+      startDate: subDays(new Date(), 30),
       endDate: new Date(),
       key: "selection",
     },
@@ -111,27 +136,6 @@ function App() {
       });
   }
 
-  async function getUserRepos() {
-    await fetch("http://localhost:9000/getUserRepos", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("access_token"),
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        let commonElements = new Map();
-        Object.keys(data).forEach((key) => {
-          if (excelData.includes(data[key])) {
-            commonElements[key] = data[key];
-          }
-        });
-        setRepositories(commonElements);
-      });
-  }
-
   async function getRepoContributors(selectedValue) {
     console.log("Repo: " + selectedValue);
     await fetch(
@@ -144,11 +148,23 @@ function App() {
       }
     )
       .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setContributors(data);
-      });
+          if (!response.ok) {
+            throw new Error(response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          setContributors(data);
+          // handle successful response
+        })
+        .catch(error => {
+          if (error.message === '404') {
+            alert('No such repository found! Please ensure the authenticated user is a contributor.');
+            setContributors([]);
+          } else {
+            console.error(error);
+          }
+        });
   }
 
   async function getCommits(contributor, start, end) {
@@ -229,16 +245,19 @@ function App() {
 
   function handleRepoDropdownChange(event) {
     setSelectedRepo(event.target.value);
+    console.log("The selected repo is => " + event.target.value);
     getRepoContributors(event.target.value);
   }
 
   function handleContributorDropdownChange(event) {
     setSelectedContributor(event.target.value);
+
     var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
     var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
     getCommits(event.target.value, start, end);
     getPRs(event.target.value, start, end);
     // console.log(commits);
+
   }
 
   function handleFileUpload(event) {
@@ -249,13 +268,16 @@ function App() {
       const workbook = XLSX.read(data, { type: "array" });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      const list = [];
+      const map = new Map();
+      let i = 0;
       for (let z in worksheet) {
         if (z.toString()[0] === "A") {
-          list.push(worksheet[z].v);
+            const key = i++; // use index as key
+            const value = worksheet[z].v;
+            map[key] = value;
         }
       }
-      setExcelData(list);
+      setExcelData(map);
     };
     reader.readAsArrayBuffer(file);
   }
@@ -267,8 +289,6 @@ function App() {
   };
 
   const hideOnClickOutside = (e) => {
-    // console.log(refOne.current)
-    // console.log(e.target)
     if (refOne.current && !refOne.current.contains(e.target)) {
       setOpen(false);
     }
@@ -278,7 +298,7 @@ function App() {
     repo.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return (
+  return ( 
     <div className="App">
       {localStorage.getItem("access_token") ? (
         <div className="mainPage">
@@ -332,16 +352,13 @@ function App() {
 
           <div>
             <div className="tableFilter">
-              <button id="repoButton" onClick={getUserRepos} style={{}}>
-                GET REPOSITORIES
-              </button>
-              {Object.keys(repositories).length !== 0 ? (
+              {Object.keys(excelData).length !== 0 ? (
                 <>
                   <select id="repoDropdown" onChange={handleRepoDropdownChange}>
                     <option key="" value="">
                       --Please select a Repository--
                     </option>
-                    {Object.entries(repositories).map(([key, value]) => (
+                    {Object.entries(excelData).map(([key, value]) => (
                       <option key={key} value={value}>
                         {" "}
                         {value}{" "}
@@ -396,7 +413,11 @@ function App() {
             </div>
 
             <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
+            
+            
+            {console.log("commits",commits)}
           </div>
+          
         </div> // main page end
       ) : (
         <>
@@ -418,11 +439,14 @@ function App() {
               SIGN IN WITH GITHUB
             </Button>
           </div>
+          
         </>
       )}
 
       {/* </header> */}
+      
     </div>
+    
   );
 }
 
@@ -431,10 +455,12 @@ function AppRouter() {
     <Router>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/home" element={<App />} />
         <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/cha" element={<Chart />}></Route>
       </Routes>
     </Router>
   );
 }
 
-export default App;
+export default AppRouter;

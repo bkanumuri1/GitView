@@ -1,6 +1,6 @@
 import json
 import secrets
-from flask import Flask,request,jsonify, session
+from flask import Flask,request,jsonify, session, abort
 import requests
 from flask_cors import CORS
 from datetime import datetime
@@ -38,18 +38,6 @@ def getUserData():
     session['username']=response.json()['login']
     return response.json()
 
-@app.route('/getUserRepos', methods=['GET'])
-def getUserRepos():
-    token = request.headers.get('Authorization')
-    print(token)
-    url = "https://api.github.com/user/repos"
-    headers = {'Authorization' : token}
-    response = requests.get(url, headers=headers)
-    repoData = {}
-    for repository in response.json():
-        repoData[str(repository.get('id'))] = repository.get('full_name')   
-    return jsonify(repoData)
-
 @app.route('/getRepoContributors', methods=['GET'])
 def getRepoContributors():
     token = request.headers.get('Authorization')
@@ -58,9 +46,14 @@ def getRepoContributors():
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
     data=response.json()
-    logins = [d['login'] for d in data]
-    return jsonify(logins)
-
+    print(response.status_code)
+    if response.status_code == 200:
+        logins = [d['login'] for d in data]
+        return jsonify(logins)
+    else:
+        print(data)
+        abort(404)
+        
 @app.route('/getCommits', methods=['GET'])
 def getCommits():
     token = request.headers.get('Authorization')
@@ -69,7 +62,7 @@ def getCommits():
     startDate = request.args.get("since")
     endDate = request.args.get("until")
     if (contributor == "all" or contributor == None):
-        url = "https://api.github.com/repos/" + repo_name + "/commits"
+        url = "https://api.github.com/repos/" + repo_name + "/commits?since="+startDate+"&until="+endDate
     elif(contributor != "all"):
         url = "https://api.github.com/repos/" + repo_name + "/commits?author=" + contributor+"&since="+startDate+"&until="+endDate
     headers = {'Authorization' : token}
