@@ -65,7 +65,7 @@ function Row(props) {
                     {row.commit_details.map((detailsRow, index) => (
                         <div>
                           {" "}
-                          <p>{detailsRow.stats.additions}</p>                         
+                          <p style={{color:"green"}}>+{detailsRow.stats.additions}</p>                         
                         </div>
                       ))}
                     </TableCell>
@@ -73,7 +73,7 @@ function Row(props) {
                     {row.commit_details.map((detailsRow, index) => (
                         <div>
                           {" "}
-                          <p>{detailsRow.stats.deletions}</p>                         
+                          <p style={{color:"red"}}>-{detailsRow.stats.deletions}</p>                         
                         </div>
                       ))}
                     </TableCell>
