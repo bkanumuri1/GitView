@@ -20,56 +20,76 @@ function Row(props) {
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <React.Fragment>
-        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-          <TableCell>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
-          <TableCell scope="row" align="center">
-            {row.date}
-          </TableCell>
-          <TableCell align="center">{row.commit_count}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Commit Links</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        {row.commit_details.map((detailsRow, index) => (
-                          <div>
-                            {" "}
-                            <a
-                              key={index}
-                              href={detailsRow.html_url}
-                              target="_blank"
-                            >
-                              {detailsRow.author.login}: {detailsRow.message}
-                            </a>
-                          </div>
-                        ))}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </Box>
-            </Collapse>
-          </TableCell>
-        </TableRow>
-      </React.Fragment>
+    
+    <React.Fragment>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+        <TableCell scope="row" align="center">
+          {row.date}
+        </TableCell>
+        <TableCell align="center">{row.commit_count}</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Commit Links</TableCell>
+                    <TableCell>Additions</TableCell>
+                    <TableCell>Deletions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      {row.commit_details.map((detailsRow, index) => (
+                        <div>
+                          {" "}
+                          <a
+                            key={index}
+                            href={detailsRow.html_url}
+                            target="_blank"
+                          >
+                            {detailsRow.author.login}: {detailsRow.message}
+                          </a>
+                        </div>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                    {row.commit_details.map((detailsRow, index) => (
+                        <div>
+                          {" "}
+                          <p style={{color:"green"}}>+{detailsRow.stats.additions}</p>                         
+                        </div>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                    {row.commit_details.map((detailsRow, index) => (
+                        <div>
+                          {" "}
+                          <p style={{color:"red"}}>-{detailsRow.stats.deletions}</p>                         
+                        </div>
+                      ))}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+      
+    </React.Fragment>      
     </>
   );
 }
