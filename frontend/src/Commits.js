@@ -135,8 +135,8 @@ const headCells = [
     label: 'Date',
   },
   {
-    id: 'commits',
-    numeric: false,
+    id: 'commit_count',
+    numeric: true,
     disablePadding: false,
     label: 'Commits',
   },
@@ -197,7 +197,7 @@ EnhancedTableHead.propTypes = {
 export default function Commits({ commits }) {
 
   const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('commits');
+  const [orderBy, setOrderBy] = React.useState('Commits');
   const [selected, setSelected] = React.useState([]);
   // const [page, setPage] = React.useState(0);
   // const [dense, setDense] = React.useState(false);
@@ -208,6 +208,7 @@ export default function Commits({ commits }) {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+
 
   return (
     <div>
@@ -223,7 +224,6 @@ export default function Commits({ commits }) {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              // onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={commits.length}
             />
