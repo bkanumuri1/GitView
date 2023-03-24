@@ -44,6 +44,8 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell>PR Links</TableCell>
+                    <TableCell>Reviewers</TableCell>
+                    <TableCell>Reviewer Comments</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -58,6 +60,34 @@ function Row(props) {
                             target="_blank"
                           >
                             {detailsRow.author}: {detailsRow.title}
+                          </a>
+                        </div>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                    {row.pr_details.map((detailsRow, index) => (
+                        <div>
+                          {" "}
+                          <a
+                            key={index}
+                            href={detailsRow.html_url}
+                            target="_blank"
+                          >
+                            {detailsRow.reviewers}
+                          </a>
+                        </div>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                    {row.pr_details.map((detailsRow, index) => (
+                        <div>
+                          {" "}
+                          <a
+                            key={index}
+                            href={detailsRow.html_url}
+                            target="_blank"
+                          >
+                            {detailsRow.review_comments}
                           </a>
                         </div>
                       ))}
