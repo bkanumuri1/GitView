@@ -14,82 +14,136 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import Chart from "./components/Charts";
+import Checkbox from '@mui/material/Checkbox';
+
 import { visuallyHidden } from '@mui/utils';
+
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
+  const [selected, setSelected] = React.useState([]);
+
+
+  // const handleSelectAllClick = (event) => {
+  //   if (event.target.checked) {
+  //     const newSelected = rows.map((n) => n.name);
+  //     setSelected(newSelected);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
+
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
+  const isSelected = (name) => selected.indexOf(name) !== -1;
+
   return (
     <>
-    
-    <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell scope="row" align="center">
-          {row.date}
-        </TableCell>
-        <TableCell align="center">{row.commit_count}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Commit Links</TableCell>
-                    <TableCell>Additions</TableCell>
-                    <TableCell>Deletions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      {row.commit_details.map((detailsRow, index) => (
-                        <div>
-                          {" "}
-                          <a
-                            key={index}
-                            href={detailsRow.html_url}
-                            target="_blank"
+
+      <React.Fragment>
+        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell scope="row" align="center">
+            {row.date}
+          </TableCell>
+          <TableCell align="center">{row.commit_count}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 1 }}>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Commit Links</TableCell>
+                      <TableCell>Additions</TableCell>
+                      <TableCell>Deletions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {row.commit_details.map((detailsRow, index) => {
+                      const isItemSelected = isSelected(detailsRow.html_url);
+                      const labelId = `enhanced-table-checkbox-${index}`;
+                      return (
+                        <TableRow
+                          onClick={(event) => handleClick(event, detailsRow.html_url)}
+                          role="checkbox"
+                          selected={isItemSelected}
+                        >
+                          <TableCell
                           >
-                            {detailsRow.author.login}: {detailsRow.message}
-                          </a>
-                        </div>
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                    {row.commit_details.map((detailsRow, index) => (
-                        <div>
-                          {" "}
-                          <p style={{color:"green"}}>+{detailsRow.stats.additions}</p>                         
-                        </div>
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                    {row.commit_details.map((detailsRow, index) => (
-                        <div>
-                          {" "}
-                          <p style={{color:"red"}}>-{detailsRow.stats.deletions}</p>                         
-                        </div>
-                      ))}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-      
-    </React.Fragment>      
+                            {/* {row.commit_details.map((detailsRow, index) => (  */}
+                            <div>
+                              <Checkbox
+                                color="primary"
+                                checked={isItemSelected}
+                                inputProps={{
+                                  // 'aria-labelledby': labelId,
+                                }} />
+                              {" "}
+                              <a
+                                key={index}
+                                href={detailsRow.html_url}
+                                target="_blank"
+                              >
+                                {detailsRow.author.login}: {detailsRow.message}
+                              </a>
+                            </div>
+                            {/* ))} */}
+                          </TableCell>
+                          <TableCell>
+                            {/* {row.commit_details.map((detailsRow, index) => ( */}
+                            <div>
+                              {" "}
+                              <p style={{ color: "green" }}>+{detailsRow.stats.additions}</p>
+                            </div>
+                            {/* ))} */}
+                          </TableCell>
+                          <TableCell>
+                            {/* {row.commit_details.map((detailsRow, index) => ( */}
+                            <div>
+                              {" "}
+                              <p style={{ color: "red" }}>-{detailsRow.stats.deletions}</p>
+                            </div>
+                            {/* ))} */}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+
+      </React.Fragment>
     </>
   );
 }
@@ -178,7 +232,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-      <TableCell>Details</TableCell>
+        <TableCell>Details</TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
