@@ -81,61 +81,53 @@ function Row(props) {
                 <Table size="small" aria-label="purchases">
                   <TableHead>
                     <TableRow>
+                      <TableCell>Select by Date</TableCell>
                       <TableCell>Commit Links</TableCell>
                       <TableCell>Additions</TableCell>
                       <TableCell>Deletions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {row.commit_details.map((detailsRow, index) => {
-                      const isItemSelected = isSelected(detailsRow.html_url);
-                      const labelId = `enhanced-table-checkbox-${index}`;
-                      return (
-                        <TableRow
-                          onClick={(event) => handleClick(event, detailsRow.html_url)}
-                          role="checkbox"
-                          selected={isItemSelected}
-                        >
-                          <TableCell
-                          >
-                            {/* {row.commit_details.map((detailsRow, index) => (  */}
-                            <div>
-                              <Checkbox
-                                color="primary"
-                                checked={isItemSelected}
-                                inputProps={{
-                                  // 'aria-labelledby': labelId,
-                                }} />
-                              {" "}
-                              <a
-                                key={index}
-                                href={detailsRow.html_url}
-                                target="_blank"
-                              >
-                                {detailsRow.author.login}: {detailsRow.message}
-                              </a>
-                            </div>
-                            {/* ))} */}
-                          </TableCell>
-                          <TableCell>
-                            {/* {row.commit_details.map((detailsRow, index) => ( */}
-                            <div>
-                              {" "}
-                              <p style={{ color: "green" }}>+{detailsRow.stats.additions}</p>
-                            </div>
-                            {/* ))} */}
-                          </TableCell>
-                          <TableCell>
-                            {/* {row.commit_details.map((detailsRow, index) => ( */}
-                            <div>
-                              {" "}
-                              <p style={{ color: "red" }}>-{detailsRow.stats.deletions}</p>
-                            </div>
-                            {/* ))} */}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                    <TableRow>
+                      <TableCell>
+                        <Checkbox
+                          color="primary"
+                          // checked={isItemSelected}
+                          inputProps={{
+                            // 'aria-labelledby': labelId,
+                          }} />
+                      </TableCell>
+                      <TableCell>
+                        {row.commit_details.map((detailsRow, index) => (
+                          <div>
+                            {" "}
+                            <a
+                              key={index}
+                              href={detailsRow.html_url}
+                              target="_blank"
+                            >
+                              {detailsRow.author.login}: {detailsRow.message}
+                            </a>
+                          </div>
+                        ))}
+                      </TableCell>
+                      <TableCell>
+                        {row.commit_details.map((detailsRow, index) => (
+                          <div>
+                            {" "}
+                            <p style={{ color: "green" }}>+{detailsRow.stats.additions}</p>
+                          </div>
+                        ))}
+                      </TableCell>
+                      <TableCell>
+                        {row.commit_details.map((detailsRow, index) => (
+                          <div>
+                            {" "}
+                            <p style={{ color: "red" }}>-{detailsRow.stats.deletions}</p>
+                          </div>
+                        ))}
+                      </TableCell>
+                    </TableRow>
                   </TableBody>
                 </Table>
               </Box>
