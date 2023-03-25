@@ -47,7 +47,6 @@ function a11yProps(index) {
 export default function FullWidthTabs({ commitData, prData }) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
-  console.log("asdfd",value)
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -70,10 +69,7 @@ export default function FullWidthTabs({ commitData, prData }) {
           aria-label="full width tabs example"
         >
           <Tab label="Commits" {...a11yProps(0)} />
-          <Tab label="Pull Requests" {...a11yProps(1)} />
-          <Tab label="Addtions" {...a11yProps(2)} />
-          <Tab label="Deletions" {...a11yProps(3)} />
-          
+          <Tab label="Pull Requests" {...a11yProps(1)} />       
         </Tabs>
       </AppBar>
 
@@ -84,14 +80,7 @@ export default function FullWidthTabs({ commitData, prData }) {
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
         <PRS prData={prData}></PRS>
-      </TabPanel>
-      <TabPanel value={value} index={2} dir={theme.direction}>
-        Item Three
-      </TabPanel>
-      <TabPanel value={value} index={4} dir={theme.direction}>
-        Item four
-      </TabPanel>
-      
+      </TabPanel>    
     </Box>
   );
 }

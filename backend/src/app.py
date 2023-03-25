@@ -1,6 +1,6 @@
 import json
 import secrets
-from flask import Flask,request,jsonify, session
+from flask import Flask,request,jsonify, session, abort
 import requests
 from flask_cors import CORS
 from datetime import datetime
@@ -38,18 +38,6 @@ def getUserData():
     session['username']=response.json()['login']
     return response.json()
 
-@app.route('/getUserRepos', methods=['GET'])
-def getUserRepos():
-    token = request.headers.get('Authorization')
-    print(token)
-    url = "https://api.github.com/user/repos"
-    headers = {'Authorization' : token}
-    response = requests.get(url, headers=headers)
-    repoData = {}
-    for repository in response.json():
-        repoData[str(repository.get('id'))] = repository.get('full_name')   
-    return jsonify(repoData)
-
 @app.route('/getRepoContributors', methods=['GET'])
 def getRepoContributors():
     token = request.headers.get('Authorization')
@@ -58,9 +46,14 @@ def getRepoContributors():
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
     data=response.json()
-    logins = [d['login'] for d in data]
-    return jsonify(logins)
-
+    print(response.status_code)
+    if response.status_code == 200:
+        logins = [d['login'] for d in data]
+        return jsonify(logins)
+    else:
+        print(data)
+        abort(404)
+        
 @app.route('/getCommits', methods=['GET'])
 def getCommits():
     token = request.headers.get('Authorization')
@@ -74,9 +67,11 @@ def getCommits():
         url = "https://api.github.com/repos/" + repo_name + "/commits?author=" + contributor+"&since="+startDate+"&until="+endDate
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
-    return jsonify(parseCommitData(response.json(), contributor, startDate, endDate))
+    return jsonify(parseCommitData(repo_name, response.json(), contributor, startDate, endDate))
     
-def parseCommitData(data, contributor, startDate, endDate):
+def parseCommitData(repo_name, data, contributor, startDate, endDate):
+    token = request.headers.get('Authorization')
+    headers = {'Authorization' : token}
     dataToSend = []
     parsedCommitList={}
     sdate = datetime.strptime(startDate, '%Y-%m-%dT%H:%M:%SZ')
@@ -85,6 +80,12 @@ def parseCommitData(data, contributor, startDate, endDate):
     edate = edate.strftime('%Y-%m-%d')
     for commit in data:
         date = datetime.strptime(commit['commit']['author']['date'], '%Y-%m-%dT%H:%M:%SZ')
+        sha_id = commit['sha']
+        url = "https://api.github.com/repos/" + repo_name + "/commits/" + str(sha_id)
+        response = requests.get(url,headers=headers).json()
+        # print("response is here", response)
+        stats = response["stats"]
+        commit["stats"] = stats
         formatted_date = date.strftime('%Y-%m-%d') 
         if not (formatted_date >= sdate and formatted_date <= edate):
                 continue     
@@ -109,6 +110,7 @@ def constructEachCommitEntry(commit):
         commmit_entry['author'] = {'name':commit['commit']['author']['name'],'login':commit['author']['login']}
         commmit_entry['html_url'] = commit['html_url']
         commmit_entry['message'] = commit['commit']['message']
+        commmit_entry['stats'] = commit['stats']
         commmit_entry['comment'] = {'comment_count':commit['commit']['comment_count'],'comments_url':commit['comments_url']}
         return commmit_entry
 # /repos/:owner/:repo/pulls?state=all&creator=:username

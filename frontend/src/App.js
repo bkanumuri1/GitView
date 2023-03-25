@@ -1,7 +1,7 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route,useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { AboutUs } from "./pages/AboutUs";
 import Button from "@mui/material/Button";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -23,7 +23,7 @@ import BarChart from "./components/BarChart";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
-  
+
   const lineChartData = {
     labels: ["October", "November", "December"],
     datasets: [
@@ -136,27 +136,6 @@ function App() {
       });
   }
 
-  async function getUserRepos() {
-    await fetch("http://localhost:9000/getUserRepos", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("access_token"),
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        let commonElements = new Map();
-        Object.keys(data).forEach((key) => {
-          if (excelData.includes(data[key])) {
-            commonElements[key] = data[key];
-          }
-        });
-        setRepositories(commonElements);
-      });
-  }
-
   async function getRepoContributors(selectedValue) {
     console.log("Repo: " + selectedValue);
     await fetch(
@@ -169,11 +148,23 @@ function App() {
       }
     )
       .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setContributors(data);
-      });
+          if (!response.ok) {
+            throw new Error(response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          setContributors(data);
+          // handle successful response
+        })
+        .catch(error => {
+          if (error.message === '404') {
+            alert('No such repository found! Please ensure the authenticated user is a contributor.');
+            setContributors([]);
+          } else {
+            console.error(error);
+          }
+        });
   }
 
   async function getCommits(contributor, start, end) {
@@ -186,13 +177,13 @@ function App() {
 
     await fetch(
       "http://localhost:9000/getCommits?repo=" +
-        selectedRepo +
-        "&author=" +
-        contributor +
-        "&since=" +
-        start +
-        "&until=" +
-        end,
+      selectedRepo +
+      "&author=" +
+      contributor +
+      "&since=" +
+      start +
+      "&until=" +
+      end,
       {
         method: "GET",
         headers: {
@@ -226,13 +217,13 @@ function App() {
 
     await fetch(
       "http://localhost:9000/getPRs?repo=" +
-        selectedRepo +
-        "&author=" +
-        contributor +
-        "&since=" +
-        start +
-        "&until=" +
-        end,
+      selectedRepo +
+      "&author=" +
+      contributor +
+      "&since=" +
+      start +
+      "&until=" +
+      end,
       {
         method: "GET",
         headers: {
@@ -254,6 +245,7 @@ function App() {
 
   function handleRepoDropdownChange(event) {
     setSelectedRepo(event.target.value);
+    console.log("The selected repo is => " + event.target.value);
     getRepoContributors(event.target.value);
   }
 
@@ -276,13 +268,16 @@ function App() {
       const workbook = XLSX.read(data, { type: "array" });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      const list = [];
+      const map = new Map();
+      let i = 0;
       for (let z in worksheet) {
         if (z.toString()[0] === "A") {
-          list.push(worksheet[z].v);
+            const key = i++; // use index as key
+            const value = worksheet[z].v;
+            map[key] = value;
         }
       }
-      setExcelData(list);
+      setExcelData(map);
     };
     reader.readAsArrayBuffer(file);
   }
@@ -294,8 +289,6 @@ function App() {
   };
 
   const hideOnClickOutside = (e) => {
-    // console.log(refOne.current)
-    // console.log(e.target)
     if (refOne.current && !refOne.current.contains(e.target)) {
       setOpen(false);
     }
@@ -305,19 +298,8 @@ function App() {
     repo.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return (
-    
-    
+  return ( 
     <div className="App">
-      {console.log("userdata:", userData)}
-     <Router>
-        <Routes>
-          <Route path="/cha" element={<Chart />}></Route>
-        </Routes>
-      </Router> 
-
-      
-      
       {localStorage.getItem("access_token") ? (
         <div className="mainPage">
           <div className="nav">
@@ -370,16 +352,13 @@ function App() {
 
           <div>
             <div className="tableFilter">
-              <button id="repoButton" onClick={getUserRepos} style={{}}>
-                GET REPOSITORIES
-              </button>
-              {Object.keys(repositories).length !== 0 ? (
+              {Object.keys(excelData).length !== 0 ? (
                 <>
                   <select id="repoDropdown" onChange={handleRepoDropdownChange}>
                     <option key="" value="">
                       --Please select a Repository--
                     </option>
-                    {Object.entries(repositories).map(([key, value]) => (
+                    {Object.entries(excelData).map(([key, value]) => (
                       <option key={key} value={value}>
                         {" "}
                         {value}{" "}
@@ -432,13 +411,9 @@ function App() {
                 <> </>
               )}
             </div>
-
             <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
-            
-            
-            {console.log("commits",commits)}
+            {console.log("commits", JSON.stringify(commits))}
           </div>
-          
         </div> // main page end
       ) : (
         <>
@@ -460,14 +435,11 @@ function App() {
               SIGN IN WITH GITHUB
             </Button>
           </div>
-          
         </>
       )}
 
       {/* </header> */}
-      
     </div>
-    
   );
 }
 
@@ -475,12 +447,13 @@ function AppRouter() {
   return (
     <Router>
       <Routes>
-       
         <Route path="/" element={<App />} />
+        <Route path="/home" element={<App />} />
         <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/cha" element={<Chart />}></Route>
       </Routes>
     </Router>
   );
 }
 
-export default App;
+export default AppRouter;
