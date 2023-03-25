@@ -136,6 +136,14 @@ def constructEachPullRequestEntry(pullrequest):
         pr_entry['title'] = pullrequest['title']
         pr_entry['head_branch'] = pullrequest['head']['ref']
         pr_entry['base_branch'] = pullrequest['base']['ref']
+        # pr_entry['reviewers'] = pullrequest['requested_reviewers']
+        reviewers = ", ".join([reviewer['login'] for reviewer in pullrequest['requested_reviewers']])
+        print(reviewers)
+        pr_entry['reviewers'] = reviewers
+        # if len(pullrequest['requested_reviewers']) > 0: 
+        #     for reviewer in pullrequest['requested_reviewers']:
+        #         login = reviewer['login']
+        pr_entry['review_comments'] = pullrequest['review_comments_url']
         return pr_entry
     
 def parsePullRequestData(data,contributor,startDate,endDate):
@@ -151,7 +159,8 @@ def parsePullRequestData(data,contributor,startDate,endDate):
         if(user == contributor or contributor=='all' or contributor is None):
             date = datetime.strptime(pullrequest['created_at'], '%Y-%m-%dT%H:%M:%SZ')
             formatted_date = date.strftime('%Y-%m-%d')
-            
+            logins = ", ".join([reviewer['login'] for reviewer in pullrequest['requested_reviewers']])
+            print(logins)
             if not (formatted_date >= sdate and formatted_date <= edate):
                 continue
             # parsedPRCount[formatted_date] =parsedPRCount.get(formatted_date,0)+1
