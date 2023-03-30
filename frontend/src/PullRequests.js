@@ -67,28 +67,14 @@ function Row(props) {
                     <TableCell>
                     {row.pr_details.map((detailsRow, index) => (
                         <div>
-                          {" "}
-                          <a
-                            key={index}
-                            href={detailsRow.html_url}
-                            target="_blank"
-                          >
                             {detailsRow.reviewers}
-                          </a>
                         </div>
                       ))}
                     </TableCell>
                     <TableCell>
                     {row.pr_details.map((detailsRow, index) => (
                         <div>
-                          {" "}
-                          <a
-                            key={index}
-                            href={detailsRow.html_url}
-                            target="_blank"
-                          >
-                            {detailsRow.review_comments}
-                          </a>
+                          {detailsRow.review_comments}
                         </div>
                       ))}
                     </TableCell>
