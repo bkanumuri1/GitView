@@ -44,6 +44,8 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell>PR Links</TableCell>
+                    <TableCell>Reviewers</TableCell>
+                    <TableCell>Reviewer Comments</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -59,6 +61,20 @@ function Row(props) {
                           >
                             {detailsRow.author}: {detailsRow.title}
                           </a>
+                        </div>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                    {row.pr_details.map((detailsRow, index) => (
+                        <div>
+                            {detailsRow.reviewers}
+                        </div>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                    {row.pr_details.map((detailsRow, index) => (
+                        <div>
+                          {detailsRow.review_comments}
                         </div>
                       ))}
                     </TableCell>
