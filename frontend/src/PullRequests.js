@@ -14,10 +14,43 @@ import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import TableSortLabel from '@mui/material/TableSortLabel';
 import { visuallyHidden } from '@mui/utils';
+import Checkbox from '@mui/material/Checkbox';
 
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
+  const [selected, setSelected] = React.useState([]);
+
+    // const handleSelectAllClick = (event) => {
+  //   if (event.target.checked) {
+  //     const newSelected = rows.map((n) => n.name);
+  //     setSelected(newSelected);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
+
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
+  const isSelected = (name) => selected.indexOf(name) !== -1;
 
   return (
     <React.Fragment>
@@ -50,6 +83,14 @@ function Row(props) {
                 </TableHead>
                 <TableBody>
                   <TableRow>
+                  <TableCell>
+                        <Checkbox
+                          color="primary"
+                          // checked={isItemSelected}
+                          inputProps={{
+                            // 'aria-labelledby': labelId,
+                          }} />
+                      </TableCell>
                     <TableCell>
                       {row.pr_details.map((detailsRow, index) => (
                         <div>
