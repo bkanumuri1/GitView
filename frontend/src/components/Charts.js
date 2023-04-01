@@ -6,40 +6,6 @@ import BarChart from "./BarChart";
 
 const Chart = (props) => {
     const {commitData}=props;
-
-    
-    //  const UserData = [
-    //     {
-    //       id: 1,
-    //       year: 2016,
-    //       userGain: 80000,
-    //       userLost: 823,
-    //     },
-    //     {
-    //       id: 2,
-    //       year: 2017,
-    //       userGain: 45677,
-    //       userLost: 345,
-    //     },
-    //     {
-    //       id: 3,
-    //       year: 2018,
-    //       userGain: 78888,
-    //       userLost: 555,
-    //     },
-    //     {
-    //       id: 4,
-    //       year: 2019,
-    //       userGain: 90000,
-    //       userLost: 4555,
-    //     },
-    //     {
-    //       id: 5,
-    //       year: 2020,
-    //       userGain: 4300,
-    //       userLost: 234,
-    //     },
-    //   ];
       const [userData, setUserData] = useState({
         labels: commitData.map((data) => data.date),
         datasets: [
@@ -55,6 +21,16 @@ const Chart = (props) => {
           },
         ],
       });
+      // const [stats, setStats] = useState({
+      //   labels : commitData.map((data) => data.date), 
+      //   datasets:[
+      //     {
+      //     label: "Stats", 
+      //     data: commitData.map((data) =>data.commit_details.stats.total)
+      //     }
+      //   ]
+      // })
+
       useEffect(()=>{
         setUserData({labels: commitData.map((data) => data.date),
         datasets: [
