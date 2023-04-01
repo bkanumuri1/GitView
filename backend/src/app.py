@@ -125,7 +125,7 @@ def getPRs():
     url = "https://api.github.com/repos/" + repo_name +"/pulls?state=all"
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
-    return jsonify(parsePullRequestData(response.json(),contributor,startDate,endDate))
+    return jsonify(parsePullRequestData(response.json(),repo_name, contributor,startDate,endDate))
 
 def constructEachPullRequestEntry(pullrequest):
         pr_entry = {}
@@ -136,10 +136,14 @@ def constructEachPullRequestEntry(pullrequest):
         pr_entry['title'] = pullrequest['title']
         pr_entry['head_branch'] = pullrequest['head']['ref']
         pr_entry['base_branch'] = pullrequest['base']['ref']
+        reviewers = ", ".join([reviewer['login'] for reviewer in pullrequest['requested_reviewers']])
+        pr_entry['reviewers'] = reviewers
+        pr_entry['review_comments'] = pullrequest['review_comments']
         return pr_entry
     
-def parsePullRequestData(data,contributor,startDate,endDate):
-   
+def parsePullRequestData(data,repo_name,contributor,startDate,endDate):
+    token = request.headers.get('Authorization')
+    headers = {'Authorization' : token}
     sdate = datetime.strptime(startDate, '%Y-%m-%dT%H:%M:%SZ')
     sdate = sdate.strftime('%Y-%m-%d')
     edate = datetime.strptime(endDate, '%Y-%m-%dT%H:%M:%SZ')
@@ -148,10 +152,24 @@ def parsePullRequestData(data,contributor,startDate,endDate):
     parsedPRList={}
     for pullrequest in data:
         user = pullrequest['user']['login']
+        pr_url = pullrequest['url']
+        pr_number = pr_url.rsplit('/',1)[-1]
+        url = "https://api.github.com/repos/" + repo_name + "/issues/" + pr_number + "/comments"
+        review_comments = requests.get(url, headers=headers).json()
+        filtered_comments = []
+        for comment in review_comments:
+                commented_reviewer = comment["user"]["login"]
+                review_posted = comment["body"]
+                posted_comment = commented_reviewer + " -> "+ review_posted
+                filtered_comments.append(posted_comment)
+        if filtered_comments:
+            filtered_comments = ", ".join([comment for comment in filtered_comments])
+            pullrequest['review_comments'] = filtered_comments
+        else:
+            pullrequest['review_comments'] = ''
         if(user == contributor or contributor=='all' or contributor is None):
             date = datetime.strptime(pullrequest['created_at'], '%Y-%m-%dT%H:%M:%SZ')
             formatted_date = date.strftime('%Y-%m-%d')
-            
             if not (formatted_date >= sdate and formatted_date <= edate):
                 continue
             # parsedPRCount[formatted_date] =parsedPRCount.get(formatted_date,0)+1
