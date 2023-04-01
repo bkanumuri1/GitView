@@ -240,7 +240,7 @@ def get_pull_requests():
     # .format(owner_name='bkanumuri1', repo_name='SER-517-Group-17---Github-Grading-Tool', user_login='hlakshm2')
     
     # Set the headers and access token
-    headers = {'Authorization': 'Bearer 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'}
+    headers = {'Authorization': 'Bearer <<TOKEN>>'}
     url = 'https://api.github.com/graphql'
 
     # Send the GraphQL query to the API
