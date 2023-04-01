@@ -42,7 +42,7 @@ def getUserData():
 def getRepoContributors():
     token = request.headers.get('Authorization')
     repo_name = request.args.get("repo")
-    url = "https://api.github.com/repos/"+repo_name+"/collaborators"
+    url = "https://api.github.com/repos/"+repo_name+"/collaborators?per_page=100"
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
     data=response.json()
