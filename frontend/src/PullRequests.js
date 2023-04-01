@@ -12,6 +12,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
+import Charts from "./components/PrCharts";
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
@@ -106,6 +107,8 @@ export default function PRS({ prData }) {
               ))}
             </TableBody>
           </Table>
+          skjgbsdjk
+          <Charts prData={prData}></Charts>
         </TableContainer>
       )}
     </div>
