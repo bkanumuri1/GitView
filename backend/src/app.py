@@ -122,10 +122,19 @@ def getPRs():
     contributor = request.args.get("author")
     startDate = request.args.get("since")
     endDate = request.args.get("until")
-    url = "https://api.github.com/repos/" + repo_name +"/pulls?state=all"
+    pageNumber = int(request.args.get("pageNumber"))
+    perPageRecords = request.args.get("perPage")
+    url = "https://api.github.com/repos/" + repo_name +"/pulls?state=all&page="+str(pageNumber+1)+"&per_page="+perPageRecords
+    print(url)
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
-    return jsonify(parsePullRequestData(response.json(),repo_name, contributor,startDate,endDate))
+    # print(response.headers.get('Link'))
+    # print('rel=\"next\"' in response.headers.get('Link'))
+    isNextPage = False
+    if(response.headers.get('Link') is not None):
+        isNextPage = 'rel=\"next\"' in response.headers.get('Link')
+    
+    return jsonify({"nextPage":isNextPage,"data":parsePullRequestData(response.json(),repo_name, contributor,startDate,endDate)})
 
 def constructEachPullRequestEntry(pullrequest):
         pr_entry = {}
@@ -186,6 +195,59 @@ def parsePullRequestData(data,repo_name,contributor,startDate,endDate):
         dataToSend.append(entry)
     return dataToSend
 
+
+@app.route('/pull-requests')
+def get_pull_requests():
+    # Set the GraphQL query
+    query = """
+        query {
+            
+  repository(owner: "bkanumuri1", name: "SER-517-Group-17---Github-Grading-Tool") {
+    pullRequest(number: 1) {
+      commits(first: 10) {
+        edges {
+          node {
+            commit {
+              oid
+              message
+            }
+          }
+        }
+      }
+      comments(first: 10) {
+        edges {
+          node {
+            body
+            author {
+              login
+            }
+          }
+        }
+      }
+      reviews(first: 10) {
+        edges {
+          node {
+            state
+          }
+        }
+      }
+    }
+  
+}
+
+        }
+    """
+    # .format(owner_name='bkanumuri1', repo_name='SER-517-Group-17---Github-Grading-Tool', user_login='hlakshm2')
+    
+    # Set the headers and access token
+    headers = {'Authorization': 'Bearer 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'}
+    url = 'https://api.github.com/graphql'
+
+    # Send the GraphQL query to the API
+    response = requests.post(url, json={'query': query}, headers=headers)
+
+    # Return the results
+    return response.json()
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
