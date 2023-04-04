@@ -46,10 +46,12 @@ def getRepoContributors():
     headers = {'Authorization' : token}
     response = requests.get(url,headers=headers)
     data=response.json()
-    print(response.status_code)
     if response.status_code == 200:
-        logins = [d['login'] for d in data]
-        return jsonify(logins)
+        contributors ={}
+        for d in data:
+            contributors[d['node_id']] = d['login']
+        # print(contributors)
+        return jsonify(contributors)
     else:
         print(data)
         abort(404)
@@ -61,12 +63,113 @@ def getCommits():
     contributor = request.args.get("author")
     startDate = request.args.get("since")
     endDate = request.args.get("until")
-    if (contributor == "all" or contributor == None):
-        url = "https://api.github.com/repos/" + repo_name + "/commits?since="+startDate+"&until="+endDate
-    elif(contributor != "all"):
-        url = "https://api.github.com/repos/" + repo_name + "/commits?author=" + contributor+"&since="+startDate+"&until="+endDate
-    headers = {'Authorization' : token}
-    response = requests.get(url,headers=headers)
+    owner, repo = repo_name.split('/')
+    print(contributor)
+    variables = {
+    "owner": owner,
+    "name": repo,
+    "login": contributor,
+    "after": None,
+    "since": startDate,
+    "until": endDate
+    }
+    if (contributor == "0" or contributor == None):
+        query = """
+                query ($owner: String!, $name: String!, $since: GitTimestamp!, $until: GitTimestamp!, $after: String) {
+                    repository(owner: $owner, name: $name) {
+                        refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100){
+                            nodes{
+                                name
+                                target{
+                                    ... on Commit {
+                                        history(first: 100, since: $since, until: $until, after: $after) {
+                                            pageInfo{
+                                                hasNextPage
+                                                endCursor
+                                            }
+                                            nodes{
+                                                author{
+                                                    user{
+                                                        login
+                                                    }
+                                                },
+                                                committedDate
+                                                additions
+                                                deletions
+                                                commitUrl
+                                                message
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                """
+    elif(contributor != "0"):
+        query = """
+                query ($owner: String!, $name: String!, $login: ID!, $since: GitTimestamp!, $until: GitTimestamp!, $after: String) {
+                    repository(owner: $owner, name: $name) {
+                        refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100){
+                            nodes{
+                                name
+                                target{
+                                    ... on Commit {
+                                        history(author: {id: $login}, first: 100, since: $since, until: $until, after: $after) {
+                                            pageInfo{
+                                                hasNextPage
+                                                endCursor
+                                            }
+                                            nodes{
+                                                author{
+                                                    user{
+                                                        login
+                                                    }
+                                                },
+                                                committedDate
+                                                additions
+                                                deletions
+                                                commitUrl
+                                                message
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                """
+    has_next_page = True
+    while has_next_page:
+        # Convert the query and variables to a JSON string
+        data = {
+            "query": query,
+            "variables": variables
+        }
+        json_data = json.dumps(data)
+        headers = {'Authorization' : token}
+        url = 'https://api.github.com/graphql' 
+        
+        # Send the GraphQL request
+        response = requests.post(url, headers=headers, data=json_data)
+        print(response.json())
+        # Parse the response data
+        # data = response.json()["data"]["repository"]["refs"]["nodes"]
+        # for node in data:
+        #     branch_name = node["name"]
+        #     commits = node["target"]["history"]["nodes"]
+        #     for commit in commits:
+        #         print(f"Branch: {branch_name}, Commit: {commit['oid']}")
+
+        # Check if there are more pages to fetch
+        has_next_page = response.json()["data"]["repository"]["refs"]["nodes"][0]["target"]["history"]["pageInfo"]["hasNextPage"]
+        print(has_next_page)
+        if has_next_page:
+            end_cursor = response.json()["data"]["repository"]["refs"]["nodes"][0]["target"]["history"]["pageInfo"]["endCursor"]
+            variables["after"] = end_cursor
+            
     return jsonify(parseCommitData(repo_name, response.json(), contributor, startDate, endDate))
     
 def parseCommitData(repo_name, data, contributor, startDate, endDate):
