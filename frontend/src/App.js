@@ -103,6 +103,7 @@ function App() {
           .then((data) => {
             if (data.access_token) {
               localStorage.setItem("access_token", data.access_token);
+              console.log(data.access_token);
               getUserData();
               setRerender(!rerender); // to force rerender on success
             }
@@ -110,6 +111,7 @@ function App() {
       }
       getAccessToken();
     }
+    console.log(localStorage.getItem("access_token"));
     document.addEventListener("keydown", hideOnEscape, true);
     document.addEventListener("click", hideOnClickOutside, true);
   }, []); // [] is used to run once
@@ -254,6 +256,7 @@ function App() {
 
     var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
     var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
+    console.log(event.target.value);
     getCommits(event.target.value, start, end);
     getPRs(event.target.value, start, end);
     // console.log(commits);
@@ -375,7 +378,7 @@ function App() {
                     <option value="">--Please choose a Contributor--</option>
                     <option value="0">All contributors</option>
                     {Object.entries(contributors).map(([key, value]) => (
-                    <option key={key} value={key}>{value}</option>
+                    <option key={key} value={key+":"+value}>{value}</option>
                     ))}
                     {/* {contributors.map((option, index) => (
                       <option key={index} value={option}>

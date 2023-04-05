@@ -60,7 +60,7 @@ def getRepoContributors():
 def getCommits():
     token = request.headers.get('Authorization')
     repo_name = request.args.get("repo")
-    contributor = request.args.get("author")
+    contributor = request.args.get("author").split(":")[0]
     startDate = request.args.get("since")
     endDate = request.args.get("until")
     owner, repo = repo_name.split('/')
@@ -78,6 +78,10 @@ def getCommits():
                 query ($owner: String!, $name: String!, $since: GitTimestamp!, $until: GitTimestamp!, $after: String) {
                     repository(owner: $owner, name: $name) {
                         refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100){
+                        pageInfo{
+                            hasNextPage
+                            endCursor
+                            }
                             nodes{
                                 name
                                 target{
@@ -93,6 +97,7 @@ def getCommits():
                                                         login
                                                     }
                                                 },
+                                                oid
                                                 committedDate
                                                 additions
                                                 deletions
@@ -111,7 +116,11 @@ def getCommits():
         query = """
                 query ($owner: String!, $name: String!, $login: ID!, $since: GitTimestamp!, $until: GitTimestamp!, $after: String) {
                     repository(owner: $owner, name: $name) {
-                        refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE}, first: 100){
+                        refs(refPrefix: "refs/heads/", orderBy: {direction: DESC, field: TAG_COMMIT_DATE},first:100){
+                        pageInfo{
+                            hasNextPage
+                            endCursor
+                            }
                             nodes{
                                 name
                                 target{
@@ -127,6 +136,7 @@ def getCommits():
                                                         login
                                                     }
                                                 },
+                                                oid
                                                 committedDate
                                                 additions
                                                 deletions
@@ -141,20 +151,19 @@ def getCommits():
                     }
                 }
                 """
-    has_next_page = True
-    while has_next_page:
+    # has_next_page = True
+    # while has_next_page:
         # Convert the query and variables to a JSON string
-        data = {
+    data = {
             "query": query,
             "variables": variables
         }
-        json_data = json.dumps(data)
-        headers = {'Authorization' : token}
-        url = 'https://api.github.com/graphql' 
+    json_data = json.dumps(data)
+    headers = {'Authorization' : token}
+    url = 'https://api.github.com/graphql' 
         
         # Send the GraphQL request
-        response = requests.post(url, headers=headers, data=json_data)
-        print(response.json())
+    response = requests.post(url, headers=headers, data=json_data)
         # Parse the response data
         # data = response.json()["data"]["repository"]["refs"]["nodes"]
         # for node in data:
@@ -164,65 +173,61 @@ def getCommits():
         #         print(f"Branch: {branch_name}, Commit: {commit['oid']}")
 
         # Check if there are more pages to fetch
-        has_next_page = response.json()["data"]["repository"]["refs"]["nodes"][0]["target"]["history"]["pageInfo"]["hasNextPage"]
-        print(has_next_page)
-        if has_next_page:
-            end_cursor = response.json()["data"]["repository"]["refs"]["nodes"][0]["target"]["history"]["pageInfo"]["endCursor"]
-            variables["after"] = end_cursor
-            
-    return jsonify(parseCommitData(repo_name, response.json(), contributor, startDate, endDate))
+        # has_next_page = response.json()["data"]["repository"]["refs"]["pageInfo"]["hasNextPage"]
+        # if has_next_page:
+        #     end_cursor = response.json()["data"]["repository"]["refs"]["pageInfo"]["endCursor"]
+        #     variables["after"] = end_cursor
+    print(response.json())    
+    return jsonify(parseCommitData(response.json()))
     
-def parseCommitData(repo_name, data, contributor, startDate, endDate):
-    token = request.headers.get('Authorization')
-    headers = {'Authorization' : token}
-    dataToSend = []
-    parsedCommitList={}
-    sdate = datetime.strptime(startDate, '%Y-%m-%dT%H:%M:%SZ')
-    sdate = sdate.strftime('%Y-%m-%d')
-    edate = datetime.strptime(endDate, '%Y-%m-%dT%H:%M:%SZ')
-    edate = edate.strftime('%Y-%m-%d')
-    for commit in data:
-        date = datetime.strptime(commit['commit']['author']['date'], '%Y-%m-%dT%H:%M:%SZ')
-        sha_id = commit['sha']
-        url = "https://api.github.com/repos/" + repo_name + "/commits/" + str(sha_id)
-        response = requests.get(url,headers=headers).json()
-        # print("response is here", response)
-        stats = response["stats"]
-        commit["stats"] = stats
-        formatted_date = date.strftime('%Y-%m-%d') 
-        if not (formatted_date >= sdate and formatted_date <= edate):
-                continue     
-        # parsedCommitCount[formatted_date] =parsedCommitCount.get(formatted_date,0)+1
-        if formatted_date in parsedCommitList:
-            parsedCommitList[formatted_date].append(constructEachCommitEntry(commit))
-        else:
-            parsedCommitList[formatted_date] = [constructEachCommitEntry(commit)]
 
-    for cdate in parsedCommitList.keys():
+def parseCommitData(response):
+     oidList = set()
+     nodes = response['data']['repository']['refs']['nodes']
+     parsedCommitList={}
+     dataToSend = []
+     for branch in nodes:
+          branchName = branch['name']
+          commitsOnBranch = branch['target']['history']['nodes']
+          for commit in commitsOnBranch:
+               if(commit['oid'] in oidList):
+                    continue
+               oidList.add(commit['oid'])
+               date = datetime.strptime(commit['committedDate'], '%Y-%m-%dT%H:%M:%SZ')
+               formatted_date = date.strftime('%Y-%m-%d')
+               if formatted_date in parsedCommitList:
+                    parsedCommitList[formatted_date].append(constructEachCommitEntry(commit,branchName))
+               else:
+                    parsedCommitList[formatted_date] = [constructEachCommitEntry(commit,branchName)]
+    
+     for cdate in parsedCommitList.keys():
         entry = {}
         entry['date'] = cdate
         entry['commit_count'] = len(parsedCommitList.get(cdate))
         entry['commit_details'] = parsedCommitList.get(cdate)
         dataToSend.append(entry)
-    return dataToSend
-
-def constructEachCommitEntry(commit):
+    
+     print(dataToSend)
+     return dataToSend
+          
+def constructEachCommitEntry(commit,branchName):
         commmit_entry = {}
-        commmit_entry['sha'] = commit['sha']
-        commmit_entry['date'] = commit['commit']['author']['date']
-        commmit_entry['author'] = {'name':commit['commit']['author']['name'],'login':commit['author']['login']}
-        commmit_entry['html_url'] = commit['html_url']
-        commmit_entry['message'] = commit['commit']['message']
-        commmit_entry['stats'] = commit['stats']
-        commmit_entry['comment'] = {'comment_count':commit['commit']['comment_count'],'comments_url':commit['comments_url']}
+        commmit_entry['oid'] = commit['oid']
+        commmit_entry['branch'] = branchName
+        commmit_entry['additions'] = commit['additions']
+        commmit_entry['deletions'] = commit['deletions']
+        commmit_entry['author'] = commit['author']['user']['login']
+        commmit_entry['html_url'] = commit['commitUrl']
+        commmit_entry['message'] = commit['message']
         return commmit_entry
-# /repos/:owner/:repo/pulls?state=all&creator=:username
+
+
 
 @app.route('/getPRs', methods=['GET'])
 def getPRs():
     token = request.headers.get('Authorization')
     repo_name = request.args.get("repo")
-    contributor = request.args.get("author")
+    contributor = request.args.get("author").split(":")[1]
     startDate = request.args.get("since")
     endDate = request.args.get("until")
     url = "https://api.github.com/repos/" + repo_name +"/pulls?state=all"

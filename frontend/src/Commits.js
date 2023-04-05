@@ -8,88 +8,92 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from '@mui/material/TableSortLabel';
+import TableSortLabel from "@mui/material/TableSortLabel";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import Chart from "./components/Charts";
-import { visuallyHidden } from '@mui/utils';
+import { visuallyHidden } from "@mui/utils";
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   return (
     <>
-    
-    <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell scope="row" align="center">
-          {row.date}
-        </TableCell>
-        <TableCell align="center">{row.commit_count}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Commit Links</TableCell>
-                    <TableCell>Additions</TableCell>
-                    <TableCell>Deletions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      {row.commit_details.map((detailsRow, index) => (
-                        <div>
-                          {" "}
-                          <a
-                            key={index}
-                            href={detailsRow.html_url}
-                            target="_blank"
-                          >
-                            {detailsRow.author.login}: {detailsRow.message}
-                          </a>
-                        </div>
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                    {row.commit_details.map((detailsRow, index) => (
-                        <div>
-                          {" "}
-                          <p style={{color:"green"}}>+{detailsRow.stats.additions}</p>                         
-                        </div>
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                    {row.commit_details.map((detailsRow, index) => (
-                        <div>
-                          {" "}
-                          <p style={{color:"red"}}>-{detailsRow.stats.deletions}</p>                         
-                        </div>
-                      ))}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-      
-    </React.Fragment>      
+      <React.Fragment>
+        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell scope="row" align="center">
+            {row.date}
+          </TableCell>
+          <TableCell align="center">{row.commit_count}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 1 }}>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Commit Links</TableCell>
+                      <TableCell>Additions</TableCell>
+                      <TableCell>Deletions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>
+                        {row.commit_details.map((detailsRow, index) => (
+                          <div>
+                            {" "}
+                            <p style={{ color: "black" }}>
+                              <a
+                                key={index}
+                                href={detailsRow.html_url}
+                                target="_blank"
+                              >
+                                {detailsRow.author}: {detailsRow.message}
+                              </a>
+                            </p>
+                          </div>
+                        ))}
+                      </TableCell>
+                      <TableCell>
+                        {row.commit_details.map((detailsRow, index) => (
+                          <div>
+                            {" "}
+                            <p style={{ color: "green" }}>
+                              +{detailsRow.additions}
+                            </p>
+                          </div>
+                        ))}
+                      </TableCell>
+                      <TableCell>
+                        {row.commit_details.map((detailsRow, index) => (
+                          <div>
+                            {" "}
+                            <p style={{ color: "red" }}>
+                              -{detailsRow.deletions}
+                            </p>
+                          </div>
+                        ))}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
     </>
   );
 }
@@ -108,7 +112,6 @@ Row.propTypes = {
   }).isRequired,
 };
 
-
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -120,7 +123,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === 'desc'
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -149,16 +152,16 @@ const headCells = [
   //   label: 'Details',
   // },
   {
-    id: 'date',
+    id: "date",
     numeric: false,
     disablePadding: false,
-    label: 'Date',
+    label: "Date",
   },
   {
-    id: 'commit_count',
+    id: "commit_count",
     numeric: true,
     disablePadding: false,
-    label: 'Commits',
+    label: "Commits",
   },
 ];
 
@@ -178,24 +181,24 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-      <TableCell>Details</TableCell>
+        <TableCell>Details</TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align="center"
             // align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
+              direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -210,23 +213,21 @@ EnhancedTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
 };
 
 export default function Commits({ commits }) {
-
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('Commits');
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("Commits");
   const [selected, setSelected] = React.useState([]);
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
 
   return (
     <div>
@@ -243,13 +244,12 @@ export default function Commits({ commits }) {
               onRequestSort={handleRequestSort}
               rowCount={commits.length}
             />
-            <TableBody >
-              {stableSort(commits, getComparator(order, orderBy))
-                .map((row, index) => {
-                  return (
-                    <Row key={index} row={row} />
-                  );
-                })}
+            <TableBody>
+              {stableSort(commits, getComparator(order, orderBy)).map(
+                (row, index) => {
+                  return <Row key={index} row={row} />;
+                }
+              )}
             </TableBody>
           </Table>
           <Chart commitData={commits} />
