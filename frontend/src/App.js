@@ -23,26 +23,6 @@ import BarChart from "./components/BarChart";
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
 
-  const lineChartData = {
-    labels: ["October", "November", "December"],
-    datasets: [
-      {
-        data: [8137119, 9431691, 10266674],
-        label: "Infected",
-        borderColor: "#3333ff",
-        fill: true,
-        lineTension: 0.5
-      },
-      {
-        data: [1216410, 1371390, 1477380],
-        label: "Deaths",
-        borderColor: "#ff3333",
-        backgroundColor: "rgba(255, 0, 0, 0.5)",
-        fill: true,
-        lineTension: 0.5
-      }
-    ]
-  };
   const [rerender, setRerender] = useState(false);
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
@@ -109,9 +89,11 @@ function App() {
       }
       getAccessToken();
     }
-    console.log(localStorage.getItem("access_token"));
+    console.log("local storage"+ localStorage.getItem("access_token"));
+    getUserData();
     document.addEventListener("keydown", hideOnEscape, true);
     document.addEventListener("click", hideOnClickOutside, true);
+    
   }, []); // [] is used to run once
 
   function loginWithGithub() {
@@ -199,16 +181,6 @@ function App() {
       });
   }
 
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const formattedDate = date.toLocaleDateString("en-GB", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return formattedDate;
-  }
-
   async function getPRs(contributor, start, end) {
     // var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
     // var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
@@ -237,10 +209,6 @@ function App() {
       .then((data) => {
         setPRs(data);
       });
-  }
-
-  function handleSearch(event) {
-    setSearchTerm(event.target.value);
   }
 
   function handleRepoDropdownChange(event) {
