@@ -56,6 +56,24 @@ const Chart = (props) => {
           },
         ],
       });
+      useEffect(()=>{
+        setUserData({labels: commitData.map((data) => data.date),
+        datasets: [
+          {
+            label: "Commits",
+            data: commitData.map((data) => data.commit_count),
+            backgroundColor: [
+              "rgba(75,192,192,1)",
+              
+            ],
+            borderColor: "black",
+            borderWidth: 2,
+          },
+        ],
+      })
+        console.log("z")
+      },[commitData]
+      )
   return (
     <>{console.log("ppppppp",userData)}
     <BarChart chartData={userData} />
