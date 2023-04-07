@@ -251,7 +251,7 @@ export default function PRS({ prData }) {
                 })}
             </TableBody>
           </Table>
-          skjgbsdjk
+          
           <Charts prData={prData}></Charts>
         </TableContainer>
       )}
