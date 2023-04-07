@@ -375,7 +375,7 @@ function App() {
                     onChange={handleContributorDropdownChange}
                   >
                     <option value="">--Please choose a Contributor--</option>
-                    <option value="0">All contributors</option>
+                    <option value="0:0">All contributors</option>
                     {Object.entries(contributors).map(([key, value]) => (
                     <option key={key} value={key+":"+value}>{value}</option>
                     ))}
