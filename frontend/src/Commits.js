@@ -104,7 +104,7 @@ Row.propTypes = {
     commit_count: PropTypes.number.isRequired,
     commit_details: PropTypes.arrayOf(
       PropTypes.shape({
-        author: PropTypes.object.isRequired,
+        author: PropTypes.string.isRequired,
         html_url: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
       })
@@ -145,12 +145,6 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  // {
-  //   id: 'details',
-  //   numeric: false,
-  //   disablePadding: true,
-  //   label: 'Details',
-  // },
   {
     id: "date",
     numeric: false,
@@ -164,6 +158,9 @@ const headCells = [
     label: "Commits",
   },
 ];
+
+const DEFAULT_ORDER = 'desc';
+const DEFAULT_ORDER_BY = 'date';
 
 function EnhancedTableHead(props) {
   const {
@@ -219,8 +216,8 @@ EnhancedTableHead.propTypes = {
 };
 
 export default function Commits({ commits }) {
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("Commits");
+  const [order, setOrder] = React.useState(DEFAULT_ORDER);
+  const [orderBy, setOrderBy] = React.useState(DEFAULT_ORDER_BY);
   const [selected, setSelected] = React.useState([]);
 
   const handleRequestSort = (event, property) => {
@@ -252,7 +249,7 @@ export default function Commits({ commits }) {
               )}
             </TableBody>
           </Table>
-          <Chart commitData={commits} />
+          {/* <Chart commitData={commits} /> */}
         </TableContainer>
       )}
     </div>

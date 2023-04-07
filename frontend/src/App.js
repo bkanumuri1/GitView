@@ -77,7 +77,6 @@ function App() {
     var end = selectedDates.selection.endDate.toISOString().slice(0, -5) + "Z";
     getCommits(selectedContributor, start, end);
     getPRs(selectedContributor, start, end);
-    // console.log(selectedDates);
   };
   const [open, setOpen] = useState(false);
 
@@ -418,8 +417,7 @@ function App() {
                 <> </>
               )}
             </div>
-            <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
-            {console.log("commits", JSON.stringify(commits))}
+            <FullWidthTabs commitData={commits} prData={PRs} dates={selectedDates}></FullWidthTabs>
           </div>
         </div> // main page end
       ) : (
