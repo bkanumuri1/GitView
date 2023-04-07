@@ -21,7 +21,7 @@ function Row(props) {
   return (
     <>
       <React.Fragment>
-        <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableRow sx={{ "& > *": { borderBottom: "unset" } , backgroundColor: '#f5f5f5'}}>
           <TableCell>
             <IconButton
               aria-label="expand row"
@@ -31,21 +31,21 @@ function Row(props) {
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </TableCell>
-          <TableCell scope="row" align="center">
+          <TableCell sx={{ fontSize: '14px' }} scope="row" align="center">
             {row.date}
           </TableCell>
-          <TableCell align="center">{row.commit_count}</TableCell>
+          <TableCell sx={{ fontSize: '14px' }} align="center">{row.commit_count}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }}>
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Commit Links</TableCell>
-                      <TableCell>Additions</TableCell>
-                      <TableCell>Deletions</TableCell>
+                <Table size="small" aria-label="purchases" sx={{ width: '100%' }}>
+                  <TableHead sx={{ backgroundColor: '#BEC3C4' }}>
+                    <TableRow >
+                      <TableCell sx={{ fontSize: '16px', fontWeight: 'bold' }}>Commit Links</TableCell>
+                      <TableCell sx={{ fontSize: '16px', fontWeight: 'bold' }}>Additions</TableCell>
+                      <TableCell sx={{ fontSize: '16px', fontWeight: 'bold' }}>Deletions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -178,11 +178,12 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell>Details</TableCell>
+        <TableCell sx={{ fontSize: '16px', fontWeight: 'bold', backgroundColor: '#BEC3C4' }}>Details</TableCell>
         {headCells.map((headCell) => (
-          <TableCell
+          <TableCell 
             key={headCell.id}
             align="center"
+            sx={{ fontSize: '16px', fontWeight: 'bold', backgroundColor : '#BEC3C4' }}
             // align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}

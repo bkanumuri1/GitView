@@ -15,7 +15,6 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import * as React from "react";
 import { BrowserRouter } from 'react-router-dom'
-
 import FullWidthTabs from "./FullWidthTabs";
 import Chart from "./components/Charts";
 import { Line } from "react-chartjs-2";
@@ -149,23 +148,23 @@ function App() {
       }
     )
       .then((response) => {
-          if (!response.ok) {
-            throw new Error(response.status);
-          }
-          return response.json();
-        })
-        .then(data => {
-          setContributors(data);
-          // handle successful response
-        })
-        .catch(error => {
-          if (error.message === '404') {
-            alert('No such repository found! Please ensure the authenticated user is a contributor.');
-            setContributors(new Map());
-          } else {
-            console.error(error);
-          }
-        });
+        if (!response.ok) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        setContributors(data);
+        // handle successful response
+      })
+      .catch(error => {
+        if (error.message === '404') {
+          alert('No such repository found! Please ensure the authenticated user is a contributor.');
+          setContributors(new Map());
+        } else {
+          console.error(error);
+        }
+      });
   }
 
   async function getCommits(contributor, start, end) {
@@ -258,7 +257,7 @@ function App() {
     console.log(event.target.value);
     getCommits(event.target.value, start, end);
     getPRs(event.target.value, start, end);
-    // console.log(commits);
+    // console.log(JSON.stringify(commits));
 
   }
 
@@ -274,9 +273,9 @@ function App() {
       let i = 0;
       for (let z in worksheet) {
         if (z.toString()[0] === "A") {
-            const key = i++; // use index as key
-            const value = worksheet[z].v;
-            map[key] = value;
+          const key = i++; // use index as key
+          const value = worksheet[z].v;
+          map[key] = value;
         }
       }
       setExcelData(map);
@@ -300,7 +299,7 @@ function App() {
     repo.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return ( 
+  return (
     <div className="App">
       {localStorage.getItem("access_token") ? (
         <div className="mainPage">
@@ -377,7 +376,7 @@ function App() {
                     <option value="">--Please choose a Contributor--</option>
                     <option value="0:0">All contributors</option>
                     {Object.entries(contributors).map(([key, value]) => (
-                    <option key={key} value={key+":"+value}>{value}</option>
+                      <option key={key} value={key + ":" + value}>{value}</option>
                     ))}
                     {/* {contributors.map((option, index) => (
                       <option key={index} value={option}>
