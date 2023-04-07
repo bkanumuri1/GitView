@@ -47,7 +47,7 @@ function App() {
   const [rerender, setRerender] = useState(false);
   const [userData, setUserData] = useState({});
   const [repositories, setRepositories] = useState([]);
-  const [contributors, setContributors] = useState([]);
+  const [contributors, setContributors] = useState(new Map());
   const [commits, setCommits] = useState([]);
   const [PRs, setPRs] = useState([]);
   const [repos, setRepos] = useState([]);
@@ -77,7 +77,6 @@ function App() {
     var end = selectedDates.selection.endDate.toISOString().slice(0, -5) + "Z";
     getCommits(selectedContributor, start, end);
     getPRs(selectedContributor, start, end);
-    // console.log(selectedDates);
   };
   const [open, setOpen] = useState(false);
 
@@ -103,6 +102,7 @@ function App() {
           .then((data) => {
             if (data.access_token) {
               localStorage.setItem("access_token", data.access_token);
+              console.log(data.access_token);
               getUserData();
               setRerender(!rerender); // to force rerender on success
             }
@@ -110,6 +110,7 @@ function App() {
       }
       getAccessToken();
     }
+    console.log(localStorage.getItem("access_token"));
     document.addEventListener("keydown", hideOnEscape, true);
     document.addEventListener("click", hideOnClickOutside, true);
   }, []); // [] is used to run once
@@ -160,7 +161,7 @@ function App() {
         .catch(error => {
           if (error.message === '404') {
             alert('No such repository found! Please ensure the authenticated user is a contributor.');
-            setContributors([]);
+            setContributors(new Map());
           } else {
             console.error(error);
           }
@@ -254,6 +255,7 @@ function App() {
 
     var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
     var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
+    console.log(event.target.value);
     getCommits(event.target.value, start, end);
     getPRs(event.target.value, start, end);
     // console.log(commits);
@@ -365,6 +367,7 @@ function App() {
                       </option>
                     ))}
                   </select>
+
                   <select
                     style={{ marginLeft: 10 }}
                     id="contributorDropdown"
@@ -372,13 +375,16 @@ function App() {
                     onChange={handleContributorDropdownChange}
                   >
                     <option value="">--Please choose a Contributor--</option>
-                    <option value="all">All contributors</option>
-                    {contributors.map((option, index) => (
+                    <option value="0:0">All contributors</option>
+                    {Object.entries(contributors).map(([key, value]) => (
+                    <option key={key} value={key+":"+value}>{value}</option>
+                    ))}
+                    {/* {contributors.map((option, index) => (
                       <option key={index} value={option}>
                         {" "}
                         {option}{" "}
                       </option>
-                    ))}
+                    ))} */}
                   </select>
 
                   <div className="calendarWrap">
@@ -411,8 +417,7 @@ function App() {
                 <> </>
               )}
             </div>
-            <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
-            {console.log("commits", JSON.stringify(commits))}
+            <FullWidthTabs commitData={commits} prData={PRs} dates={selectedDates}></FullWidthTabs>
           </div>
         </div> // main page end
       ) : (

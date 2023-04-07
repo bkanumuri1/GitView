@@ -12,8 +12,23 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
-import TableSortLabel from '@mui/material/TableSortLabel';
-import { visuallyHidden } from '@mui/utils';
+import TableSortLabel from "@mui/material/TableSortLabel";
+import { visuallyHidden } from "@mui/utils";
+
+function Comments({ comment }) {
+  return (
+    <Table>
+      <TableBody>
+        {comment.map((row) => (
+          <TableRow>
+            <TableCell>{row.author}</TableCell>
+            <TableCell>{row.comment}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
 
 function Row(props) {
   const { row } = props;
@@ -21,7 +36,7 @@ function Row(props) {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -44,41 +59,55 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell>PR Links</TableCell>
+                    <TableCell>Status</TableCell>
                     <TableCell>Reviewers</TableCell>
-                    <TableCell>Reviewer Comments</TableCell>
+                    <TableCell>
+                      <TableRow colSpan="2">Reviews</TableRow>
+                      <TableRow>
+                        <TableCell>Author</TableCell>
+                        <TableCell>Comment</TableCell>
+                      </TableRow>
+                    </TableCell>
+                    <TableCell>
+                      <TableRow colSpan="2">Comments</TableRow>
+                      <TableRow>
+                        <TableCell>Author</TableCell>
+                        <TableCell>Comment</TableCell>
+                      </TableRow>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      {row.pr_details.map((detailsRow, index) => (
-                        <div>
-                          {" "}
-                          <a
-                            key={index}
-                            href={detailsRow.html_url}
-                            target="_blank"
-                          >
-                            {detailsRow.author}: {detailsRow.title}
-                          </a>
-                        </div>
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                    {row.pr_details.map((detailsRow, index) => (
-                        <div>
-                            {detailsRow.reviewers}
-                        </div>
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                    {row.pr_details.map((detailsRow, index) => (
-                        <div>
-                          {detailsRow.review_comments}
-                        </div>
-                      ))}
-                    </TableCell>
-                  </TableRow>
+                  {row.pr_details.map((detailsRow, index) => (
+                    <>
+                      <TableRow key={index}>
+                        <TableCell>
+                          <div>
+                            {" "}
+                            <a
+                              key={index}
+                              href={detailsRow.url}
+                              target="_blank"
+                            >
+                              {detailsRow.author}: {detailsRow.title}
+                            </a>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>{detailsRow.state}</div>
+                        </TableCell>
+                        <TableCell>
+                          <p>{detailsRow.reviewers.join(", ")}</p>
+                        </TableCell>
+                        <TableCell>
+                          <Comments comment={detailsRow.reviews}></Comments>
+                        </TableCell>
+                        <TableCell>
+                          <Comments comment={detailsRow.comments}></Comments>
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  ))}
                 </TableBody>
               </Table>
             </Box>
@@ -103,7 +132,6 @@ Row.propTypes = {
   }).isRequired,
 };
 
-
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -115,7 +143,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === 'desc'
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -137,23 +165,17 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  // {
-  //   id: 'details',
-  //   numeric: false,
-  //   disablePadding: true,
-  //   label: 'Details',
-  // },
   {
-    id: 'date',
+    id: "date",
     numeric: false,
     disablePadding: false,
-    label: 'Date',
+    label: "Date",
   },
   {
-    id: 'pr_count',
+    id: "pr_count",
     numeric: true,
     disablePadding: false,
-    label: 'Pull Requests',
+    label: "Pull Requests",
   },
 ];
 
@@ -179,18 +201,18 @@ function EnhancedTableHead(props) {
             key={headCell.id}
             align="center"
             // align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
+              direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -205,23 +227,21 @@ EnhancedTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
 };
 
 export default function PRS({ prData }) {
-
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('prData');
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("prData");
   const [selected, setSelected] = React.useState([]);
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
 
   return (
     <div>
@@ -238,13 +258,12 @@ export default function PRS({ prData }) {
               onRequestSort={handleRequestSort}
               rowCount={prData.length}
             />
-            <TableBody >
-              {stableSort(prData, getComparator(order, orderBy))
-                .map((row, index) => {
-                  return (
-                    <Row key={index} row={row} />
-                  );
-                })}
+            <TableBody>
+              {stableSort(prData, getComparator(order, orderBy)).map(
+                (row, index) => {
+                  return <Row key={index} row={row} />;
+                }
+              )}
             </TableBody>
           </Table>
         </TableContainer>
