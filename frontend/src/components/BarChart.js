@@ -5,9 +5,9 @@ import { Chart as ChartJS } from "chart.js/auto";
 
 function BarChart({ chartData }) {
   return <div style={{ position: "relative", margin: "auto", width: "80vw", height: '40vh' }}> <Bar data={chartData}   />
-  <Line data={chartData}/>
+  {/* <Line data={chartData}/>
   <Doughnut data={chartData} />
-  <Pie data={chartData}/>
+  <Pie data={chartData}/> */}
   
   
   </div>;
