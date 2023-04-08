@@ -69,9 +69,43 @@ const Chart = (props) => {
     pieCommitData.push(result[pieCommitDataLabels[i]]);
     i = i + 1;
   }
+
+  const pieChartData = {
+    "labels": pieCommitDataLabels,
+    "datasets": [
+      {
+        "label": "Total Contributions",
+        "data": pieCommitData,
+        "backgroundColor": [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#6C757D',
+          '#28A745',
+          '#007BFF',
+          '#DC3545',
+          '#F0AD4E',
+        ],
+        hoverBackgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#6C757D',
+          '#28A745',
+          '#007BFF',
+          '#DC3545',
+          '#F0AD4E',
+        ],
+        "borderColor": "black",
+        "borderWidth": 2
+      }
+    ]
+  }
+  
   return (
     <>{console.log("ccccccc", commitData)}
       <BarChart chartData={userData} />
+      <PieChart chartData={pieChartData} />
     </>
   );
 };
