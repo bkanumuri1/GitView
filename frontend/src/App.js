@@ -412,7 +412,7 @@ function App() {
               )}
             </div>
             <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
-            {console.log("commits", JSON.stringify(commits))}
+            {/* {console.log("commits", JSON.stringify(commits))} */}
           </div>
         </div> // main page end
       ) : (
