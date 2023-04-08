@@ -1,13 +1,26 @@
-html, body {
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../assets/Montserrat.ttf');
+}
+html{
+  font-family: 'Montserrat';
+}
+body {
   height: 100%;
   margin: 0;
+  font-family: 'Montserrat';
 }
 
 .App {
-  background-color:  #4a90d5;
+  font-family: 'Montserrat';
+  background-color: #4a90d5;
   text-align: center;
   height: 100%;
   min-height: 100vh;
+}
+
+code {
+  font-family: 'Montserrat';
 }
 
 .App-logo {
@@ -28,7 +41,7 @@ html, body {
 .App-header {
   /* background-color: #282c34;
    */
-  background-color:  #4a90d5;
+  background-color: #4a90d5;
   /* background-color:#fceed1; */
   min-height: 100vh;
   display: flex;
@@ -75,21 +88,20 @@ html, body {
 #repoButton {
   color: white;
   background-color: #0d0d0d;
-  padding: 10px 20px; 
-  border-radius: 15px; 
-  font-family: "Arial", sans-serif; 
+  padding: 10px 20px;
+  border-radius: 15px;
+  font-family: "Arial", sans-serif;
   font-size: 16px;
-  margin: 10px 0; 
-  text-transform: uppercase; 
-  letter-spacing: 1px; 
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3); 
-  border: none; 
-  cursor: pointer; 
+  margin: 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+  border: none;
+  cursor: pointer;
   margin-right: 20px;
 }
 
 .card {
-
   overflow: hidden;
   background-color: #0d0d0d;
   border-radius: 20px;
@@ -97,7 +109,7 @@ html, body {
   text-align: center;
   padding-top: 100px;
   width: 900px;
-  color:white;
+  color: white;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -105,7 +117,6 @@ html, body {
 }
 
 .newCard {
-
   display: flex;
   justify-content: center;
 }
@@ -139,9 +150,8 @@ html, body {
 }
 
 .date {
-
   width: 260;
-  display: 'block';
+  display: "block";
 }
 
 input.inputBox {
@@ -152,13 +162,12 @@ input.inputBox {
   width: max-content;
   align-items: center;
   background-color: rgb(199, 199, 203);
-  
 }
 
 .calendarWrap {
   display: inline-block;
   position: relative;
-  margin-left: 30px;
+  margin-left: 50px;
   z-index: 9999;
 }
 
@@ -172,4 +181,4 @@ input.inputBox {
   width: 230px; 
   max-height: 300px; 
   overflow-y: auto; */
-} 
+}
