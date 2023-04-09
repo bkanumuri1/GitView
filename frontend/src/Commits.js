@@ -249,7 +249,6 @@ export default function Commits({ commits }) {
               )}
             </TableBody>
           </Table>
-          {/* <Chart commitData={commits} /> */}
         </TableContainer>
       )}
     </div>

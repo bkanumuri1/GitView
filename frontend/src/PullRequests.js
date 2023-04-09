@@ -17,6 +17,7 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import { visuallyHidden } from "@mui/utils";
 import Chip from "@mui/material/Chip";
 import TransitionsPopper from "./components/TransitionsPopper";
+import Charts from "./components/PrCharts";
 import { GitMergeIcon } from '@primer/octicons';
 
 
@@ -295,6 +296,7 @@ export default function PRS({ prData }) {
               )}
             </TableBody>
           </Table>
+          {/* <Charts prData={prData}></Charts> */}
         </TableContainer>
       )}
     </div>

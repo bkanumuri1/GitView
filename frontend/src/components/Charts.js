@@ -19,23 +19,23 @@ const Chart = (props) => {
       const obj = commitData.find((d) => moment(d.date).format('YYYY-MM-DD') === date);
       return { date, count: obj ? obj.commit_count : 0 };
     });
+    const [userData, setUserData] = useState({
+      labels: chartCommitMap.map((d) => d.date),
+      datasets: [
+        {
+          label: "Commits",
+          data: chartCommitMap.map((d) => d.count),
+          backgroundColor: [
+            "rgba(75,192,192,1)",
+          ],
+          borderColor: "black",
+          borderWidth: 2,
+        },
+      ],
+    });
 
-      const [userData, setUserData] = useState({
-        labels: chartCommitMap.map((d) => d.date),
-        datasets: [
-          {
-            label: "Commits",
-            data: chartCommitMap.map((d) => d.count),
-            backgroundColor: [
-              "rgba(75,192,192,1)",
-            ],
-            borderColor: "black",
-            borderWidth: 2,
-          },
-        ],
-      });
-      useEffect(()=>{
-        setUserData({labels: chartCommitMap.map((d) => d.date),
+    useEffect(()=>{
+      setUserData({labels: chartCommitMap.map((d) => d.date),
         datasets: [
           {
             label: "Commits",
@@ -48,8 +48,8 @@ const Chart = (props) => {
           },
         ],
       })
-      },[commitData]
-      )
+    },[commitData])
+  
   return (
     <div>
       {commitData.length == 0 ? (
