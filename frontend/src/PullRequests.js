@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled, withStyles} from "@mui/material/styles";
+import { styled, withStyles } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
@@ -17,14 +17,14 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import { visuallyHidden } from "@mui/utils";
 import Chip from "@mui/material/Chip";
 import TransitionsPopper from "./components/TransitionsPopper";
-import { GitMergeIcon } from '@primer/octicons';
-
+import { GitMergeIcon } from "@primer/octicons";
+import Charts from "./components/PrCharts";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "#778899",
     color: theme.palette.common.black,
-    width: '200px'
+    width: "200px",
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -49,11 +49,17 @@ function Row(props) {
     <React.Fragment>
       <StyledTableRow>
         <StyledTableCell>
-          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </StyledTableCell>
-        <StyledTableCell scope="row" align="center">{row.date}</StyledTableCell>
+        <StyledTableCell scope="row" align="center">
+          {row.date}
+        </StyledTableCell>
         <StyledTableCell align="center">{row.pr_count}</StyledTableCell>
       </StyledTableRow>
       <TableRow>
@@ -80,7 +86,11 @@ function Row(props) {
                       <StyledTableRow key={index}>
                         <StyledTableCell>
                           <div>
-                            <a key={index} href={detailsRow.url} target="_blank">
+                            <a
+                              key={index}
+                              href={detailsRow.url}
+                              target="_blank"
+                            >
                               {detailsRow.author}: {detailsRow.title}
                             </a>
                           </div>
@@ -92,8 +102,12 @@ function Row(props) {
                                 {
                                   OPEN: <Chip label="open" color="success" />,
                                   CLOSED: <Chip label="closed" color="error" />,
-                                  MERGED: <Chip label="merged" color="secondary">
-                                  </Chip>
+                                  MERGED: (
+                                    <Chip
+                                      label="merged"
+                                      color="secondary"
+                                    ></Chip>
+                                  ),
                                 }[detailsRow.state]
                               }
                             </>
@@ -107,30 +121,42 @@ function Row(props) {
                         <StyledTableCell>
                           <TransitionsPopper
                             heading="Review Comments"
-                            content={detailsRow.reviews.length == 0 ? "None" :
-                            <div>
-                                {detailsRow.reviews.map((comment) => (
-                                <div dangerouslySetInnerHTML={{
-                                  __html: `${comment.author}: ${comment.comment}<br>`,
-                                    }}
-                                  />
-                                ))}
-                              </div>}
+                            content={
+                              detailsRow.reviews.length == 0 ? (
+                                "None"
+                              ) : (
+                                <div>
+                                  {detailsRow.reviews.map((comment) => (
+                                    <div
+                                      dangerouslySetInnerHTML={{
+                                        __html: `${comment.author}: ${comment.comment}<br>`,
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                              )
+                            }
                           ></TransitionsPopper>
                         </StyledTableCell>
                         <StyledTableCell>
                           <div>
-                          <TransitionsPopper
-                            heading="Issue Comments"
-                            content={detailsRow.comments.length == 0 ? "None" :
-                                <div>
+                            <TransitionsPopper
+                              heading="Issue Comments"
+                              content={
+                                detailsRow.comments.length == 0 ? (
+                                  "None"
+                                ) : (
+                                  <div>
                                     {detailsRow.comments.map((comment) => (
-                                    <div dangerouslySetInnerHTML={{
-                                      __html: `${comment.author}: ${comment.comment}<br>`,
+                                      <div
+                                        dangerouslySetInnerHTML={{
+                                          __html: `${comment.author}: ${comment.comment}<br>`,
                                         }}
                                       />
                                     ))}
-                                  </div>}
+                                  </div>
+                                )
+                              }
                             ></TransitionsPopper>
                           </div>
                         </StyledTableCell>
@@ -295,6 +321,7 @@ export default function PRS({ prData }) {
               )}
             </TableBody>
           </Table>
+          <Charts prData={prData}></Charts>
         </TableContainer>
       )}
     </div>
