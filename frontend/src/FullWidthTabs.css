@@ -1,0 +1,15 @@
+.commits-tab-container {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .commits-table-container {
+    flex: 1;
+    padding-right: 10px;
+  }
+  
+  .chart-container {
+    flex: 1;
+    padding-left: 10px;
+  }
+  
