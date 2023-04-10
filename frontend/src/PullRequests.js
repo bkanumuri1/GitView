@@ -17,7 +17,7 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import { visuallyHidden } from "@mui/utils";
 import Chip from "@mui/material/Chip";
 import TransitionsPopper from "./components/TransitionsPopper";
-import Charts from "./components/PrCharts";
+import Charts from "./components/PullRequestBarChart";
 import { GitMergeIcon } from '@primer/octicons';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({

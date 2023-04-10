@@ -11,7 +11,8 @@ import Box from "@mui/material/Box";
 import Commits from "./Commits";
 import PRS from "./PullRequests";
 import Chart from "./components/Charts";
-import Charts from "./components/PrCharts";
+import Charts from "./components/PullRequestBarChart";
+import DoughnutChart from "./components/DoughnutChart";
 
 import commits from "./Commits"
 
@@ -78,23 +79,24 @@ export default function FullWidthTabs({ commitData, prData, dates }) {
       </AppBar>
 
       <TabPanel value={value} index={0} dir={theme.direction}>
-        <div className="commits-tab-container">
-          <div className="commits-table-container">
+        <div className="tab-container">
+          <div className="table-container">
             <Commits commits={commitData}></Commits>
           </div>
-          <div className="chart-container">
+          <div>
             <Chart dates={dates} commitData={commitData} />
           </div>
         </div>
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
-      <div className="commits-tab-container">
-        <div className="commits-table-container">
+      <div className="tab-container">
+        <div className="table-container">
           <PRS prData={prData}></PRS>
         </div>
-      <div className="chart-container">
+        <div>
           <Charts prData={prData} />
-      </div>
+          <DoughnutChart />
+        </div>
       </div>  
       </TabPanel>    
     </Box>
