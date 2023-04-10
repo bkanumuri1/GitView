@@ -1,7 +1,6 @@
 import React from "react";
-import { Bar,Line } from "react-chartjs-2";
+import { Bar,Line,Doughnut,Pie } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
-import { Doughnut, Pie } from "react-chartjs-2";
 import './PullRequestsBarChart.css'
 
 function BarChart({ chartData }) {

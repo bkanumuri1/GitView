@@ -2,6 +2,7 @@ import React from "react";
 import { useState ,useEffect} from "react";
 import { Bar,Line } from "react-chartjs-2";
 import BarChart from "./BarChart";
+import PieChart from "./PieChart";
 import moment from 'moment';
 import selectedDates from '../App'
 
@@ -49,6 +50,62 @@ const Chart = (props) => {
         ],
       })
     },[commitData])
+
+    // pie chart for comparing contributor's contributions
+    const result = commitData.reduce((acc, item) => {
+      const commitDetails = item.commit_details;
+      commitDetails.forEach(detail => {
+        const loginId = detail.author;
+        const total = detail.additions + detail.deletions;
+        console.log("contr total", total);
+        if (!acc[loginId]) {
+          acc[loginId] = total;
+        } else {
+          acc[loginId] += total;
+        }
+      });
+      return acc;
+    }, {});
+  
+    const pieCommitDataLabels = Object.keys(result);
+    let pieCommitData = [];
+    let i = 0;
+    while (i < pieCommitDataLabels.length) {
+      pieCommitData.push(result[pieCommitDataLabels[i]]);
+      i = i + 1;
+    }
+
+    const pieChartData = {
+      "labels": pieCommitDataLabels,
+      "datasets": [
+        {
+          "label": "Total Contributions",
+          "data": pieCommitData,
+          "backgroundColor": [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#6C757D',
+            '#28A745',
+            '#007BFF',
+            '#DC3545',
+            '#F0AD4E',
+          ],
+          hoverBackgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#6C757D',
+            '#28A745',
+            '#007BFF',
+            '#DC3545',
+            '#F0AD4E',
+          ],
+          "borderColor": "white",
+          "borderWidth": 2
+        }
+      ]
+    }
   
   return (
     <div>
@@ -59,6 +116,7 @@ const Chart = (props) => {
       (
       <div>
         <BarChart chartData={userData} />
+        <PieChart chartData={pieChartData} />
       </div>
       )
       }
