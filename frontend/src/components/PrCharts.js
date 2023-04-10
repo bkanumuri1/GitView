@@ -17,12 +17,29 @@ const Charts = (props) => {
         borderWidth: 2,
       },
     ],
-  });
+    });
+
+    useEffect(()=>{
+
+      setUserData({labels: prData.map((d) => d.date),
+        datasets: [
+          {
+            label: "Pull Requests",
+            data: prData.map((d) => d.pr_count),
+            backgroundColor: [
+              "rgba(75,192,192,1)",
+            ],
+            borderColor: "black",
+            borderWidth: 2,
+          },
+        ],
+      })
+    },[prData])
+
   return (
-    <>
-      {console.log("ppppppp", userData)}
+    <div>
       <BarChart chartData={userData} />
-    </>
+    </div>
   );
 };
 export default Charts;

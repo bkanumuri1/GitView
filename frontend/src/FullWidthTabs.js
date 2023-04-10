@@ -11,6 +11,8 @@ import Box from "@mui/material/Box";
 import Commits from "./Commits";
 import PRS from "./PullRequests";
 import Chart from "./components/Charts";
+import Charts from "./components/PrCharts";
+
 import commits from "./Commits"
 
 function TabPanel(props) {
@@ -52,6 +54,7 @@ export default function FullWidthTabs({ commitData, prData, dates }) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     Chart(commitData);
+    Charts(prData);
   };
 
   const handleChangeIndex = (index) => {
@@ -85,7 +88,14 @@ export default function FullWidthTabs({ commitData, prData, dates }) {
         </div>
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
-        <PRS prData={prData}></PRS>
+      <div className="commits-tab-container">
+        <div className="commits-table-container">
+          <PRS prData={prData}></PRS>
+        </div>
+      <div className="chart-container">
+          <Charts prData={prData} />
+      </div>
+      </div>  
       </TabPanel>    
     </Box>
   );
