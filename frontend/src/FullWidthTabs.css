@@ -22,7 +22,7 @@
   }
   
   .chart-container {
-    flex: 2;
+    flex: 0;
     padding-left: 10px;
   }
 
