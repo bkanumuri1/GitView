@@ -25,6 +25,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import FullWidthTabs from "./FullWidthTabs";
 import Chart from "./components/Charts";
+import {UploadIcon} from '@primer/octicons-react';
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -331,21 +332,18 @@ function App() {
             >
               GIT VIEW
             </Button>
-            <input
-              type="file"
-              accept=".xlsx, .xls, .xlsm, .csv"
-              onChange={handleFileUpload}
-            />
-            <button
+            <label class="upload-file">
+              <input type="file" id="upload" name="upload" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
+                <span>
+                  <UploadIcon className="upload-icon" />
+                  Upload file
+                </span>
+              </label>
+              <button
+              className="logout-button"
               onClick={() => {
                 localStorage.clear();
                 setRerender(!rerender);
-              }}
-              style={{
-                color: "white",
-                backgroundColor: "black",
-                fontFamily: "sans-serif",
-                fontSize: 16,
               }}
             >
               Log Out
@@ -391,7 +389,7 @@ function App() {
                       </Select>
 
                       {/* <InputLabel id="contributor-label"> Select a Contributor </InputLabel> */}
-                      <Select id="contributorDropdown" labelId="contributor-label" value={selectedContributor} label="Contributor" onChange={handleContributorDropdownChange}>
+                      <Select id="repoDropdown" labelId="contributor-label" value={selectedContributor} label="Contributor" onChange={handleContributorDropdownChange}>
                         <MenuItem key="select" value="select">Select a Contributor</MenuItem>
                         <MenuItem value="0:0">All contributors</MenuItem>
                         {

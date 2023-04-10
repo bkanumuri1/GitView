@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import BarChart from "./BarChart";
+import './PullRequestsBarChart.css';
 
 const Charts = (props) => {
   const { prData } = props;
@@ -37,9 +38,7 @@ const Charts = (props) => {
     },[prData])
 
   return (
-    <div>
-      <BarChart chartData={userData} />
-    </div>
+      <BarChart chartData={userData}  />
   );
 };
 export default Charts;
