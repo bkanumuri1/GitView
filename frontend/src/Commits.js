@@ -8,16 +8,13 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from '@mui/material/TableSortLabel';
+import TableSortLabel from "@mui/material/TableSortLabel";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import Chart from "./components/Charts";
-import Checkbox from '@mui/material/Checkbox';
-
-import { visuallyHidden } from '@mui/utils';
-
+import { visuallyHidden } from "@mui/utils";
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
@@ -57,7 +54,6 @@ function Row(props) {
 
   return (
     <>
-
       <React.Fragment>
         <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
           <TableCell>
@@ -81,7 +77,6 @@ function Row(props) {
                 <Table size="small" aria-label="purchases">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Select by Date</TableCell>
                       <TableCell>Commit Links</TableCell>
                       <TableCell>Additions</TableCell>
                       <TableCell>Deletions</TableCell>
@@ -90,24 +85,18 @@ function Row(props) {
                   <TableBody>
                     <TableRow>
                       <TableCell>
-                        <Checkbox
-                          color="primary"
-                          // checked={isItemSelected}
-                          inputProps={{
-                            // 'aria-labelledby': labelId,
-                          }} />
-                      </TableCell>
-                      <TableCell>
                         {row.commit_details.map((detailsRow, index) => (
                           <div>
                             {" "}
-                            <a
-                              key={index}
-                              href={detailsRow.html_url}
-                              target="_blank"
-                            >
-                              {detailsRow.author.login}: {detailsRow.message}
-                            </a>
+                            <p style={{ color: "black" }}>
+                              <a
+                                key={index}
+                                href={detailsRow.html_url}
+                                target="_blank"
+                              >
+                                {detailsRow.author}: {detailsRow.message}
+                              </a>
+                            </p>
                           </div>
                         ))}
                       </TableCell>
@@ -115,7 +104,9 @@ function Row(props) {
                         {row.commit_details.map((detailsRow, index) => (
                           <div>
                             {" "}
-                            <p style={{ color: "green" }}>+{detailsRow.stats.additions}</p>
+                            <p style={{ color: "green" }}>
+                              +{detailsRow.additions}
+                            </p>
                           </div>
                         ))}
                       </TableCell>
@@ -123,7 +114,9 @@ function Row(props) {
                         {row.commit_details.map((detailsRow, index) => (
                           <div>
                             {" "}
-                            <p style={{ color: "red" }}>-{detailsRow.stats.deletions}</p>
+                            <p style={{ color: "red" }}>
+                              -{detailsRow.deletions}
+                            </p>
                           </div>
                         ))}
                       </TableCell>
@@ -134,7 +127,6 @@ function Row(props) {
             </Collapse>
           </TableCell>
         </TableRow>
-
       </React.Fragment>
     </>
   );
@@ -146,14 +138,13 @@ Row.propTypes = {
     commit_count: PropTypes.number.isRequired,
     commit_details: PropTypes.arrayOf(
       PropTypes.shape({
-        author: PropTypes.object.isRequired,
+        author: PropTypes.string.isRequired,
         html_url: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
       })
     ).isRequired,
   }).isRequired,
 };
-
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -166,7 +157,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === 'desc'
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -188,25 +179,22 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  // {
-  //   id: 'details',
-  //   numeric: false,
-  //   disablePadding: true,
-  //   label: 'Details',
-  // },
   {
-    id: 'date',
+    id: "date",
     numeric: false,
     disablePadding: false,
-    label: 'Date',
+    label: "Date",
   },
   {
-    id: 'commit_count',
+    id: "commit_count",
     numeric: true,
     disablePadding: false,
-    label: 'Commits',
+    label: "Commits",
   },
 ];
+
+const DEFAULT_ORDER = 'desc';
+const DEFAULT_ORDER_BY = 'date';
 
 function EnhancedTableHead(props) {
   const {
@@ -230,18 +218,18 @@ function EnhancedTableHead(props) {
             key={headCell.id}
             align="center"
             // align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
+              direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -256,23 +244,21 @@ EnhancedTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
 };
 
 export default function Commits({ commits }) {
-
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('Commits');
+  const [order, setOrder] = React.useState(DEFAULT_ORDER);
+  const [orderBy, setOrderBy] = React.useState(DEFAULT_ORDER_BY);
   const [selected, setSelected] = React.useState([]);
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
 
   return (
     <div>
@@ -289,16 +275,14 @@ export default function Commits({ commits }) {
               onRequestSort={handleRequestSort}
               rowCount={commits.length}
             />
-            <TableBody >
-              {stableSort(commits, getComparator(order, orderBy))
-                .map((row, index) => {
-                  return (
-                    <Row key={index} row={row} />
-                  );
-                })}
+            <TableBody>
+              {stableSort(commits, getComparator(order, orderBy)).map(
+                (row, index) => {
+                  return <Row key={index} row={row} />;
+                }
+              )}
             </TableBody>
           </Table>
-          <Chart commitData={commits} />
         </TableContainer>
       )}
     </div>

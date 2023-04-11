@@ -1,3 +1,4 @@
+import "./FullWidthTabs.css";
 import * as React from "react";
 import PropTypes from "prop-types";
 // import SwipeableViews from "react-swipeable-views";
@@ -10,6 +11,10 @@ import Box from "@mui/material/Box";
 import Commits from "./Commits";
 import PRS from "./PullRequests";
 import Chart from "./components/Charts";
+import Charts from "./components/PullRequestBarChart";
+import DoughnutChart from "./components/DoughnutChart";
+
+import commits from "./Commits"
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -44,13 +49,13 @@ function a11yProps(index) {
   };
 }
 
-export default function FullWidthTabs({ commitData, prData }) {
+export default function FullWidthTabs({ commitData, prData, dates }) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
     Chart(commitData);
+    Charts(prData);
   };
 
   const handleChangeIndex = (index) => {
@@ -74,12 +79,25 @@ export default function FullWidthTabs({ commitData, prData }) {
       </AppBar>
 
       <TabPanel value={value} index={0} dir={theme.direction}>
-        <Commits commits={commitData}></Commits>
-        {/* {JSON.stringify(commitData)} */}
-        
+        <div className="tab-container">
+          <div className="table-container">
+            <Commits commits={commitData}></Commits>
+          </div>
+          <div>
+            <Chart dates={dates} commitData={commitData} />
+          </div>
+        </div>
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
-        <PRS prData={prData}></PRS>
+      <div className="tab-container">
+        <div className="table-container">
+          <PRS prData={prData}></PRS>
+        </div>
+        <div>
+          <Charts prData={prData} />
+          <DoughnutChart />
+        </div>
+      </div>  
       </TabPanel>    
     </Box>
   );
