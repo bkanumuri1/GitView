@@ -94,8 +94,8 @@ export default function FullWidthTabs({ commitData, prData, dates }) {
           <PRS prData={prData}></PRS>
         </div>
         <div>
-          <Charts prData={prData} />
-          <DoughnutChart />
+          <Charts dates={dates} prData={prData} />
+          <DoughnutChart prData={prData}/>
         </div>
       </div>  
       </TabPanel>    
