@@ -1,13 +1,31 @@
 import React from "react";
-import { Bar,Line } from "react-chartjs-2";
+import { Bar,Line,Doughnut,Pie } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
+import './PullRequestsBarChart.css'
 
 function BarChart({ chartData }) {
-  return <div style={{ position: "relative", margin: "auto", width: "80vw", height: '40vh' }}> <Bar data={chartData}   />
-  <Line data={chartData}/>
-  
-  
-  </div>;
+  return (
+    <div className="chart-container">
+      <div className="chart-wrapper">
+        <Bar
+          data={chartData}
+          options={{
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
+                  },
+                },
+              ],
+            },
+          }}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default BarChart;

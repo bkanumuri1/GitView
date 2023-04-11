@@ -1,7 +1,13 @@
 import "./App.css";
 import "./components/LoginButton.css";
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
+import Box from "@mui/material/Box";
 import { AboutUs } from "./pages/AboutUs";
 import Button from "@mui/material/Button";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -14,74 +20,64 @@ import format from "date-fns/format";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import * as React from "react";
-import { BrowserRouter } from 'react-router-dom'
-
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 import FullWidthTabs from "./FullWidthTabs";
 import Chart from "./components/Charts";
-import { Line } from "react-chartjs-2";
-import BarChart from "./components/BarChart";
+import {UploadIcon} from '@primer/octicons-react';
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
-
-  const lineChartData = {
-    labels: ["October", "November", "December"],
-    datasets: [
-      {
-        data: [8137119, 9431691, 10266674],
-        label: "Infected",
-        borderColor: "#3333ff",
-        fill: true,
-        lineTension: 0.5
-      },
-      {
-        data: [1216410, 1371390, 1477380],
-        label: "Deaths",
-        borderColor: "#ff3333",
-        backgroundColor: "rgba(255, 0, 0, 0.5)",
-        fill: true,
-        lineTension: 0.5
-      }
-    ]
-  };
   const [rerender, setRerender] = useState(false);
-  const [userData, setUserData] = useState({});
-  const [repositories, setRepositories] = useState([]);
-  const [contributors, setContributors] = useState([]);
+  const [userData, setUserData] = useState("");
+  const [contributors, setContributors] = useState(new Map());
   const [commits, setCommits] = useState([]);
   const [PRs, setPRs] = useState([]);
-  const [repos, setRepos] = useState([]);
   const [selectedRepo, setSelectedRepo] = useState("");
   const [selectedContributor, setSelectedContributor] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const [excelData, setExcelData] = useState([]);
-  const [date, setDate] = useState([
-    {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
-      key: "selection",
-    },
-  ]);
-  const [selectedDates, setDateRange] = useState([
+  const [selectedDates, setDateRange] = useState(() => {
+    const defaultDateRange = [
     {
       startDate: subDays(new Date(), 30),
       endDate: new Date(),
       key: "selection",
-    },
-  ]);
+    }]
+    var start = localStorage.getItem("startDate");
+    var end = localStorage.getItem("endDate");
+    if(start && end){
+      const localDateRange = [
+        {
+          startDate:  addDays(new Date(start.slice(0, 10)), 1),
+          endDate: new Date(end.slice(0, 10)),
+          key: "selection",
+        }]
+        start = localDateRange[0].startDate.toISOString().slice(0, -5) + "Z";
+        end = localDateRange[0].endDate.toISOString().slice(0, -5) + "Z";
+        localStorage.setItem("startDate", start);
+        localStorage.setItem("endDate", end);
+      return localDateRange;
+    }
+    start = defaultDateRange[0].startDate.toISOString().slice(0, -5) + "Z";
+    end = defaultDateRange[0].endDate.toISOString().slice(0, -5) + "Z";
+    localStorage.setItem("startDate", start);
+    localStorage.setItem("endDate", end);
+    return defaultDateRange;
+  });
 
-  const handleDateChange = (selectedDates) => {
-    setDateRange([selectedDates.selection]);
-    var start =
-      selectedDates.selection.startDate.toISOString().slice(0, -5) + "Z";
-    var end = selectedDates.selection.endDate.toISOString().slice(0, -5) + "Z";
-    getCommits(selectedContributor, start, end);
-    getPRs(selectedContributor, start, end);
-    // console.log(selectedDates);
+  const handleDateChange = (selectedDate) => {
+    setDateRange([selectedDate.selection]);
+    var start = selectedDate.selection.startDate.toISOString().slice(0, -5) + "Z";
+    var end = selectedDate.selection.endDate.toISOString().slice(0, -5) + "Z";
+    localStorage.setItem("startDate", start);
+    localStorage.setItem("endDate", end);
+    getCommits(selectedRepo, selectedContributor, start, end);
+    getPRs(selectedRepo, selectedContributor, start, end);
   };
   const [open, setOpen] = useState(false);
-
   const refOne = useRef(null);
+
   // Forward the user to the github login screen (pass clientID)
   // user is now on the github side ang logs in
   // when user decides to login .. they get forwaded back to localhost
@@ -91,6 +87,39 @@ function App() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const codeParam = urlParams.get("code");
+    const username = localStorage.getItem("username");
+    if (username){
+      setUserData(username);
+    }
+    const repositories = localStorage.getItem("repositories");
+    if(repositories){
+      const repolist = JSON.parse(repositories);
+      setExcelData(repolist);
+    }
+    const contributor_list = localStorage.getItem("contributor-list");
+    if(contributor_list){
+      const contributors = JSON.parse(contributor_list);
+      setContributors(contributors);
+    }
+
+    const localselectedRepository = localStorage.getItem("selectedRepository");
+    console.log("Local Selected Repository: "+localselectedRepository);
+    const localselectedContributor = localStorage.getItem("selectedContributor");
+    const localstartDate = localStorage.getItem("startDate");
+    const localendDate = localStorage.getItem("endDate");
+    console.log(localstartDate+" : "+localendDate);
+    if(localselectedRepository && localselectedContributor && localstartDate && localendDate){
+      setSelectedRepo(localselectedRepository);
+      setSelectedContributor(localselectedContributor);
+      getCommits(localselectedRepository, localselectedContributor, localstartDate, localendDate);
+      getPRs(localselectedRepository, localselectedContributor, localstartDate, localendDate);
+      setRerender(!rerender);
+    }
+    else{
+      setSelectedRepo("select");
+      setSelectedContributor("select");
+    }
+    
     // using local storage to store access_token, help persists through login in with Github
     if (codeParam && localStorage.getItem("access_token") === null) {
       async function getAccessToken() {
@@ -103,6 +132,7 @@ function App() {
           .then((data) => {
             if (data.access_token) {
               localStorage.setItem("access_token", data.access_token);
+              console.log(data.access_token);
               getUserData();
               setRerender(!rerender); // to force rerender on success
             }
@@ -132,7 +162,8 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        setUserData(data);
+        setUserData(data.name);
+        localStorage.setItem("username", data.name);
       });
   }
 
@@ -148,27 +179,29 @@ function App() {
       }
     )
       .then((response) => {
-          if (!response.ok) {
-            throw new Error(response.status);
-          }
-          return response.json();
-        })
-        .then(data => {
-          setContributors(data);
-          // handle successful response
-        })
-        .catch(error => {
-          if (error.message === '404') {
-            alert('No such repository found! Please ensure the authenticated user is a contributor.');
-            setContributors([]);
-          } else {
-            console.error(error);
-          }
-        });
+        if (!response.ok) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setContributors(data);
+        localStorage.setItem("contributor-list", JSON.stringify(data));
+      })
+      .catch((error) => {
+        if (error.message === "404") {
+          alert(
+            "No such repository found! Please ensure the authenticated user is a contributor."
+          );
+          setContributors(new Map());
+        } else {
+          console.error(error);
+        }
+      });
   }
 
-  async function getCommits(contributor, start, end) {
-    console.log("The selected repo is => " + selectedRepo);
+  async function getCommits(repository, contributor, start, end) {
+    console.log("The selected repo is => " + repository);
     console.log("The selected user is => " + contributor);
     console.log("Access_token => " + localStorage.getItem("access_token"));
 
@@ -177,13 +210,13 @@ function App() {
 
     await fetch(
       "http://localhost:9000/getCommits?repo=" +
-      selectedRepo +
-      "&author=" +
-      contributor +
-      "&since=" +
-      start +
-      "&until=" +
-      end,
+        repository +
+        "&author=" +
+        contributor +
+        "&since=" +
+        start +
+        "&until=" +
+        end,
       {
         method: "GET",
         headers: {
@@ -199,17 +232,7 @@ function App() {
       });
   }
 
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const formattedDate = date.toLocaleDateString("en-GB", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return formattedDate;
-  }
-
-  async function getPRs(contributor, start, end) {
+  async function getPRs(repository, contributor, start, end) {
     // var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
     // var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
     // console.log("start: " + start);
@@ -217,13 +240,13 @@ function App() {
 
     await fetch(
       "http://localhost:9000/getPRs?repo=" +
-      selectedRepo +
-      "&author=" +
-      contributor +
-      "&since=" +
-      start +
-      "&until=" +
-      end,
+      repository +
+        "&author=" +
+        contributor +
+        "&since=" +
+        start +
+        "&until=" +
+        end,
       {
         method: "GET",
         headers: {
@@ -239,25 +262,21 @@ function App() {
       });
   }
 
-  function handleSearch(event) {
-    setSearchTerm(event.target.value);
-  }
-
   function handleRepoDropdownChange(event) {
     setSelectedRepo(event.target.value);
-    console.log("The selected repo is => " + event.target.value);
     getRepoContributors(event.target.value);
+    localStorage.setItem("selectedRepository", event.target.value);
   }
 
   function handleContributorDropdownChange(event) {
     setSelectedContributor(event.target.value);
-
+    localStorage.setItem("selectedContributor", event.target.value);
     var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
     var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
-    getCommits(event.target.value, start, end);
-    getPRs(event.target.value, start, end);
+    console.log(event.target.value);
+    getCommits(selectedRepo, event.target.value, start, end);
+    getPRs(selectedRepo, event.target.value, start, end);
     // console.log(commits);
-
   }
 
   function handleFileUpload(event) {
@@ -268,16 +287,16 @@ function App() {
       const workbook = XLSX.read(data, { type: "array" });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      const map = new Map();
-      let i = 0;
-      for (let z in worksheet) {
-        if (z.toString()[0] === "A") {
-            const key = i++; // use index as key
-            const value = worksheet[z].v;
-            map[key] = value;
+      const list = [];
+      for (const cell in worksheet) {
+        if (cell.toString()[0] === "A") {
+          const value = worksheet[cell].v;
+          list.push(value);
         }
       }
-      setExcelData(map);
+      setExcelData(list);
+      // console.log(list);
+      localStorage.setItem("repositories", JSON.stringify(list));
     };
     reader.readAsArrayBuffer(file);
   }
@@ -294,13 +313,9 @@ function App() {
     }
   };
 
-  const filteredRepos = repos.filter((repo) =>
-    repo.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return ( 
+  return (
     <div className="App">
-      {localStorage.getItem("access_token") ? (
+      { localStorage.getItem("access_token") ? (
         <div className="mainPage">
           <div className="nav">
             <Button
@@ -317,21 +332,18 @@ function App() {
             >
               GIT VIEW
             </Button>
-            <input
-              type="file"
-              accept=".xlsx, .xls, .xlsm, .csv"
-              onChange={handleFileUpload}
-            />
-            <button
+            <label class="upload-file">
+              <input type="file" id="upload" name="upload" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
+                <span>
+                  <UploadIcon className="upload-icon" />
+                  Upload file
+                </span>
+              </label>
+              <button
+              className="logout-button"
               onClick={() => {
-                localStorage.removeItem("access_token");
+                localStorage.clear();
                 setRerender(!rerender);
-              }}
-              style={{
-                color: "white",
-                backgroundColor: "black",
-                fontFamily: "sans-serif",
-                fontSize: 16,
               }}
             >
               Log Out
@@ -346,73 +358,81 @@ function App() {
                 justifyContent: "flex-end",
               }}
             >
-              WELCOME {userData.login}
+              WELCOME {userData}
             </Button>
           </div>
 
           <div>
-            <div className="tableFilter">
-              {Object.keys(excelData).length !== 0 ? (
+            <Box>
+              {excelData.length !== 0 ? (
                 <>
-                  <select id="repoDropdown" onChange={handleRepoDropdownChange}>
-                    <option key="" value="">
-                      --Please select a Repository--
-                    </option>
-                    {Object.entries(excelData).map(([key, value]) => (
-                      <option key={key} value={value}>
-                        {" "}
-                        {value}{" "}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    style={{ marginLeft: 10 }}
-                    id="contributorDropdown"
-                    value={selectedContributor}
-                    onChange={handleContributorDropdownChange}
-                  >
-                    <option value="">--Please choose a Contributor--</option>
-                    <option value="all">All contributors</option>
-                    {contributors.map((option, index) => (
-                      <option key={index} value={option}>
-                        {" "}
-                        {option}{" "}
-                      </option>
-                    ))}
-                  </select>
+                  <Box>
+                    <FormControl
+                      fullwidth
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      {/* <InputLabel id="repo-label">
+                        Select a Repository
+                      </InputLabel> */}
+                      <Select labelId="repo-label" id="repoDropdown" value={selectedRepo} label="Repository" onChange={handleRepoDropdownChange}>
+                        <MenuItem key="" value="select">Select a Repository</MenuItem>
+                        {
+                          Array.from(excelData).map((value, index) => (
+                          <MenuItem key={index} value={value}>{value}</MenuItem>
+                          ))
+                        }
+                        Select a Repository
+                      </Select>
 
-                  <div className="calendarWrap">
-                    <input
-                      value={`${format(
-                        selectedDates[0].startDate,
-                        "MM/dd/yyyy"
-                      )} to ${format(selectedDates[0].endDate, "MM/dd/yyyy")}`}
-                      readOnly
-                      className="inputBox"
-                      onClick={() => setOpen((open) => !open)}
-                    />
-
-                    <div ref={refOne}>
-                      {open && (
-                        <DateRangePicker
-                          onChange={handleDateChange}
-                          editableDateInputs={true}
-                          moveRangeOnFirstSelection={false}
-                          ranges={selectedDates}
-                          months={1}
-                          direction="horizontal"
-                          className="calendarElement"
+                      {/* <InputLabel id="contributor-label"> Select a Contributor </InputLabel> */}
+                      <Select id="repoDropdown" labelId="contributor-label" value={selectedContributor} label="Contributor" onChange={handleContributorDropdownChange}>
+                        <MenuItem key="select" value="select">Select a Contributor</MenuItem>
+                        <MenuItem value="0:0">All contributors</MenuItem>
+                        {
+                          Object.entries(contributors).map(([key, value]) => (
+                            <MenuItem key={key} value={key + ":" + value}>{value}</MenuItem>
+                          ))
+                        }
+                      </Select>
+                      <div className="calendarWrap">
+                        <input
+                          value={`${format(
+                            selectedDates[0].startDate,
+                            "MM/dd/yyyy"
+                          )} to ${format(
+                            selectedDates[0].endDate,
+                            "MM/dd/yyyy"
+                          )}`}
+                          readOnly
+                          className="inputBox"
+                          onClick={() => setOpen((open) => !open)}
                         />
-                      )}
-                    </div>
-                  </div>
+                        <div ref={refOne}>
+                          {open && (
+                            <DateRangePicker
+                              onChange={handleDateChange}
+                              editableDateInputs={true}
+                              moveRangeOnFirstSelection={false}
+                              ranges={selectedDates}
+                              months={1}
+                              direction="horizontal"
+                              className="calendarElement"
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </FormControl>
+                  </Box>
                 </>
               ) : (
                 <> </>
               )}
-            </div>
-            <FullWidthTabs commitData={commits} prData={PRs}></FullWidthTabs>
-            {console.log("commits", JSON.stringify(commits))}
+            </Box>
+            <FullWidthTabs commitData={commits} prData={PRs} dates={selectedDates}></FullWidthTabs>
           </div>
         </div> // main page end
       ) : (
