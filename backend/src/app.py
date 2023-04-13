@@ -161,7 +161,6 @@ def constructEachCommitEntry(commit,branchName):
              commmit_entry['author'] = commit['author']['user']['login']
         else:
              commmit_entry['author'] = 'None'
-        commmit_entry['author'] = commit['author']['user']['login']
         commmit_entry['html_url'] = commit['commitUrl']
         commmit_entry['message'] = commit['message']
         return commmit_entry
