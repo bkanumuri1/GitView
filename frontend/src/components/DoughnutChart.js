@@ -7,33 +7,19 @@ const DoughnutChart = (props) => {
   const { prData } = props
   console.log(JSON.stringify(prData))
 
-  const [chartData, setChartData] = useState({
-    labels: ['Red', 'Green', 'Blue'],
-    datasets: [
-      {
-        label: 'My Doughnut Chart',
-        data: [12, 19, 3],
-        // backgroundColor: ['purple', 'pink', 'yellow']
-      }
-    ]
-  });
+  const [chartData, setChartData] = useState({ labels: [], datasets: []});
 
   const result = prData.reduce((acc, item) => {
     const prDetails = item.pr_details;
-    // const count = item.pr_count;
-    // while(count > 0) {
-      
-    // }
-
     prDetails.forEach(detail => {
       console.log("Detail"+ JSON.stringify(detail))
       const loginId = detail.author;
       const total = item.pr_count
       console.log("PR contr total", total);
       if (!acc[loginId]) {
-        acc[loginId] = total;
+        acc[loginId] = 1;
       } else {
-        acc[loginId] += total;
+        acc[loginId] += 1;
       }
     });
     return acc;
