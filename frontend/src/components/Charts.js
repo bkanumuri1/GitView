@@ -9,6 +9,7 @@ import selectedDates from '../App'
 const Chart = (props) => {
     const {commitData}=props;
     const {dates}=props;
+    const { selectedContributor } = props;
     const chartStart = new Date(dates[0].startDate.toISOString().slice(0, 10));
     const chartEnd = new Date(dates[0].endDate.toISOString().slice(0, 10));
     const dateRange = [];
@@ -57,7 +58,6 @@ const Chart = (props) => {
       commitDetails.forEach(detail => {
         const loginId = detail.author;
         const total = detail.additions + detail.deletions;
-        console.log("contr total", total);
         if (!acc[loginId]) {
           acc[loginId] = total;
         } else {
@@ -116,7 +116,8 @@ const Chart = (props) => {
       (
       <div>
         <BarChart chartData={userData} />
-        <PieChart chartData={pieChartData} />
+        {/* when 'All contributors' is selected, the selectedContributor is set to 0:0. The Pie Chart is only displayed when 'all contributors' are selected */}
+        {selectedContributor === '0:0' && <PieChart chartData={pieChartData} />}
       </div>
       )
       }
