@@ -85,7 +85,7 @@ export default function FullWidthTabs({ commitData, prData, dates }) {
         </div>
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
-        <PRS prData={prData}></PRS>
+        <PRS prData={prData} dates={dates}></PRS>
       </TabPanel>    
     </Box>
   );

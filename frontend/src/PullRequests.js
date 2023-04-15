@@ -287,7 +287,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-export default function PRS({ prData }) {
+export default function PRS({ prData, dates}) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("prData");
   const [selected, setSelected] = React.useState([]);
@@ -321,7 +321,7 @@ export default function PRS({ prData }) {
               )}
             </TableBody>
           </Table>
-          <Charts prData={prData}></Charts>
+          <Charts prData={prData} dates={dates}></Charts>
         </TableContainer>
       )}
     </div>
