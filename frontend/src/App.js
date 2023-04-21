@@ -432,7 +432,7 @@ function App() {
                 <> </>
               )}
             </Box>
-            <FullWidthTabs commitData={commits} prData={PRs} dates={selectedDates}></FullWidthTabs>
+            <FullWidthTabs commitData={commits} prData={PRs} dates={selectedDates} selectedContributor={selectedContributor}></FullWidthTabs>
           </div>
         </div> // main page end
       ) : (
