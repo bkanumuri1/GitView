@@ -141,7 +141,6 @@ const DoughnutChart = (props) => {
           <select onChange={(event) => handleMetricChange(event.target.value)}>
             <option value="data1">PR count</option>
             <option value="data2">Reviews count</option>
-            <option value="data3">Data 3</option>
           </select>
         </div>
         <Doughnut data={chartData} options={{
