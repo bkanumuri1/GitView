@@ -1,10 +1,8 @@
 import React from "react";
 import { useState ,useEffect} from "react";
-import { Bar,Line } from "react-chartjs-2";
 import BarChart from "./BarChart";
 import PieChart from "./PieChart";
 import moment from 'moment';
-import selectedDates from '../App'
 
 const Chart = (props) => {
     const {commitData}=props;

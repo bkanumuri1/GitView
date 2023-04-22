@@ -14,8 +14,6 @@ import Chart from "./components/Charts";
 import Charts from "./components/PullRequestBarChart";
 import DoughnutChart from "./components/DoughnutChart";
 
-import commits from "./Commits"
-
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 

@@ -173,20 +173,6 @@ function Row(props) {
   );
 }
 
-// Row.propTypes = {
-//   row: PropTypes.shape({
-//     date: PropTypes.string.isRequired,
-//     commit_count: PropTypes.number.isRequired,
-//     // commit_details: PropTypes.arrayOf(
-//     //   // PropTypes.shape({
-//     //   //   author: PropTypes.object.isRequired,
-//     //   //   html_url: PropTypes.object.isRequired,
-//     //   //   message: PropTypes.string.isRequired,
-//     //   // })
-//     // ).isRequired,
-//   }).isRequired,
-// };
-
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -236,11 +222,8 @@ const headCells = [
 
 function EnhancedTableHead(props) {
   const {
-    onSelectAllClick,
     order,
     orderBy,
-    numSelected,
-    rowCount,
     onRequestSort,
   } = props;
   const createSortHandler = (property) => (event) => {
@@ -321,7 +304,6 @@ export default function PRS({ prData }) {
               )}
             </TableBody>
           </Table>
-          {/* <Charts prData={prData}></Charts> */}
         </TableContainer>
       )}
     </div>

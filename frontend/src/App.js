@@ -5,7 +5,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useNavigate,
 } from "react-router-dom";
 import Box from "@mui/material/Box";
 import { AboutUs } from "./pages/AboutUs";
@@ -276,7 +275,6 @@ function App() {
     console.log(event.target.value);
     getCommits(selectedRepo, event.target.value, start, end);
     getPRs(selectedRepo, event.target.value, start, end);
-    // console.log(commits);
   }
 
   function handleFileUpload(event) {
@@ -295,7 +293,6 @@ function App() {
         }
       }
       setExcelData(list);
-      // console.log(list);
       localStorage.setItem("repositories", JSON.stringify(list));
     };
     reader.readAsArrayBuffer(file);
@@ -375,9 +372,6 @@ function App() {
                         alignItems: "center",
                       }}
                     >
-                      {/* <InputLabel id="repo-label">
-                        Select a Repository
-                      </InputLabel> */}
                       <Select labelId="repo-label" id="repoDropdown" value={selectedRepo} label="Repository" onChange={handleRepoDropdownChange}>
                         <MenuItem key="" value="select">Select a Repository</MenuItem>
                         {
@@ -387,8 +381,6 @@ function App() {
                         }
                         Select a Repository
                       </Select>
-
-                      {/* <InputLabel id="contributor-label"> Select a Contributor </InputLabel> */}
                       <Select id="repoDropdown" labelId="contributor-label" value={selectedContributor} label="Contributor" onChange={handleContributorDropdownChange}>
                         <MenuItem key="select" value="select">Select a Contributor</MenuItem>
                         <MenuItem value="0:0">All contributors</MenuItem>
