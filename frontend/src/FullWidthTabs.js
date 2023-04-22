@@ -94,7 +94,7 @@ export default function FullWidthTabs({ commitData, prData, dates , selectedCont
           <PRS prData={prData}></PRS>
         </div>
         <div>
-          <Charts prData={prData} />
+          <Charts prData={prData} dates={dates}/>
           <DoughnutChart />
         </div>
       </div>  
