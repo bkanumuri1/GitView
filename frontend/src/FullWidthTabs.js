@@ -49,7 +49,7 @@ function a11yProps(index) {
   };
 }
 
-export default function FullWidthTabs({ commitData, prData, dates }) {
+export default function FullWidthTabs({ commitData, prData, dates , selectedContributor}) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
@@ -84,7 +84,7 @@ export default function FullWidthTabs({ commitData, prData, dates }) {
             <Commits commits={commitData}></Commits>
           </div>
           <div>
-            <Chart dates={dates} commitData={commitData} />
+            <Chart dates={dates} commitData={commitData} selectedContributor= {selectedContributor} />
           </div>
         </div>
       </TabPanel>
@@ -94,8 +94,8 @@ export default function FullWidthTabs({ commitData, prData, dates }) {
           <PRS prData={prData}></PRS>
         </div>
         <div>
-          <Charts prData={prData} />
-          <DoughnutChart />
+          <Charts dates={dates} prData={prData} />
+          <DoughnutChart prData={prData}/>
         </div>
       </div>  
       </TabPanel>    
