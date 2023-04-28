@@ -1,6 +1,4 @@
 import * as React from "react";
-import Popover from "@mui/material/Popover";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Popper from "@mui/material/Popper";
@@ -15,27 +13,34 @@ export default function TransitionsPopper({ heading, content }) {
     setOpen((previousOpen) => !previousOpen);
   }
 
-  function handleMouseLeave(event){
+  function handleMouseLeave(event) {
     setAnchorEl(null);
     setOpen(false);
-  };
+  }
 
   const canBeOpen = Boolean(anchorEl);
   const id = canBeOpen ? "transition-popover" : undefined;
-  
+
   return (
-    <div id="popper" onMouseLeave={handleMouseLeave} onMouseOver={handleMouseOver}>
-      <Button aria-describedby={id}  type="text">
+    <div
+      id="popper"
+      onMouseLeave={handleMouseLeave}
+      onMouseOver={handleMouseOver}
+    >
+      <Button aria-describedby={id} type="text">
         {heading}
       </Button>
-      <Popper id={id} open={open}
-         anchorEl={anchorEl}
-         transition
-         anchorOrigin={{
+      <Popper
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        transition
+        anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}>
-          {({ TransitionProps }) => (
+        }}
+      >
+        {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Box sx={{ border: 1, p: 1, bgcolor: "background.paper" }}>
               {content}

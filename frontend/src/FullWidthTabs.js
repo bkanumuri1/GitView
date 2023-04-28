@@ -13,9 +13,6 @@ import PRS from "./PullRequests";
 import Chart from "./components/Charts";
 import Charts from "./components/PullRequestBarChart";
 import DoughnutChart from "./components/DoughnutChart";
-
-import commits from "./Commits"
-
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -49,9 +46,15 @@ function a11yProps(index) {
   };
 }
 
-export default function FullWidthTabs({ commitData, prData, dates , selectedContributor}) {
+export default function FullWidthTabs({
+  commitData,
+  prData,
+  dates,
+  selectedContributor,
+}) {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
     Chart(commitData);
@@ -74,7 +77,7 @@ export default function FullWidthTabs({ commitData, prData, dates , selectedCont
           aria-label="full width tabs example"
         >
           <Tab label="Commits" {...a11yProps(0)} />
-          <Tab label="Pull Requests" {...a11yProps(1)} />       
+          <Tab label="Pull Requests" {...a11yProps(1)} />
         </Tabs>
       </AppBar>
 
@@ -83,22 +86,26 @@ export default function FullWidthTabs({ commitData, prData, dates , selectedCont
           <div className="table-container">
             <Commits commits={commitData}></Commits>
           </div>
-          <div>
-            <Chart dates={dates} commitData={commitData} selectedContributor= {selectedContributor} />
+          <div className="table-container">
+            <Chart
+              dates={dates}
+              commitData={commitData}
+              selectedContributor={selectedContributor}
+            />
           </div>
         </div>
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
-      <div className="tab-container">
-        <div className="table-container">
-          <PRS prData={prData}></PRS>
+        <div className="tab-container">
+          <div className="table-container">
+            <PRS prData={prData}></PRS>
+          </div>
+          <div className="table-container">
+            <Charts dates={dates} prData={prData} />
+            <DoughnutChart prData={prData} />
+          </div>
         </div>
-        <div>
-          <Charts dates={dates} prData={prData} />
-          <DoughnutChart prData={prData}/>
-        </div>
-      </div>  
-      </TabPanel>    
+      </TabPanel>
     </Box>
   );
 }

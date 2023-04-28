@@ -1,18 +1,18 @@
 @font-face {
-  font-family: 'Montserrat';
-  src: url('../assets/Montserrat.ttf');
+  font-family: "Montserrat";
+  src: url("../assets/Montserrat.ttf");
 }
-html{
-  font-family: 'Montserrat';
+html {
+  font-family: "Montserrat";
 }
 body {
   height: 100%;
   margin: 0;
-  font-family: 'Montserrat';
+  font-family: "Montserrat";
 }
 
 .App {
-  font-family: 'Montserrat';
+  font-family: "Montserrat";
   background-color: #ffffff;
   text-align: center;
   height: 100%;
@@ -20,7 +20,7 @@ body {
 }
 
 code {
-  font-family: 'Montserrat';
+  font-family: "Montserrat";
 }
 
 .App-logo {
@@ -154,13 +154,14 @@ code {
 }
 
 input.inputBox {
-  font-size: 22px;
-  padding: 5px 8px 4px 8px;
+  font-size: 15px;
+  padding: 10px;
   border-radius: 3px;
   border: 1px solid #666;
-  width: max-content;
   align-items: center;
   background-color: rgb(199, 199, 203);
+  white-space: normal !important;
+  width: 170px;
 }
 
 .calendarWrap {
@@ -185,7 +186,7 @@ input.inputBox {
   font-size: 16px;
   font-weight: 600;
   color: #fff;
-  background-color: #007bff;
+  background-color: #2074d4;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -206,7 +207,7 @@ input.inputBox {
   margin-left: 5px;
 }
 
-.logout-button:hover{
+.logout-button:hover {
   background-color: #f46161;
 }
 
@@ -217,7 +218,7 @@ input.inputBox {
   font-size: 16px;
   font-weight: 600;
   color: #fff;
-  background-color: #007bff;
+  background-color: #2074d4;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -238,8 +239,6 @@ input.inputBox {
   margin-left: 5px;
 }
 
-.upload-file:hover{
+.upload-file:hover {
   background-color: #7ff47f;
 }
-
-
