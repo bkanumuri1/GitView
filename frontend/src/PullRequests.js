@@ -24,10 +24,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "#778899",
     color: theme.palette.common.black,
-    width: "200px",
+    width: "100px",
+    textAlign: "center"
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    wordWrap: 'break-word',
   },
 }));
 

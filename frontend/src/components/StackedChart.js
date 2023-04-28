@@ -8,13 +8,13 @@ function StackedChart({ chartData }) {
     datasets: chartData.authors.map((author, i) => ({
       label: author.name,
       data: author.commits,
-      backgroundColor: `rgba(${i * 50}, ${i * 100}, ${i * 150}, 0.5)`, // example color
     })),
   };
 
   const options = {
     maintainAspectRatio: false,
     responsive: true,
+    opacity: 1,
     scales: {
       xAxes: [
         {

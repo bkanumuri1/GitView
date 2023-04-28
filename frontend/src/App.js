@@ -324,13 +324,13 @@ function App() {
                 color: "white",
                 padding: 10,
                 borderRadius: 15,
-                fontFamily: "sans-serif",
+                fontFamily: "montserrat",
                 marginRight: "400px",
                 fontSize: 16,
                 fontWeight: 600,
               }}
             >
-              GIT VIEW
+              GitView
             </Button>
             <label class="upload-file">
               <input
@@ -360,7 +360,7 @@ function App() {
                 color: "white",
                 padding: 10,
                 borderRadius: 15,
-                fontFamily: "sans-serif",
+                fontFamily: "montserrat",
                 justifyContent: "flex-end",
               }}
             >
@@ -471,9 +471,22 @@ function App() {
       ) : (
         <>
           <div className="card">
-            <h1 style={{ color: "white", fontFamily: "sans-serif" }}>
-              LOGIN TO BEGIN GRADING
-            </h1>
+            <button
+              startIcon={<AccountTreeOutlinedIcon />}
+              style={{
+                color: "black",
+                padding: 10,
+                borderRadius: 15,
+                fontSize: 40,
+                fontWeight: 600,
+                fontFamily: "montserrat",
+              }}
+            >
+              GitView
+            </button>
+            <h2>
+              Login below to 'git' grading!
+            </h2>
             <Button
               onClick={loginWithGithub}
               variant="outlined"
@@ -482,7 +495,7 @@ function App() {
                 color: "white",
                 padding: 10,
                 borderRadius: 15,
-                fontFamily: "sans-serif",
+                fontFamily: "montserrat",
               }}
             >
               SIGN IN WITH GITHUB
