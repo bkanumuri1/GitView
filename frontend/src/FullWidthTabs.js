@@ -86,7 +86,7 @@ export default function FullWidthTabs({
           <div className="table-container">
             <Commits commits={commitData}></Commits>
           </div>
-          <div className="table-container">
+          <div>
             <Chart
               dates={dates}
               commitData={commitData}
@@ -100,7 +100,7 @@ export default function FullWidthTabs({
           <div className="table-container">
             <PRS prData={prData}></PRS>
           </div>
-          <div className="table-container">
+          <div>
             <Charts dates={dates} prData={prData} />
             <DoughnutChart prData={prData} />
           </div>
