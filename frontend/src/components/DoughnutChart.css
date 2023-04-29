@@ -17,7 +17,7 @@
   
   .widget-dropdown {
     position: absolute;
-    top: 10px;
+    top: 30px;
     left: 1px;
     z-index: 1;
     background-color: white;

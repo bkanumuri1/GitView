@@ -25,7 +25,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import FullWidthTabs from "./FullWidthTabs";
 import Chart from "./components/Charts";
-import {UploadIcon} from '@primer/octicons-react';
+import { UploadIcon } from "@primer/octicons-react";
 
 const CLIENT_ID = "e7231ef0e449bce7d695";
 function App() {
@@ -39,24 +39,26 @@ function App() {
   const [excelData, setExcelData] = useState([]);
   const [selectedDates, setDateRange] = useState(() => {
     const defaultDateRange = [
-    {
-      startDate: subDays(new Date(), 30),
-      endDate: new Date(),
-      key: "selection",
-    }]
+      {
+        startDate: subDays(new Date(), 30),
+        endDate: new Date(),
+        key: "selection",
+      },
+    ];
     var start = localStorage.getItem("startDate");
     var end = localStorage.getItem("endDate");
-    if(start && end){
+    if (start && end) {
       const localDateRange = [
         {
-          startDate:  addDays(new Date(start.slice(0, 10)), 1),
+          startDate: addDays(new Date(start.slice(0, 10)), 1),
           endDate: new Date(end.slice(0, 10)),
           key: "selection",
-        }]
-        start = localDateRange[0].startDate.toISOString().slice(0, -5) + "Z";
-        end = localDateRange[0].endDate.toISOString().slice(0, -5) + "Z";
-        localStorage.setItem("startDate", start);
-        localStorage.setItem("endDate", end);
+        },
+      ];
+      start = localDateRange[0].startDate.toISOString().slice(0, -5) + "Z";
+      end = localDateRange[0].endDate.toISOString().slice(0, -5) + "Z";
+      localStorage.setItem("startDate", start);
+      localStorage.setItem("endDate", end);
       return localDateRange;
     }
     start = defaultDateRange[0].startDate.toISOString().slice(0, -5) + "Z";
@@ -68,7 +70,8 @@ function App() {
 
   const handleDateChange = (selectedDate) => {
     setDateRange([selectedDate.selection]);
-    var start = selectedDate.selection.startDate.toISOString().slice(0, -5) + "Z";
+    var start =
+      selectedDate.selection.startDate.toISOString().slice(0, -5) + "Z";
     var end = selectedDate.selection.endDate.toISOString().slice(0, -5) + "Z";
     localStorage.setItem("startDate", start);
     localStorage.setItem("endDate", end);
@@ -88,38 +91,52 @@ function App() {
     const urlParams = new URLSearchParams(queryString);
     const codeParam = urlParams.get("code");
     const username = localStorage.getItem("username");
-    if (username){
+    if (username) {
       setUserData(username);
     }
     const repositories = localStorage.getItem("repositories");
-    if(repositories){
+    if (repositories) {
       const repolist = JSON.parse(repositories);
       setExcelData(repolist);
     }
     const contributor_list = localStorage.getItem("contributor-list");
-    if(contributor_list){
+    if (contributor_list) {
       const contributors = JSON.parse(contributor_list);
       setContributors(contributors);
     }
 
     const localselectedRepository = localStorage.getItem("selectedRepository");
-    console.log("Local Selected Repository: "+localselectedRepository);
-    const localselectedContributor = localStorage.getItem("selectedContributor");
+    const localselectedContributor = localStorage.getItem(
+      "selectedContributor"
+    );
     const localstartDate = localStorage.getItem("startDate");
     const localendDate = localStorage.getItem("endDate");
-    console.log(localstartDate+" : "+localendDate);
-    if(localselectedRepository && localselectedContributor && localstartDate && localendDate){
+    if (
+      localselectedRepository &&
+      localselectedContributor &&
+      localstartDate &&
+      localendDate
+    ) {
       setSelectedRepo(localselectedRepository);
       setSelectedContributor(localselectedContributor);
-      getCommits(localselectedRepository, localselectedContributor, localstartDate, localendDate);
-      getPRs(localselectedRepository, localselectedContributor, localstartDate, localendDate);
+      getCommits(
+        localselectedRepository,
+        localselectedContributor,
+        localstartDate,
+        localendDate
+      );
+      getPRs(
+        localselectedRepository,
+        localselectedContributor,
+        localstartDate,
+        localendDate
+      );
       setRerender(!rerender);
-    }
-    else{
+    } else {
       setSelectedRepo("select");
       setSelectedContributor("select");
     }
-    
+
     // using local storage to store access_token, help persists through login in with Github
     if (codeParam && localStorage.getItem("access_token") === null) {
       async function getAccessToken() {
@@ -132,7 +149,6 @@ function App() {
           .then((data) => {
             if (data.access_token) {
               localStorage.setItem("access_token", data.access_token);
-              console.log(data.access_token);
               getUserData();
               setRerender(!rerender); // to force rerender on success
             }
@@ -168,7 +184,6 @@ function App() {
   }
 
   async function getRepoContributors(selectedValue) {
-    console.log("Repo: " + selectedValue);
     await fetch(
       "http://localhost:9000/getRepoContributors?repo=" + selectedValue,
       {
@@ -201,13 +216,6 @@ function App() {
   }
 
   async function getCommits(repository, contributor, start, end) {
-    console.log("The selected repo is => " + repository);
-    console.log("The selected user is => " + contributor);
-    console.log("Access_token => " + localStorage.getItem("access_token"));
-
-    console.log("start: " + start);
-    console.log("end: " + end);
-
     await fetch(
       "http://localhost:9000/getCommits?repo=" +
         repository +
@@ -233,14 +241,9 @@ function App() {
   }
 
   async function getPRs(repository, contributor, start, end) {
-    // var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
-    // var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
-    // console.log("start: " + start);
-    // console.log("end: " + end);
-
     await fetch(
       "http://localhost:9000/getPRs?repo=" +
-      repository +
+        repository +
         "&author=" +
         contributor +
         "&since=" +
@@ -273,10 +276,8 @@ function App() {
     localStorage.setItem("selectedContributor", event.target.value);
     var start = selectedDates[0].startDate.toISOString().slice(0, -5) + "Z";
     var end = selectedDates[0].endDate.toISOString().slice(0, -5) + "Z";
-    console.log(event.target.value);
     getCommits(selectedRepo, event.target.value, start, end);
     getPRs(selectedRepo, event.target.value, start, end);
-    // console.log(commits);
   }
 
   function handleFileUpload(event) {
@@ -295,7 +296,6 @@ function App() {
         }
       }
       setExcelData(list);
-      // console.log(list);
       localStorage.setItem("repositories", JSON.stringify(list));
     };
     reader.readAsArrayBuffer(file);
@@ -315,7 +315,7 @@ function App() {
 
   return (
     <div className="App">
-      { localStorage.getItem("access_token") ? (
+      {localStorage.getItem("access_token") ? (
         <div className="mainPage">
           <div className="nav">
             <Button
@@ -324,22 +324,28 @@ function App() {
                 color: "white",
                 padding: 10,
                 borderRadius: 15,
-                fontFamily: "sans-serif",
+                fontFamily: "montserrat",
                 marginRight: "400px",
                 fontSize: 16,
                 fontWeight: 600,
               }}
             >
-              GIT VIEW
+              GitView
             </Button>
             <label class="upload-file">
-              <input type="file" id="upload" name="upload" accept=".xlsx, .xls, .xlsm, .csv" onChange={handleFileUpload}/>
-                <span>
-                  <UploadIcon className="upload-icon" />
-                  Upload file
-                </span>
-              </label>
-              <button
+              <input
+                type="file"
+                id="upload"
+                name="upload"
+                accept=".xlsx, .xls, .xlsm, .csv"
+                onChange={handleFileUpload}
+              />
+              <span>
+                <UploadIcon className="upload-icon" />
+                Upload file
+              </span>
+            </label>
+            <button
               className="logout-button"
               onClick={() => {
                 localStorage.clear();
@@ -354,7 +360,7 @@ function App() {
                 color: "white",
                 padding: 10,
                 borderRadius: 15,
-                fontFamily: "sans-serif",
+                fontFamily: "montserrat",
                 justifyContent: "flex-end",
               }}
             >
@@ -366,7 +372,7 @@ function App() {
             <Box>
               {excelData.length !== 0 ? (
                 <>
-                  <Box>
+                  <Box padding={1} style={{ backgroundColor: "#2074d4" }}>
                     <FormControl
                       fullwidth
                       sx={{
@@ -378,26 +384,46 @@ function App() {
                       {/* <InputLabel id="repo-label">
                         Select a Repository
                       </InputLabel> */}
-                      <Select labelId="repo-label" id="repoDropdown" value={selectedRepo} label="Repository" onChange={handleRepoDropdownChange}>
-                        <MenuItem key="" value="select">Select a Repository</MenuItem>
-                        {
-                          Array.from(excelData).map((value, index) => (
-                          <MenuItem key={index} value={value}>{value}</MenuItem>
-                          ))
-                        }
-                        Select a Repository
-                      </Select>
+                      <div>
+                        <Select
+                          labelId="repo-label"
+                          id="repoDropdown"
+                          value={selectedRepo}
+                          label="Repository"
+                          onChange={handleRepoDropdownChange}
+                        >
+                          <MenuItem key="" value="select">
+                            Select a Repository
+                          </MenuItem>
+                          {Array.from(excelData).map((value, index) => (
+                            <MenuItem key={index} value={value}>
+                              {value}
+                            </MenuItem>
+                          ))}
+                          Select a Repository
+                        </Select>
+                      </div>
 
                       {/* <InputLabel id="contributor-label"> Select a Contributor </InputLabel> */}
-                      <Select id="repoDropdown" labelId="contributor-label" value={selectedContributor} label="Contributor" onChange={handleContributorDropdownChange}>
-                        <MenuItem key="select" value="select">Select a Contributor</MenuItem>
-                        <MenuItem value="0:0">All contributors</MenuItem>
-                        {
-                          Object.entries(contributors).map(([key, value]) => (
-                            <MenuItem key={key} value={key + ":" + value}>{value}</MenuItem>
-                          ))
-                        }
-                      </Select>
+                      <div className="calendarWrap">
+                        <Select
+                          id="repoDropdown"
+                          labelId="contributor-label"
+                          value={selectedContributor}
+                          label="Contributor"
+                          onChange={handleContributorDropdownChange}
+                        >
+                          <MenuItem key="select" value="select">
+                            Select a Contributor
+                          </MenuItem>
+                          <MenuItem value="0:0">All contributors</MenuItem>
+                          {Object.entries(contributors).map(([key, value]) => (
+                            <MenuItem key={key} value={key + ":" + value}>
+                              {value}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </div>
                       <div className="calendarWrap">
                         <input
                           value={`${format(
@@ -427,20 +453,40 @@ function App() {
                       </div>
                     </FormControl>
                   </Box>
+                  <Box>
+                    <FullWidthTabs
+                      commitData={commits}
+                      prData={PRs}
+                      dates={selectedDates}
+                      selectedContributor={selectedContributor}
+                    ></FullWidthTabs>
+                  </Box>
                 </>
               ) : (
                 <> </>
               )}
             </Box>
-            <FullWidthTabs commitData={commits} prData={PRs} dates={selectedDates}></FullWidthTabs>
           </div>
         </div> // main page end
       ) : (
         <>
           <div className="card">
-            <h1 style={{ color: "white", fontFamily: "sans-serif" }}>
-              LOGIN TO BEGIN GRADING
-            </h1>
+            <button
+              startIcon={<AccountTreeOutlinedIcon />}
+              style={{
+                color: "black",
+                padding: 10,
+                borderRadius: 15,
+                fontSize: 40,
+                fontWeight: 600,
+                fontFamily: "montserrat",
+              }}
+            >
+              GitView
+            </button>
+            <h2>
+              Login below to 'git' grading!
+            </h2>
             <Button
               onClick={loginWithGithub}
               variant="outlined"
@@ -449,7 +495,7 @@ function App() {
                 color: "white",
                 padding: 10,
                 borderRadius: 15,
-                fontFamily: "sans-serif",
+                fontFamily: "montserrat",
               }}
             >
               SIGN IN WITH GITHUB

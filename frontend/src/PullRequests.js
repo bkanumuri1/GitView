@@ -18,16 +18,18 @@ import { visuallyHidden } from "@mui/utils";
 import Chip from "@mui/material/Chip";
 import TransitionsPopper from "./components/TransitionsPopper";
 import Charts from "./components/PullRequestBarChart";
-import { GitMergeIcon } from '@primer/octicons';
+import { GitMergeIcon } from "@primer/octicons";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "#778899",
     color: theme.palette.common.black,
-    width: "200px",
+    width: "100px",
+    textAlign: "center"
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    wordWrap: 'break-word',
   },
 }));
 
